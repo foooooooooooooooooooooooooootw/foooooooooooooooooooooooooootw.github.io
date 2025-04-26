@@ -54,6 +54,12 @@ header {
   font-size: 1.2rem;
 }
 
+.responsive-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Navigation */
 nav ul {
   display: flex;
