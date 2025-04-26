@@ -7,12 +7,12 @@
 
 /* Base styles */
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #fff;
-  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9; /* Light gray background */
+  color: #333; /* Dark text for good contrast */
   line-height: 1.6;
   padding: 2rem;
-  max-width: 800px;
+  max-width: 960px;
   margin: auto;
 }
 
@@ -23,13 +23,14 @@ header {
 }
 
 header h1 {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
+  color: #2d2d2d; /* Slightly darker for better contrast */
   margin-bottom: 0.5rem;
 }
 
 .tagline {
-  color: #666;
-  font-size: 1.1rem;
+  color: #5a5a5a;
+  font-size: 1.2rem;
 }
 
 /* Navigation */
@@ -44,24 +45,49 @@ nav ul {
 nav a {
   text-decoration: none;
   color: #333;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1.1rem;
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
-  transition: border 0.3s;
+  transition: border 0.3s ease, color 0.3s ease;
 }
 
 nav a:hover {
-  border-color: #333;
+  border-color: #007acc; /* Subtle blue accent */
+  color: #007acc; /* Same blue for hover effect */
 }
 
 /* Main Content */
+main {
+  margin-bottom: 3rem;
+}
+
 main h2 {
-  font-size: 1.8rem;
+  font-size: 2rem;
+  color: #333;
   margin-bottom: 1rem;
 }
 
 main p {
   font-size: 1.1rem;
+  color: #555;
+}
+
+/* Section Styling */
+section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+section h2 {
+  margin-bottom: 1rem;
+}
+
+section p {
+  line-height: 1.8;
+  color: #666;
 }
 
 /* Footer */
@@ -69,5 +95,11 @@ footer {
   text-align: center;
   margin-top: 3rem;
   font-size: 0.9rem;
-  color: #888;
+  color: #777;
+}
+
+footer p {
+  padding: 1rem 0;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 2rem;
 }
