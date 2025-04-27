@@ -62,6 +62,13 @@ header {
   transform: translateX(-15%);
 }
 
+.responsive-image-2 {
+  width: 69%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 /* Navigation */
 nav ul {
   display: flex;
