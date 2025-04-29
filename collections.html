@@ -31,24 +31,29 @@
       <h2>My Handmade Creations</h2>
       <div class="collection-gallery">
         <article class="collection-item">
-          <div class="item-images">
-            <a href="#img1"><img src="img/sunstone1.jpg" alt="Sunstone" /></a>
-            <a href="#img2"><img src="img/moonstone1.jpg" alt="Moonstone" /></a>
-          </div>
           <div class="item-text">
             <h3>Sun & Moon</h3>
-            <p>Twin rings, one silver with a sunstone and the other brass with a moonstone. Both show their special properties when hit with light at certain angles. </p>
+            <p>Twin rings, one silver with a sunstone and the other brass with a moonstone. Both show their special properties when hit with light at certain angles.</p>
+          </div>
+          <div class="item-images">
+            <a href="#lightbox-img1"><img src="img/sunstone1.jpg" alt="sunstone ring" /></a>
+            <a href="#lightbox-img2"><img src="img/moonstone1.jpg" alt="moonstone ring" /></a>
           </div>
         
-          <!-- Lightbox overlay (1 per image) -->
-          <div id="img1" class="lightbox">
-            <a href="#"><img src="img/sunstone1.jpg" alt="Sunstone" /></a>
+          <!-- Lightbox overlays -->
+          <div class="lightbox" id="lightbox-img1">
+            <div class="lightbox-content">
+              <a href="#" class="close-btn">&times;</a>
+              <img src="img/sunstone1.jpg" alt="sunstone ring" />
+            </div>
           </div>
-          <div id="img2" class="lightbox">
-            <a href="#"><img src="img/moonstone1.jpg" alt="Moonstone" /></a>
+          <div class="lightbox" id="lightbox-img2">
+            <div class="lightbox-content">
+              <a href="#" class="close-btn">&times;</a>
+              <img src="img/moonstone1.jpg" alt="moonstone ring" />
+            </div>
           </div>
         </article>
-
 
   <footer>
     <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
