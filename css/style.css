@@ -249,7 +249,7 @@ main section {
 }
 .item-images img {
   width: 100%;
-  height: auto;
+  height: 250px;
   border-radius: 6px;
   transition: transform 0.3s ease;
   cursor: zoom-in;
