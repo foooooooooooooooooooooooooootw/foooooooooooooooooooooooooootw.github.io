@@ -16,15 +16,19 @@
     </div>
   </header>
 
-  <nav>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="projects.html">Projects</a></li>
-      <li><a href="collections.html">Collections</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-  </nav>
+  <div class="navbar">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+    <nav>
+      <div class="menu-overlay"></div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="collections.html">Collections</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
 
   <main>
     <section>
@@ -48,5 +52,36 @@
   <footer>
     <p>© 2025 [Your Name]. All rights reserved.</p>
   </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const nav = document.querySelector('nav');
+      const menuOverlay = document.querySelector('.menu-overlay');
+      
+      // Toggle menu when hamburger is clicked
+      menuToggle.addEventListener('click', function() {
+        nav.classList.toggle('active');
+        
+        // Change hamburger icon when menu is open
+        this.innerHTML = nav.classList.contains('active') ? '✕' : '☰';
+      });
+      
+      // Close menu when overlay is clicked
+      menuOverlay.addEventListener('click', function() {
+        nav.classList.remove('active');
+        menuToggle.innerHTML = '☰';
+      });
+      
+      // Close menu when a link is clicked
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          nav.classList.remove('active');
+          menuToggle.innerHTML = '☰';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
