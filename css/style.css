@@ -58,6 +58,13 @@ header {
   font-size: 1.2rem;
 }
 
+.responsive-image-2 {
+   width: 40%;
+   height: 40%;
+   display: block;
+   margin: 0 auto;
+ }
+
 /* Updated Navigation Styles */
 .navbar {
   width: 100%;
