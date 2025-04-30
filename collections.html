@@ -16,15 +16,19 @@
     </div>
   </header>
 
-  <nav>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="projects.html">Projects</a></li>
-      <li><a href="collections.html">Collections</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-  </nav>
+  <div class="navbar">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+    <nav>
+      <div class="menu-overlay"></div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="collections.html">Collections</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
 
   <main>
     <section>
@@ -39,24 +43,58 @@
             <a href="#lightbox-img1"><img src="img/sunstone1.jpg" alt="sunstone ring" /></a>
             <a href="#lightbox-img2"><img src="img/moonstone1.jpg" alt="moonstone ring" /></a>
           </div>
-        
-          <!-- Lightbox overlays -->
-          <div class="lightbox" id="lightbox-img1">
-            <div class="lightbox-content">
-              <a href="#" class="close-btn">&times;</a>
-              <img src="img/sunstone1.jpg" alt="sunstone ring" />
-            </div>
-          </div>
-          <div class="lightbox" id="lightbox-img2">
-            <div class="lightbox-content">
-              <a href="#" class="close-btn">&times;</a>
-              <img src="img/moonstone1.jpg" alt="moonstone ring" />
-            </div>
-          </div>
         </article>
+        
+        <!-- Lightbox overlays -->
+        <div class="lightbox" id="lightbox-img1">
+          <div class="lightbox-content">
+            <a href="#" class="close-btn">&times;</a>
+            <img src="img/sunstone1.jpg" alt="sunstone ring" />
+          </div>
+        </div>
+        <div class="lightbox" id="lightbox-img2">
+          <div class="lightbox-content">
+            <a href="#" class="close-btn">&times;</a>
+            <img src="img/moonstone1.jpg" alt="moonstone ring" />
+          </div>
+        </div>
+      </div><!-- Close collection-gallery -->
+    </section>
+  </main>
 
   <footer>
     <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
   </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const nav = document.querySelector('nav');
+      const menuOverlay = document.querySelector('.menu-overlay');
+      
+      // Toggle menu when hamburger is clicked
+      menuToggle.addEventListener('click', function() {
+        nav.classList.toggle('active');
+        
+        // Change hamburger icon when menu is open
+        this.innerHTML = nav.classList.contains('active') ? '✕' : '☰';
+      });
+      
+      // Close menu when overlay is clicked
+      menuOverlay.addEventListener('click', function() {
+        nav.classList.remove('active');
+        menuToggle.innerHTML = '☰';
+      });
+      
+      // Close menu when a link is clicked
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          nav.classList.remove('active');
+          menuToggle.innerHTML = '☰';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
