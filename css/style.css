@@ -238,6 +238,12 @@
   padding: 2rem;
 }
 
+.collection-gallery::after {
+  content: "";
+  display: block;
+  clear: both; /* Ensures the footer isn't floated next to collection items */
+}
+
 /* Mobile Layout for Portrait Orientation */
 @media (orientation: portrait) {
   /* Stack items in a single column on mobile */
