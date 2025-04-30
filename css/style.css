@@ -1,236 +1,210 @@
 /* Reset */
- * {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
- }
- 
- /* Base styles */
- body {
-   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-   background-color: #D8E3D8; /* Soft Sage Green background */
-   color: #333; /* Dark text for good contrast */
-   line-height: 1.6;
-   padding: 2rem;
-   max-width: 960px;
-   margin: auto;
- }
- 
- /* Header Section */
- header {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   margin-bottom: 2rem;
-   background-color: #f5f5f5; /* Light Gray background for header */
-   padding: 2rem 1.5rem;
-   border-radius: 10px;
-   flex-direction: column; /* Makes sure the name is below the profile image */
-   text-align: center; /* Centers the header text */
- }
- 
- .header-content {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   gap: 1.5rem; /* Space between image and text */
- }
- 
- .profile-image img {
-   width: 100px;
-   height: 100px;
-   border-radius: 50%;
-   object-fit: cover;
- }
- 
- .header-text h1 {
-   font-size: 2.5rem;
-   color: #2d2d2d;
-   margin-bottom: 0.5rem;
- }
- 
- .tagline {
-   color: #5a5a5a;
-   font-size: 1.2rem;
- }
- 
- .responsive-image {
-   width: 100%;
-   height: auto;
-   display: block;
-   margin: 0 auto;
-   transform: translateX(-15%);
- }
- 
- .responsive-image-2 {
-   width: 30%;
-   height: 30%;
-   display: block;
-   margin: 0 auto;
- }
- 
- /* Navigation */
- nav ul {
-   display: flex;
-   justify-content: center;
-   list-style: none;
-   margin-bottom: 2rem;
-   gap: 2rem;
- }
- 
- nav a {
-   text-decoration: none;
-   color: #333;
-   font-weight: 600;
-   font-size: 1.1rem;
-   padding-bottom: 4px;
-   border-bottom: 2px solid transparent;
-   transition: border 0.3s ease, color 0.3s ease;
- }
- 
- nav a:hover {
-   border-color: #007acc; /* Subtle blue accent */
-   color: #007acc; /* Same blue for hover effect */
- }
- 
- /* Main Content */
- main {
-   margin-bottom: 3rem;
- }
- 
- main h2 {
-   font-size: 2rem;
-   color: #333;
-   margin-bottom: 1rem;
- }
- 
- main p {
-   font-size: 1.1rem;
-   color: #555;
- }
- 
- /* Section Styling */
- section {
-   background-color: #fff;
-   border-radius: 8px;
-   padding: 2rem;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
- }
- 
- section h2 {
-   margin-bottom: 1rem;
- }
- 
- section p {
-   line-height: 1.8;
-   color: #666;
- }
- 
- /* Image Gallery */
- .image-gallery {
-   display: flex;
-   gap: 1rem;
-   margin-top: 2rem;
- }
- 
- .image-gallery img {
-   width: 100%;
-   height: 200px;
-   object-fit: cover;
-   border-radius: 8px;
-   transition: transform 0.3s ease-in-out;
- }
- 
- .image-gallery img:hover {
-   transform: scale(1.05); /* Slight zoom on hover */
- }
- 
- /* Footer */
- footer {
-   text-align: center;
-   margin-top: 3rem;
-   font-size: 0.9rem;
-   color: #777;
- }
- 
- footer p {
-   padding: 1rem 0;
-   border-top: 1px solid #e0e0e0;
-   margin-top: 2rem;
- }
- 
- /* Base styles for About page */
- body {
-   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-   background-color: #D8E3D8;
-   color: #333;
-   line-height: 1.6;
-   padding: 2rem;
-   max-width: 960px;
-   margin: auto;
- }
- 
- /* About page specific styles */
- header {
-   display: flex;
-   justify-content: center;
-   margin-bottom: 2rem;
-   background-color: #f5f5f5;
-   padding: 2rem 1.5rem;
-   border-radius: 10px;
-   text-align: center;
- }
- 
- header .header-text h1 {
-   font-size: 2.5rem;
-   margin-bottom: 0.5rem;
- }
- 
- header .tagline {
-   color: #5a5a5a;
-   font-size: 1.2rem;
- }
- 
- main section {
-   background-color: #fff;
-   padding: 2rem;
-   margin-top: 1rem;
-   border-radius: 8px;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
- }
- 
- .image-section {
-   display: flex;
-   justify-content: center;
-   margin-bottom: 2rem;
- }
- 
- .about-image {
-   max-width: 100%;
-   height: auto;
-   border-radius: 8px; /* Rounded corners */
-   object-fit: cover; /* Ensures the image doesn't get stretched */
- }
- 
- /* Collections Page Styles */
- 
- .collection-item {
-   background-color: #fff;
-   border: 1px solid #ddd;
-   border-radius: 10px;
-   overflow: hidden;
-   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
- }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
- 
- .item-text {
-   padding: 1rem;
- }
- .item-text h3 {
-   margin-top: 0;
- }
- 
- /* Default Grid Layout for larger screens */
+/* Base styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #D8E3D8; /* Soft Sage Green background */
+  color: #333; /* Dark text for good contrast */
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 960px;
+  margin: auto;
+  /* Make sure body contains all elements properly */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header Section */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  background-color: #f5f5f5; /* Light Gray background for header */
+  padding: 2rem 1.5rem;
+  border-radius: 10px;
+  flex-direction: column; /* Makes sure the name is below the profile image */
+  text-align: center; /* Centers the header text */
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem; /* Space between image and text */
+}
+
+.profile-image img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-text h1 {
+  font-size: 2.5rem;
+  color: #2d2d2d;
+  margin-bottom: 0.5rem;
+}
+
+.tagline {
+  color: #5a5a5a;
+  font-size: 1.2rem;
+}
+
+/* Updated Navigation Styles */
+.navbar {
+  width: 100%;
+  position: relative;
+  margin-bottom: 3.5rem; /* Increased spacing below navbar */
+  padding-top: 1rem; /* Add space above navbar */
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Desktop/Landscape Navigation */
+nav ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  gap: 2rem;
+  transition: all 0.3s ease;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: border 0.3s ease, color 0.3s ease;
+}
+
+nav a:hover {
+  border-color: #007acc;
+  color: #007acc;
+}
+
+/* Hamburger Menu Icon - Hidden by default on desktop */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  position: absolute;
+  left: 1rem; /* Moved to left side */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically in navbar */
+  z-index: 100;
+  color: #333;
+}
+
+/* Mobile Navigation Styles */
+@media (orientation: portrait) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  nav ul {
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: -100%; /* Changed to left side slide-in */
+    width: 70%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: #f5f5f5;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1); /* Updated shadow direction */
+    padding: 4rem 2rem 2rem;
+    z-index: 90;
+    transition: left 0.3s ease; /* Changed to match left position */
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  /* When menu is active */
+  nav.active ul {
+    left: 0; /* Changed to match left position */
+  }
+  
+  /* Overlay when menu is open */
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 80;
+  }
+  
+  nav.active .menu-overlay {
+    display: block;
+  }
+}
+
+/* Main Content */
+main {
+  margin-bottom: 3rem;
+  /* Make main content take available space */
+  flex: 1;
+}
+
+main h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+main p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* Section Styling */
+section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+section h2 {
+  margin-bottom: 1rem;
+}
+
+section p {
+  line-height: 1.8;
+  color: #666;
+}
+
+/* Collections Page Styles */
+.collection-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.item-text {
+  padding: 1rem;
+}
+.item-text h3 {
+  margin-top: 0;
+}
+
+/* Default Grid Layout for larger screens */
 .collection-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Grid layout with responsive columns */
@@ -238,10 +212,31 @@
   padding: 2rem;
 }
 
-.collection-gallery::after {
-  content: "";
-  display: block;
-  clear: both; /* Ensures the footer isn't floated next to collection items */
+/* Fixed flexbox layout for image container */
+.item-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1rem;
+  justify-content: center;
+}
+
+.item-images a {
+  flex: 1 1 45%;
+  max-width: 48%;
+}
+
+.item-images img {
+  width: 100%;
+  height: 180px; /* Reduced height for landscape */
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+}
+
+.item-images img:hover {
+  transform: scale(1.05);
 }
 
 /* Mobile Layout for Portrait Orientation */
@@ -249,6 +244,7 @@
   /* Stack items in a single column on mobile */
   .collection-gallery {
     grid-template-columns: 1fr; /* Stack items in a single column */
+    padding: 1rem;
   }
 
   .item-images {
@@ -256,98 +252,66 @@
     align-items: center; /* Center the images */
   }
 
-  .item-images img {
-    width: 90%; /* Smaller images for mobile */
-    height: auto; /* Let the height adjust based on aspect ratio */
-    max-height: 400px; /* Prevent large images */
-    object-fit: contain; /* Preserve aspect ratio */
-  }
-
   .item-images a {
     width: 100%; /* Ensure images take up full width on mobile */
+    max-width: 100%;
   }
-}
 
-/* Handling Landscape Layout for Mobile Devices */
-@media (orientation: landscape) {
-  /* This is for landscape mobile mode where we don't stack images vertically */
-/* Flexbox Layout for Image Container */
-  .item-images {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 1rem;
-    justify-content: center;
-  }
-   .item-images a {
-     flex: 1 1 45%;
-     max-width: 48%;
-   }
   .item-images img {
-    width: 100%;
-    height: 250px; /* Fixed height for large screens */
-    object-fit: cover; /* Preserve aspect ratio while filling the container */
-    border-radius: 6px;
-    transition: transform 0.3s ease;
-    cursor: zoom-in;
+    width: 100%; /* Smaller images for mobile */
+    height: auto; /* Let the height adjust based on aspect ratio */
+    max-height: 300px; /* Prevent large images */
+    object-fit: contain; /* Preserve aspect ratio */
   }
-   .item-images img:hover {
-     transform: scale(1.05);
-   }
-   footer {
-     width: 100%;       /* Make the footer take up the full width */
-     padding: 1rem;
-     text-align: center;
-     background-color: #f1f1f1;
-     /* Remove positioning properties that might affect the layout */
-     position: static;  /* Ensure footer flows naturally below the content */
-   }
 }
 
-/* Footer Fix */
+/* Footer styling */
 footer {
-  width: 100%;       /* Make the footer take up the full width */
+  width: 100%;
   padding: 1rem;
   text-align: center;
   background-color: #f1f1f1;
-  /* Remove positioning properties that might affect the layout */
-  position: static;  /* Ensure footer flows naturally below the content */
+  margin-top: 2rem;
+  border-radius: 8px;
+  /* Ensure footer is not part of the grid or flexbox flow */
+  display: block;
 }
- /* Lightbox styling */
- .lightbox {
-   position: fixed;
-   top: 0; left: 0;
-   width: 100vw; height: 100vh;
-   background: rgba(0, 0, 0, 0.85);
-   display: none;
-   align-items: center;
-   justify-content: center;
-   z-index: 999;
- }
- 
- .lightbox:target {
-   display: flex;
- }
- 
- .lightbox-content {
-   position: relative;
-   max-width: 90vw;
-   max-height: 90vh;
- }
- .lightbox-content img {
-   max-width: 100%;
-   max-height: 100%;
-   border-radius: 8px;
- }
- .close-btn {
-   position: absolute;
-   top: -30px;
-   right: -10px;
-   color: white;
-   font-size: 2rem;
-   text-decoration: none;
-   font-weight: bold;
- }
- .close-btn:hover {
-   color: #ccc;
- }
+
+/* Lightbox styling */
+.lightbox {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.lightbox:target {
+  display: flex;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+}
+.close-btn {
+  position: absolute;
+  top: -30px;
+  right: -10px;
+  color: white;
+  font-size: 2rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+.close-btn:hover {
+  color: #ccc;
+}
