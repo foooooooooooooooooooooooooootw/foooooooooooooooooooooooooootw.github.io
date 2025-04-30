@@ -69,13 +69,20 @@ header {
   margin: 0 auto;
 }
 
-/* Navigation */
+/* Base styling for the navbar */
+nav {
+  width: 100%; /* Ensure the navbar takes full width of the viewport */
+  padding: 1rem;
+}
+
 nav ul {
   display: flex;
   justify-content: center;
   list-style: none;
   margin-bottom: 2rem;
   gap: 2rem;
+  padding: 0;
+  flex-wrap: wrap;  /* Allow navbar items to wrap on small screens */
 }
 
 nav a {
@@ -89,9 +96,36 @@ nav a {
 }
 
 nav a:hover {
-  border-color: #007acc; /* Subtle blue accent */
-  color: #007acc; /* Same blue for hover effect */
+  border-color: #007acc;
+  color: #007acc;
 }
+
+/* Mobile View: Use aspect-ratio based queries for taller devices */
+@media (max-width: 1080px) and (max-aspect-ratio: 1/1) {
+  /* Adjust navbar for phones with a taller screen (portrait mode) */
+  nav ul {
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center the items horizontally */
+  }
+
+  nav ul li {
+    margin-bottom: 1rem; /* Add spacing between items when stacked vertically */
+  }
+
+  nav a {
+    font-size: 1rem; /* Smaller font size for mobile */
+  }
+}
+
+/* Desktop or Landscape View (wider screens) */
+@media (min-width: 1080px) and (min-aspect-ratio: 16/9) {
+  /* Target wider screens like landscape tablets, desktop monitors */
+  nav ul {
+    flex-direction: row;  /* Keep items in a horizontal row */
+    justify-content: center;  /* Center items */
+  }
+}
+
 
 /* Main Content */
 main {
