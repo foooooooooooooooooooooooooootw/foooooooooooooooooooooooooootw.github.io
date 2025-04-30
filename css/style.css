@@ -250,13 +250,15 @@ main section {
 /* Layout styling */
 
 /* Default Grid Layout for larger screens (horizontal layout) */
+/* Default Grid Layout for larger screens */
 .collection-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid for large screens */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Grid layout with responsive columns */
   gap: 2rem;
   padding: 2rem;
 }
 
+/* Default Flexbox Layout for Image Container */
 .item-images {
   display: flex;
   flex-wrap: wrap;
@@ -265,7 +267,7 @@ main section {
   justify-content: center;
 }
 
-/* Default image styles for large screens */
+/* Default Image styles (large screens) */
 .item-images img {
   width: 100%;
   height: 250px; /* Fixed height for large screens */
@@ -275,21 +277,22 @@ main section {
   cursor: zoom-in;
 }
 
-/* Mobile View - stack images vertically */
+/* Mobile View - Stack images vertically */
 @media (max-width: 1080px) {
+  /* Single Column Layout for Mobile (images stacked) */
   .collection-gallery {
-    grid-template-columns: 1fr; /* Single column for mobile */
+    grid-template-columns: 1fr; /* Stack items in a single column on mobile */
   }
 
   .item-images {
-    flex-direction: column; /* Stack images vertically on smaller screens */
+    flex-direction: column; /* Stack images vertically */
     align-items: center; /* Center the images */
   }
 
   .item-images img {
     width: 90%; /* Make images a little smaller than the full width for mobile */
     height: auto; /* Let the height adjust based on aspect ratio */
-    max-height: 400px; /* Set a maximum height to prevent images from being too large */
+    max-height: 400px; /* Limit max height to prevent images from being too large */
     object-fit: contain; /* Ensure images preserve their aspect ratio */
   }
 
@@ -298,7 +301,7 @@ main section {
   }
 }
 
-/* Handle very tall screens (portrait aspect ratio) */
+/* Handle tall portrait mode screens */
 @media (max-width: 1080px) and (max-aspect-ratio: 1/1) {
   .item-images {
     flex-direction: column; /* Stack images vertically */
@@ -311,6 +314,26 @@ main section {
     object-fit: contain; /* Preserve aspect ratio and prevent stretching */
   }
 }
+
+/* Reset flex-direction to row for larger screens */
+@media (min-width: 1081px) {
+  .item-images {
+    flex-direction: row; /* Ensure images are in a row layout for larger screens */
+    justify-content: center; /* Align the images horizontally */
+  }
+}
+
+/* Footer issue fix: Ensure footer behaves correctly */
+footer {
+  clear: both; /* Prevent footer from floating beside content */
+  width: 100%; /* Ensure footer spans full width */
+  padding: 1rem;
+  text-align: center;
+  background-color: #f1f1f1;
+  position: relative;
+  bottom: 0;
+}
+
 
 
 /* Lightbox styling */
