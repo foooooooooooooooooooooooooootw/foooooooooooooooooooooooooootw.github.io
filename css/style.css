@@ -294,15 +294,24 @@
    .item-images img:hover {
      transform: scale(1.05);
    }
+   footer {
+     width: 100%;       /* Make the footer take up the full width */
+     padding: 1rem;
+     text-align: center;
+     background-color: #f1f1f1;
+     /* Remove positioning properties that might affect the layout */
+     position: static;  /* Ensure footer flows naturally below the content */
+   }
 }
 
 /* Footer Fix */
 footer {
-  clear: both;
-  width: 100%;
+  width: 100%;       /* Make the footer take up the full width */
   padding: 1rem;
   text-align: center;
   background-color: #f1f1f1;
+  /* Remove positioning properties that might affect the layout */
+  position: static;  /* Ensure footer flows naturally below the content */
 }
  /* Lightbox styling */
  .lightbox {
