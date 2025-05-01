@@ -58,6 +58,14 @@ header {
   font-size: 1.2rem;
 }
 
+ .responsive-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    transform: translateX(-15%);
+  }
+
 @media (orientation: portrait) {
   .responsive-image-2 {
     width: 100% !important; /* Take up full width on mobile devices */
