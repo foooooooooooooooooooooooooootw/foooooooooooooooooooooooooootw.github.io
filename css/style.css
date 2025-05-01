@@ -58,12 +58,21 @@ header {
   font-size: 1.2rem;
 }
 
+@media (orientation: portrait) {
+  .responsive-image-2 {
+    width: 100% !important; /* Take up full width on mobile devices */
+    height: auto;
+    margin: 0 auto;
+  }
+}
+
+/* Default styles for landscape orientation */
 .responsive-image-2 {
-   width: 40%;
-   height: 40%;
-   display: block;
-   margin: 0 auto;
- }
+  width: 40%;
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: 0 auto;
+}
 
 /* Updated Navigation Styles */
 .navbar {
