@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Me</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="header-text">
+        <h1>About Me</h1>
+        <h2>At a Glance</h2>
+        <p class="tagline">Enneagram 6 "Skeptic Loyalist" | INFP "Mediator"  | Servant Leader</p>
+      </div>
+    </div>
+  </header>
+          <img src="img/1738827794719_034344~2.png" alt="Gun range" class="responsive-image-2" />
+  <br></br>
+
+  <div class="navbar">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
+    <nav>
+      <div class="menu-overlay"></div>
+      <ul class="menu-list">
+        <li><a href="index.html">Home</a></li>
+        <li class="has-dropdown">
+          <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="bio.html">Bio</a></li>
+            <li><a href="music.html">Music</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a href="jewelry.html">Jewelry<span class="dropdown-indicator">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="collections.html">Collections</a></li>
+          </ul>
+        </li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+  <br>
+  <br>
+  <br>
+
+  
+  <footer>
+    <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const nav = document.querySelector('nav');
+      const menuOverlay = document.querySelector('.menu-overlay');
+  
+      // Toggle menu when hamburger is clicked
+      menuToggle.addEventListener('click', function() {
+        nav.classList.toggle('active');
+  
+        if (nav.classList.contains('active')) {
+          menuToggle.style.display = 'none'; // Hide button when menu is open
+        }
+      });
+  
+      // Close menu when overlay is clicked
+      menuOverlay.addEventListener('click', function() {
+        nav.classList.remove('active');
+        menuToggle.style.display = 'block'; // Show button again
+      });
+  
+      // Close menu when a link is clicked (in portrait mode only)
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          if (window.matchMedia('(orientation: portrait)').matches) {
+            nav.classList.remove('active');
+            menuToggle.style.display = 'block'; // Show button again
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
