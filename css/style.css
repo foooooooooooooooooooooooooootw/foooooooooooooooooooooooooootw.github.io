@@ -82,82 +82,175 @@ header {
   margin: 0 auto;
 }
 
-/* Updated Navigation Styles */
+/* Default styles for landscape orientation */
+.responsive-image-3 {
+  width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  border-radius: 25px;
+}
+
 .navbar {
   width: 100%;
   position: relative;
-  margin-bottom: 3.5rem; /* Increased spacing below navbar */
-  padding-top: 1rem; /* Add space above navbar */
+  margin-bottom: 1.5rem;
   border-radius: 8px;
   padding: 1rem;
 }
 
-/* Desktop/Landscape Navigation */
-nav ul {
-  display: flex;
-  justify-content: center;
+/* Remove default list styling */
+.menu-list, .dropdown-menu {
   list-style: none;
-  gap: 2rem;
-  transition: all 0.3s ease;
+  margin: 0;
+  padding: 0;
 }
 
+/* Links styling */
 nav a {
   text-decoration: none;
   color: #333;
   font-weight: 600;
-  font-size: 1.1rem;
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: border 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 nav a:hover {
-  border-color: #007acc;
   color: #007acc;
 }
 
-/* Hamburger Menu Icon - Hidden by default on desktop */
+/* Hamburger menu button */
 .menu-toggle {
   display: none;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 0.5rem;
-  position: absolute;
-  left: 1rem; /* Moved to left side */
-  top: 50%;
-  transform: translateY(-50%); /* Center vertically in navbar */
-  z-index: 100;
-  color: #333;
 }
 
-/* Mobile Navigation Styles */
+/* LANDSCAPE MODE (Horizontal Navbar) */
+@media (orientation: landscape) {
+  /* Horizontal menu */
+  .menu-list {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  /* Position dropdown parent */
+  .has-dropdown {
+    position: relative;
+  }
+  
+  /* Show dropdown indicator */
+  .dropdown-indicator {
+    margin-left: 0.3rem;
+  }
+  
+  /* Style dropdown */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    border-radius: 4px;
+    padding: 0.5rem 0;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+  }
+  
+  /* Dropdown menu items */
+  .dropdown-menu a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  /* Show dropdown on hover */
+  .has-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* PORTRAIT MODE (Slide-out Sidebar) */
 @media (orientation: portrait) {
   .menu-toggle {
     display: block;
+    position: absolute;
+    left: 1rem; /* stays on the left */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
   }
   
-  nav ul {
+  /* Off-canvas sidebar */
+  nav .menu-list {
     flex-direction: column;
     position: fixed;
     top: 0;
-    left: -100%; /* Changed to left side slide-in */
-    width: 70%;
+    left: -100%;
+    width: 80%;
     max-width: 300px;
     height: 100vh;
-    background-color: #f5f5f5;
-    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1); /* Updated shadow direction */
-    padding: 4rem 2rem 2rem;
+    background-color: #fff;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    padding: 3rem 0 0 0;
     z-index: 90;
-    transition: left 0.3s ease; /* Changed to match left position */
-    gap: 1.5rem;
-    align-items: center;
+    transition: left 0.3s ease;
+    overflow-y: auto;
   }
   
-  /* When menu is active */
-  nav.active ul {
-    left: 0; /* Changed to match left position */
+  /* Menu items */
+  .menu-list > li {
+    margin: 0;
+    width: 100%;
+  }
+  
+  .menu-list > li > a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Hide dropdown arrows in mobile */
+  .dropdown-indicator {
+    display: none;
+  }
+  
+  /* Always show dropdown in portrait mode */
+  .dropdown-menu {
+    display: block;
+    padding-left: 1.5rem;
+    margin: 0.25rem 0 0.75rem 0;
+  }
+  
+  /* Style submenu items */
+  .dropdown-menu li {
+    margin: 0.5rem 0;
+  }
+  
+  .dropdown-menu a {
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    position: relative;
+  }
+  
+  /* Add arrow indicator for submenu items */
+  .dropdown-menu a:before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: #007acc;
+  }
+  
+  /* Show sidebar when active */
+  nav.active .menu-list {
+    left: 0;
   }
   
   /* Overlay when menu is open */
