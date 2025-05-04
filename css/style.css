@@ -66,6 +66,25 @@ header {
     transform: translateX(-15%);
   }
 
+.under-construction {
+  background: linear-gradient(135deg, #ffcc00, #ff6600);
+  color: #222;
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-bottom: 5px dashed #fff;
+}
+
+.under-construction h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.under-construction p {
+  font-size: 1.2em;
+  margin: 0;
+}
+
 @media (orientation: portrait) {
   .responsive-image-2 {
     width: 100% !important; /* Take up full width on mobile devices */
