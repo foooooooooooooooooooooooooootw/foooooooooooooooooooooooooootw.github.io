@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Photography Portfolio</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #3498db;
+      --text-color: #333;
+      --light-text: #f8f9fa;
+      --background-color: #f8f9fa;
+      --card-color: #ffffff;
+      --transition-speed: 0.3s;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    header {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-text);
+      background-color: #000;
+      overflow: hidden;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+    }
+    
+    .header-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.7;
+      background-size: cover;
+      background-position: center;
+      animation: zoomEffect 20s infinite alternate;
+    }
+    
+    @keyframes zoomEffect {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+    
+    .header-text h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    }
+    
+    .header-text h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    }
+    
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(0,0,0,0.8);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      transition: all var(--transition-speed);
+    }
+    
+    .navbar.scrolled {
+      background-color: rgba(0,0,0,0.95);
+    }
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      width: 100%;
+      max-width: 1400px;
+    }
+    
+    .logo {
+      color: var(--light-text);
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    
+    .menu-list {
+      display: flex;
+      list-style: none;
+    }
+    
+    .menu-list li {
+      position: relative;
+      margin-left: 1.5rem;
+    }
+    
+    .menu-list a {
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 0.5rem;
+      transition: color var(--transition-speed);
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+    
+    .menu-list a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown-indicator {
+      margin-left: 0.2rem;
+      font-size: 0.8rem;
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: rgba(0,0,0,0.9);
+      min-width: 150px;
+      list-style: none;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all var(--transition-speed);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .has-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .dropdown-menu li {
+      margin: 0;
+    }
+    
+    .dropdown-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .dropdown-menu a:hover {
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+    
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--light-text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .menu-overlay {
+      display: none;
+    }
+    
+    .gallery-container {
+      max-width: 1400px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 300;
+      color: var(--primary-color);
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      aspect-ratio: 1 / 1;
+    }
+    
+    .gallery-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+    
+    .gallery-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      color: white;
+      padding: 1rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover .gallery-overlay {
+      transform: translateY(0);
+    }
+    
+    .gallery-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .gallery-description {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .categories {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    
+    .category-btn {
+      background: none;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      font-size: 0.9rem;
+    }
+    
+    .category-btn:hover, .category-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .about-section {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background-color: var(--card-color);
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    }
+    
+    .about-image {
+      flex: 1;
+      min-width: 300px;
+      padding: 1rem;
+    }
+    
+    .about-image img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    .about-content {
+      flex: 2;
+      min-width: 300px;
+      padding: 2rem;
+    }
+    
+    .about-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      font-weight: 300;
+    }
+    
+    .about-content p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      color: var(--light-text);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    
+    .footer-section {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+      text-align: left;
+    }
+    
+    .footer-section h3 {
+      margin-bottom: 1rem;
+      font-weight: 300;
+      font-size: 1.3rem;
+    }
+    
+    .footer-section p {
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+    
+    .footer-section ul {
+      list-style: none;
+    }
+    
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-section a {
+      color: var(--light-text);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity var(--transition-speed);
+    }
+    
+    .footer-section a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    
+    .social-icons {
+      display: flex;
+      margin-top: 1rem;
+    }
+    
+    .social-icons a {
+      display: inline-block;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+    }
+    
+    .copyright {
+      width: 100%;
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    /* Modal for image viewing */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      overflow: auto;
+    }
+    
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 90%;
+      max-height: 90%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #f1f1f1;
+      font-size: 40px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .modal-close:hover {
+      color: var(--accent-color);
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+      .header-text h1 {
+        font-size: 3rem;
+      }
+      
+      .header-text h2 {
+        font-size: 1.8rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 102;
+      }
+      
+      nav {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 0;
+        overflow: hidden;
+        background-color: rgba(0,0,0,0.95);
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 5rem 0 2rem;
+        transition: width var(--transition-speed);
+        opacity: 0;
+      }
+      
+      nav.active {
+        width: 70%;
+        opacity: 1;
+      }
+      
+      .menu-list {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .menu-list li {
+        margin: 0;
+        width: 100%;
+      }
+      
+      .menu-list a {
+        padding: 1rem 2rem;
+        display: block;
+        width: 100%;
+      }
+      
+      .dropdown-menu {
+        position: static;
+        background-color: rgba(0,0,0,0.3);
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        transition: max-height var(--transition-speed);
+      }
+      
+      .has-dropdown.active .dropdown-menu {
+        max-height: 500px;
+      }
+      
+      .dropdown-indicator {
+        float: right;
+      }
+      
+      .menu-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 101;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity var(--transition-speed);
+      }
+      
+      nav.active + .menu-overlay {
+        visibility: visible;
+        opacity: 1;
+      }
+      
+      .header-text h1 {
+        font-size: 2.5rem;
+      }
+      
+      .header-text h2 {
+        font-size: 1.5rem;
+      }
+      
+      .tagline {
+        font-size: 1rem;
+      }
+      
+      .about-image, .about-content {
+        flex: 100%;
+      }
+      
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header-text h1 {
+        font-size: 2rem;
+      }
+      
+      .header-text h2 {
+        font-size: 1.2rem;
+      }
+      
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-background" style="background-image: url('/api/placeholder/1200/800');"></div>
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Foo T'suen Wei</h1>
+        <h2>Photography</h2>
+        <p class="tagline">Capturing Moments | Creating Art | Sharing Perspectives</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="navbar">
+    <nav>
+      <a href="index.html" class="logo">FTW</a>
+      <button class="menu-toggle" aria-label="Menu">☰</button>
+      <ul class="menu-list">
+        <li><a href="index.html">Home</a></li>
+        <li class="has-dropdown">
+          <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="bio.html">Bio</a></li>
+            <li><a href="music.html">Music</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a>Portfolio<span class="dropdown-indicator">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="jewelry.html">Jewelry</a></li>
+            <li><a href="collections.html">Collections</a></li>
+            <li><a href="photography.html">Photography</a></li>
+          </ul>
+        </li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="menu-overlay"></div>
+    </nav>
+  </div>
+
+  <div class="gallery-container">
+    <h2 class="section-title">Photography Portfolio</h2>
+    
+    <div class="categories">
+      <button class="category-btn active">All</button>
+      <button class="category-btn">Nature</button>
+      <button class="category-btn">Sky</button>
+      <button class="category-btn">Landscape</button>
+      <button class="category-btn">Urban</button>
+    </div>
+    
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Nature Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Sunset Horizon</h3>
+          <p class="gallery-description">Beautiful sunset captured at the beach</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Sky Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Stormy Clouds</h3>
+          <p class="gallery-description">Dramatic cloud formations before a storm</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Landscape Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Mountain View</h3>
+          <p class="gallery-description">Majestic mountains at sunrise</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Urban Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">City Lights</h3>
+          <p class="gallery-description">Nighttime cityscape with vibrant lights</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Nature Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Forest Path</h3>
+          <p class="gallery-description">Serene walkway through ancient trees</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Sky Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Starry Night</h3>
+          <p class="gallery-description">Milky way visible on a clear night</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Urban Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Street Life</h3>
+          <p class="gallery-description">Capturing everyday moments in the city</p>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="/api/placeholder/600/600" alt="Landscape Photography" />
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Desert Sands</h3>
+          <p class="gallery-description">Golden dunes stretching to the horizon</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-section">
+    <div class="about-image">
+      <img src="/api/placeholder/600/800" alt="Photographer Profile Image" />
+    </div>
+    <div class="about-content">
+      <h2>About the Artist</h2>
+      <p>Welcome to my photography portfolio. I'm passionate about capturing the beauty of our world through my lens, with a special focus on sky photography and natural landscapes.</p>
+      <p>Photography allows me to express my perspective and share the fleeting moments that often go unnoticed in our busy lives. Each image tells a story and freezes a moment in time that can never be precisely recreated.</p>
+      <p>My work spans various styles and subjects, but I'm particularly drawn to the ever-changing canvas of the sky - from dramatic storm clouds to peaceful sunsets and the mesmerizing patterns of stars at night.</p>
+      <p>I hope my images inspire you to look up more often and appreciate the natural art show happening above us every day.</p>
+    </div>
+  </div>
+
+  <div class="modal">
+    <span class="modal-close">&times;</span>
+    <img class="modal-content" id="expandedImg">
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <p>Email: your.email@example.com</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Location: Your City, State</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="photography.html">Photography</a></li>
+          <li><a href="jewelry.html">Jewelry</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Follow Me</h3>
+        <p>Stay connected for the latest updates</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-pinterest"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>© 2025 Your Name. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Navigation menu toggle for mobile
+      const menuToggle = document.querySelector('.menu-toggle');
+      const nav = document.querySelector('nav');
+      const menuOverlay = document.querySelector('.menu-overlay');
+  
+      // Toggle menu when hamburger is clicked
+      menuToggle.addEventListener('click', function() {
+        nav.classList.toggle('active');
+      });
+  
+      // Close menu when overlay is clicked
+      menuOverlay.addEventListener('click', function() {
+        nav.classList.remove('active');
+      });
+      
+      // Mobile dropdown toggle
+      const dropdownLinks = document.querySelectorAll('.has-dropdown > a');
+      dropdownLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (window.innerWidth <= 768) {
+            e.preventDefault();
+            this.parentElement.classList.toggle('active');
+          }
+        });
+      });
+      
+      // Navbar background change on scroll
+      window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+      
+      // Gallery filtering
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          categoryBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          const category = this.textContent.toLowerCase();
+          
+          if (category === 'all') {
+            galleryItems.forEach(item => {
+              item.style.display = 'block';
+            });
+          } else {
+            galleryItems.forEach(item => {
+              if (item.querySelector('img').alt.toLowerCase().includes(category)) {
+                item.style.display = 'block';
+              } else {
+                item.style.display = 'none';
+              }
+            });
+          }
+        });
+      });
+      
+      // Modal for image viewing
+      const modal = document.querySelector('.modal');
+      const modalImg = document.querySelector('.modal-content');
+      const modalClose = document.querySelector('.modal-close');
+      const galleryImages = document.querySelectorAll('.gallery-item img');
+      
+      galleryImages.forEach(img => {
+        img.addEventListener('click', function() {
+          modal.style.display = 'block';
+          modalImg.src = this.src;
+        });
+      });
+      
+      modalClose.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+      
+      window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

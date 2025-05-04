@@ -3,26 +3,1415 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About Me</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>Jewelry Portfolio</title>
+  <style>
+    :root {
+      --primary-color: #2d3436;
+      --accent-color: #b8a07e;
+      --light-accent: #e2d1ba;
+      --text-color: #333;
+      --light-text: #f8f9fa;
+      --background-color: #f8f9fa;
+      --card-color: #ffffff;
+      --transition-speed: 0.3s;
+    }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      background-color: rgba(0,0,0,0.8);
+      overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.show {
+      display: flex;
+      opacity: 1;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: var(--card-color);
+      width: 90%;
+      max-width: 900px;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal.show .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      z-index: 10;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.8);
+      transition: all var(--transition-speed);
+    }
+
+    .modal-close:hover {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    @media (min-width: 768px) {
+      .modal-body {
+        flex-direction: row;
+        max-height: 80vh;
+      }
+    }
+
+    /* Gallery Styles */
+    .modal-gallery {
+      flex: 1;
+      min-width: 300px;
+      background-color: rgba(0,0,0,0.02);
+      position: relative;
+    }
+
+    .gallery-main {
+      width: 100%;
+      position: relative;
+      height: 300px;
+    }
+
+    @media (min-width: 768px) {
+      .gallery-main {
+        height: 400px;
+      }
+    }
+
+    .gallery-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-thumbs {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+      background-color: var(--primary-color);
+    }
+
+    .gallery-thumb {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+      margin-right: 10px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .gallery-thumb:hover {
+      opacity: 1;
+    }
+
+    .gallery-thumb.active {
+      opacity: 1;
+      border-color: var(--accent-color);
+    }
+
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Product Info Styles */
+    .modal-info {
+      flex: 1;
+      min-width: 300px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-title {
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      letter-spacing: 1px;
+    }
+
+    .modal-price {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .modal-description {
+      margin-bottom: 30px;
+      line-height: 1.8;
+    }
+
+    .modal-details {
+      margin-bottom: 30px;
+    }
+
+    .detail-item {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .detail-label {
+      width: 120px;
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+
+    .modal-actions {
+      margin-top: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .modal-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      flex: 1;
+      min-width: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-btn i {
+      margin-right: 8px;
+    }
+
+    .modal-btn.primary {
+      background-color: var(--accent-color);
+    }
+
+    .modal-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    /* Gallery Navigation */
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.2);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 1.2rem;
+    }
+
+    .gallery-nav:hover {
+      background: var(--accent-color);
+    }
+
+    .gallery-prev {
+      left: 15px;
+    }
+
+    .gallery-next {
+      right: 15px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+    }
+    
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    header {
+      position: relative;
+      height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-text);
+      background-color: var(--primary-color);
+      overflow: hidden;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+    }
+    
+    .header-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.4;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .header-text h1 {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    
+    .header-text h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+    
+    .tagline {
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      border: 1px solid var(--accent-color);
+      background-color: transparent;
+      color: var(--light-text);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      transition: all var(--transition-speed);
+      margin: 0 0.5rem;
+    }
+    
+    .btn:hover {
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+    }
+    
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(45, 52, 54, 0.95);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      transition: all var(--transition-speed);
+    }
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      width: 100%;
+      max-width: 1400px;
+    }
+    
+    .logo {
+      color: var(--light-text);
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      text-decoration: none;
+      font-weight: 300;
+    }
+    
+    .logo span {
+      color: var(--accent-color);
+    }
+    
+    .menu-list {
+      display: flex;
+      list-style: none;
+    }
+    
+    .menu-list li {
+      position: relative;
+      margin-left: 1.5rem;
+    }
+    
+    .menu-list a {
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 0.5rem;
+      transition: color var(--transition-speed);
+      font-weight: 300;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+    
+    .menu-list a:hover {
+      color: var(--accent-color);
+    }
+    
+    .dropdown-indicator {
+      margin-left: 0.2rem;
+      font-size: 0.8rem;
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: rgba(45, 52, 54, 0.95);
+      min-width: 150px;
+      list-style: none;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all var(--transition-speed);
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-top: 1px solid var(--accent-color);
+    }
+    
+    .has-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .dropdown-menu li {
+      margin: 0;
+    }
+    
+    .dropdown-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.8rem;
+    }
+    
+    .dropdown-menu a:hover {
+      background-color: rgba(184, 160, 126, 0.1);
+    }
+    
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--light-text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .menu-overlay {
+      display: none;
+    }
+    
+    .collection-container {
+      max-width: 1400px;
+      margin: 6rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: 300;
+      color: var(--primary-color);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .section-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 3rem;
+      text-align: center;
+      font-weight: 300;
+      color: var(--accent-color);
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+    
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 3rem;
+    }
+    
+    .collection-card {
+      background-color: var(--card-color);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .collection-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    .collection-image {
+      position: relative;
+      overflow: hidden;
+      height: 350px;
+    }
+    
+    .collection-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .collection-card:hover .collection-image img {
+      transform: scale(1.05);
+    }
+    
+    .collection-info {
+      padding: 2rem;
+      position: relative;
+    }
+    
+    .collection-info::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 1px;
+      background-color: var(--accent-color);
+    }
+    
+    .collection-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      color: var(--primary-color);
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    
+    .collection-description {
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .collection-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .collection-price {
+      font-size: 1.2rem;
+      color: var(--accent-color);
+      font-weight: 500;
+    }
+    
+    .collection-btn {
+      background-color: transparent;
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 0.5rem 1.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+    
+    .collection-btn:hover {
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .jewelry-showcase {
+      margin: 6rem 0;
+      padding: 4rem 0;
+      background-color: rgba(226, 209, 186, 0.2);
+    }
+    
+    .showcase-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    
+    .showcase-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 5rem;
+    }
+    
+    .showcase-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .showcase-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+    
+    .showcase-image {
+      flex: 1;
+      min-width: 300px;
+      padding: 1rem;
+    }
+    
+    .showcase-image img {
+      width: 100%;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .showcase-content {
+      flex: 1;
+      min-width: 300px;
+      padding: 2rem;
+    }
+    
+    .showcase-title {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+      color: var(--primary-color);
+      letter-spacing: 1px;
+    }
+    
+    .showcase-description {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    
+    .showcase-features {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    
+    .feature {
+      flex: 1;
+      min-width: 150px;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-title {
+      font-weight: 500;
+      color: var(--accent-color);
+      margin-bottom: 0.3rem;
+    }
+    
+    .showcase-price {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .process-section {
+      max-width: 1200px;
+      margin: 6rem auto;
+      padding: 0 1.5rem;
+    }
+    
+    .process-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 3rem;
+    }
+    
+    .process-step {
+      flex: 1;
+      min-width: 250px;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+    
+    .process-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 3rem;
+      right: 0;
+      height: 50%;
+      width: 1px;
+      background-color: rgba(0,0,0,0.1);
+    }
+    
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      color: white;
+      font-size: 1.5rem;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .step-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      color: var(--primary-color);
+    }
+    
+    .step-description {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    
+    .testimonials {
+      padding: 6rem 0;
+      background-color: var(--primary-color);
+      color: var(--light-text);
+    }
+    
+    .testimonial-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    
+    .testimonial-title {
+      color: var(--light-text);
+      margin-bottom: 3rem;
+    }
+    
+    .testimonial-subtitle {
+      color: var(--light-accent);
+    }
+    
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .testimonial-card {
+      background-color: rgba(255,255,255,0.05);
+      padding: 2rem;
+      border-radius: 5px;
+      position: relative;
+    }
+    
+    .testimonial-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+    
+    .author-image {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 1rem;
+    }
+    
+    .author-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .author-info h4 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 0.2rem;
+    }
+    
+    .author-info p {
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    .testimonial-quote {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 3rem;
+      opacity: 0.1;
+      font-family: serif;
+    }
+    
+    .contact-section {
+      max-width: 1200px;
+      margin: 6rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .contact-info {
+      flex: 1;
+      min-width: 300px;
+      padding: 2rem;
+    }
+    
+    .contact-form {
+      flex: 2;
+      min-width: 300px;
+      padding: 2rem;
+    }
+    
+    .contact-info h3 {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      font-weight: 300;
+      color: var(--primary-color);
+    }
+    
+    .contact-details {
+      margin-bottom: 2rem;
+    }
+    
+    .contact-item {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+    
+    .contact-icon {
+      margin-right: 1rem;
+      color: var(--accent-color);
+    }
+    
+    .social-links {
+      display: flex;
+      margin-top: 2rem;
+    }
+    
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--light-accent);
+      color: var(--primary-color);
+      margin-right: 1rem;
+      transition: all var(--transition-speed);
+    }
+    
+    .social-link:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary-color);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border var(--transition-speed);
+    }
+    
+    .form-input:focus {
+      border-color: var(--accent-color);
+      outline: none;
+    }
+    
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    
+    .submit-btn {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+    
+    .submit-btn:hover {
+      background-color: var(--primary-color);
+    }
+    
+    footer {
+      background-color: var(--primary-color);
+      color: var(--light-text);
+      padding: 4rem 0 2rem;
+    }
+    
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    
+    .footer-column {
+      flex: 1;
+      min-width: 250px;
+      padding: 0 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-column h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+    
+    .footer-column h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 30px;
+      height: 1px;
+      background-color: var(--accent-color);
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+    
+    .footer-links a {
+      color: var(--light-text);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity var(--transition-speed);
+    }
+    
+    .footer-links a:hover {
+      opacity: 1;
+      color: var(--accent-color);
+    }
+    
+    .newsletter-form {
+      display: flex;
+      margin-top: 1.5rem;
+    }
+    
+    .newsletter-input {
+      flex: 1;
+      padding: 0.8rem;
+      border: none;
+      font-family: inherit;
+    }
+    
+    .newsletter-btn {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0 1.5rem;
+      cursor: pointer;
+      transition: background-color var(--transition-speed);
+    }
+    
+    .newsletter-btn:hover {
+      background-color: var(--light-accent);
+      color: var(--primary-color);
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .footer-bottom p {
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .header-text h1 {
+        font-size: 3rem;
+      }
+      
+      .showcase-item {
+        margin-bottom: 3rem;
+      }
+      
+      .process-step:not(:last-child)::after {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-text h1 {
+        font-size: 2.5rem;
+      }
+      
+      .header-text h2 {
+        font-size: 1.5rem;
+      }
+      
+      .menu-toggle {
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 102;
+      }
+      
+      nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 70%;
+        background-color: rgba(45, 52, 54, 0.98);
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 5rem 0 2rem;
+        transition: right var(--transition-speed);
+      }
+      
+      nav.active {
+        right: 0;
+      }
+      
+      .menu-list {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .menu-list li {
+        margin: 0;
+        width: 100%;
+      }
+      
+      .menu-list a {
+        padding: 1rem 2rem;
+        display: block;
+        width: 100%;
+      }
+      
+      .dropdown-menu {
+        position: static;
+        background-color: rgba(0,0,0,0.2);
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        transition: max-height var(--transition-speed);
+        border-top: none;
+      }
+      
+      .has-dropdown.active .dropdown-menu {
+        max-height: 500px;
+      }
+      
+      .dropdown-indicator {
+        float: right;
+      }
+      
+      .menu-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 101;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity var(--transition-speed);
+      }
+      
+      nav.active + .menu-overlay {
+        visibility: visible;
+        opacity: 1;
+      }
+      
+      .collection-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      
+      .showcase-item, .showcase-item:nth-child(even) {
+        flex-direction: column;
+      }
+      
+      .showcase-image {
+        margin-bottom: 2rem;
+      }
+      
+      .process-step {
+        margin-bottom: 3rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header-text h1 {
+        font-size: 2rem;
+      }
+      
+      .header-text h2 {
+        font-size: 1.2rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .collection-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .newsletter-form {
+        flex-direction: column;
+      }
+      
+      .newsletter-input {
+        margin-bottom: 1rem;
+      }
+      
+      .newsletter-btn {
+        width: 100%;
+        padding: 0.8rem;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+  <script>  // Jewelry item data
+    const jewelryData = [
+      {
+        id: "moonlight-ring",
+        title: "Moonlight Silver Ring",
+        description: `This elegant sterling silver ring features a luminous moonstone cabochon set in a handcrafted bezel. Each piece is individually shaped and polished to create a unique profile that catches the light as it moves.
+        <br><br>
+        The moonstone displays a beautiful blue adularescence – a floating light effect resembling moonlight on water. Perfect for everyday wear yet distinctive enough for special occasions.
+        <br><br>
+        The band has a comfortable, smooth inner surface and a subtly textured exterior created using traditional hammering techniques.`,
+        images: [
+          "/api/placeholder/800/600",
+          "/api/placeholder/800/601",
+          "/api/placeholder/800/602",
+          "/api/placeholder/800/603"
+        ],
+        material: "Sterling Silver (925)",
+        gemstone: "Rainbow Moonstone",
+        dimensions: "US Size 6-8 (Adjustable)",
+        location: "Singapore"
+      },
+      {
+        id: "aurora-necklace",
+        title: "Aurora Gold Necklace",
+        description: `The Aurora Gold Necklace features a handcrafted pendant inspired by the northern lights. Each pendant is individually formed from 14k gold-filled sheet, carefully textured and polished to create beautiful light reflections.
+        <br><br>
+        The flowing, organic shape captures the ethereal movement of the aurora borealis, while subtle hammer marks create texture that catches the light from different angles.
+        <br><br>
+        The pendant hangs from a delicate but durable 18-inch gold-filled chain with a secure lobster clasp. This necklace sits beautifully at the collarbone and makes a subtle yet distinctive statement.`,
+        images: [
+          "/api/placeholder/800/610",
+          "/api/placeholder/800/611",
+          "/api/placeholder/800/612",
+          "/api/placeholder/800/613"
+        ],
+        material: "14k Gold-Filled",
+        gemstone: "None",
+        dimensions: "Pendant: 1.25\" × 0.75\", Chain: 18\"",
+        location: "Singapore"
+      },
+      {
+        id: "twisted-bracelet",
+        title: "Twisted Copper Bracelet",
+        description: `This statement bracelet is crafted from pure copper that has been forged, twisted, and hammered by hand to create its distinctive spiral pattern. Each piece is unique, with variations in the twist pattern making no two exactly alike.
+        <br><br>
+        The copper develops a natural patina over time that enhances its character, though it can be polished back to a bright finish if preferred. The bracelet has been carefully formed for comfort and features smooth, rounded ends.
+        <br><br>
+        Sized to fit most wrists with a small opening allowing for easy on and off. The substantial weight and texture make this piece both a tactile pleasure to wear and a striking visual addition to any outfit.`,
+        images: [
+          "/api/placeholder/800/620",
+          "/api/placeholder/800/621",
+          "/api/placeholder/800/622",
+          "/api/placeholder/800/623"
+        ],
+        material: "Pure Copper",
+        gemstone: "None",
+        dimensions: "Inner Diameter: 2.5\", Width: 0.4\"",
+        location: "Singapore"
+      }
+    ];
+  
+    // Modal functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('jewelryModal');
+      const mainImage = document.getElementById('mainImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDescription = document.getElementById('modalDescription');
+      const materialValue = document.getElementById('materialValue');
+      const gemstoneValue = document.getElementById('gemstoneValue');
+      const dimensionsValue = document.getElementById('dimensionsValue');
+      const locationValue = document.getElementById('locationValue');
+      const galleryThumbs = document.getElementById('galleryThumbs');
+      const closeButton = document.querySelector('.modal-close');
+      const prevButton = document.querySelector('.gallery-prev');
+      const nextButton = document.querySelector('.gallery-next');
+      
+      let currentItemId = null;
+      let currentImageIndex = 0;
+      
+      // Add click event to all "View Details" buttons
+      const detailButtons = document.querySelectorAll('.collection-btn');
+      detailButtons.forEach((button, index) => {
+        button.addEventListener('click', function() {
+          openModal(jewelryData[index].id);
+        });
+      });
+      
+      // Close modal when clicking the close button
+      closeButton.addEventListener('click', function() {
+        closeModal();
+      });
+      
+      // Close modal when clicking outside the content
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+          closeModal();
+        }
+      });
+      
+      // Gallery navigation
+      prevButton.addEventListener('click', function() {
+        navigateGallery(-1);
+      });
+      
+      nextButton.addEventListener('click', function() {
+        navigateGallery(1);
+      });
+      
+      // Open the modal with item data
+      function openModal(itemId) {
+        const item = jewelryData.find(item => item.id === itemId);
+        if (!item) return;
+        
+        currentItemId = itemId;
+        currentImageIndex = 0;
+        
+        // Populate modal with item data
+        modalTitle.textContent = item.title;
+        modalDescription.innerHTML = item.description;
+        materialValue.textContent = item.material;
+        gemstoneValue.textContent = item.gemstone;
+        dimensionsValue.textContent = item.dimensions;
+        locationValue.textContent = item.location;
+        
+        // Create thumbnails
+        galleryThumbs.innerHTML = '';
+        item.images.forEach((src, index) => {
+          const thumb = document.createElement('div');
+          thumb.className = index === 0 ? 'gallery-thumb active' : 'gallery-thumb';
+          thumb.innerHTML = `<img src="${src}" alt="${item.title} view ${index + 1}">`;
+          thumb.addEventListener('click', function() {
+            updateMainImage(index);
+          });
+          galleryThumbs.appendChild(thumb);
+        });
+        
+        // Set main image
+        mainImage.src = item.images[0];
+        mainImage.alt = item.title;
+        
+        // Show modal
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+      }
+      
+      // Close the modal
+      function closeModal() {
+        modal.classList.remove('show');
+        document.body.style.overflow = ''; // Restore scrolling
+      }
+      
+      // Update main image when thumbnail is clicked
+      function updateMainImage(index) {
+        if (!currentItemId) return;
+        
+        const item = jewelryData.find(item => item.id === currentItemId);
+        if (!item || index < 0 || index >= item.images.length) return;
+        
+        currentImageIndex = index;
+        
+        // Update main image
+        mainImage.src = item.images[index];
+        
+        // Update active thumbnail
+        const thumbs = galleryThumbs.querySelectorAll('.gallery-thumb');
+        thumbs.forEach((thumb, i) => {
+          if (i === index) {
+            thumb.classList.add('active');
+          } else {
+            thumb.classList.remove('active');
+          }
+        });
+      }
+      
+      // Navigate through gallery
+      function navigateGallery(direction) {
+        if (!currentItemId) return;
+        
+        const item = jewelryData.find(item => item.id === currentItemId);
+        if (!item) return;
+        
+        let newIndex = currentImageIndex + direction;
+        
+        // Wrap around
+        if (newIndex < 0) newIndex = item.images.length - 1;
+        if (newIndex >= item.images.length) newIndex = 0;
+        
+        updateMainImage(newIndex);
+      }
+      
+      // Keyboard navigation for gallery
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('show')) return;
+        
+        if (e.key === 'ArrowLeft') {
+          navigateGallery(-1);
+        } else if (e.key === 'ArrowRight') {
+          navigateGallery(1);
+        }
+      });
+    });</script>
 </head>
 <body>
   <header>
+    <div class="header-background" style="background-image: url('/api/placeholder/1200/800');"></div>
     <div class="header-content">
       <div class="header-text">
-        <h1>About Me</h1>
-        <h2>At a Glance</h2>
-        <p class="tagline">Enneagram 6 "Skeptic Loyalist" | INFP "Mediator"  | Servant Leader</p>
+        <h1>Foo T'suen Wei</h1>
+        <h2>Handcrafted Jewelry</h2>
+        <p class="tagline">Unique designs | Artisanal craftsmanship | Timeless elegance</p>
+        <div class="header-buttons">
+          <a href="#collection" class="btn">View Works</a>
+          <a href="#contact" class="btn">Contact Me</a>
+        </div>
       </div>
     </div>
   </header>
-          <img src="img/1738827794719_034344~2.png" alt="Gun range" class="responsive-image-2" />
-  <br></br>
 
   <div class="navbar">
-    <button class="menu-toggle" aria-label="Menu">☰</button>
     <nav>
-      <div class="menu-overlay"></div>
+      <a href="index.html" class="logo">FTW<span>Atelier</span></a>
+      <button class="menu-toggle" aria-label="Menu">☰</button>
       <ul class="menu-list">
         <li><a href="index.html">Home</a></li>
         <li class="has-dropdown">
@@ -43,50 +1432,98 @@
         <li><a href="projects.html">Projects</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
+      <div class="menu-overlay"></div>
     </nav>
   </div>
-  <br>
-  <br>
-  <br>
-  <br>
 
-  
-  <footer>
-    <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
-  </footer>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const menuToggle = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('nav');
-      const menuOverlay = document.querySelector('.menu-overlay');
-  
-      // Toggle menu when hamburger is clicked
-      menuToggle.addEventListener('click', function() {
-        nav.classList.toggle('active');
-  
-        if (nav.classList.contains('active')) {
-          menuToggle.style.display = 'none'; // Hide button when menu is open
-        }
-      });
-  
-      // Close menu when overlay is clicked
-      menuOverlay.addEventListener('click', function() {
-        nav.classList.remove('active');
-        menuToggle.style.display = 'block'; // Show button again
-      });
-  
-      // Close menu when a link is clicked (in portrait mode only)
-      const navLinks = document.querySelectorAll('nav a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          if (window.matchMedia('(orientation: portrait)').matches) {
-            nav.classList.remove('active');
-            menuToggle.style.display = 'block'; // Show button again
-          }
-        });
-      });
-    });
-  </script>
+  <div class="collection-container" id="collection">
+    <h2 class="section-title">Latest Works</h2>
+    <p class="section-subtitle">Discover unique pieces handcrafted with passion</p>
+    
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="/api/placeholder/600/600" alt="Silver Ring" />
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Moonlight Silver Ring</h3>
+          <p class="collection-description">Elegant sterling silver ring with moonstone, perfect for everyday wear or special occasions.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="/api/placeholder/600/600" alt="Gold Necklace" />
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Aurora Gold Necklace</h3>
+          <p class="collection-description">Delicate gold chain with handcrafted pendant inspired by the northern lights.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="/api/placeholder/600/600" alt="Copper Bracelet" />
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Twisted Copper Bracelet</h3>
+          <p class="collection-description">Unique twisted design copper bracelet with natural patina finish.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="jewelryModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-body">
+        <div class="modal-gallery">
+          <div class="gallery-main">
+            <img id="mainImage" src="/api/placeholder/800/600" alt="Jewelry piece">
+            <button class="gallery-nav gallery-prev" aria-label="Previous image">&lt;</button>
+            <button class="gallery-nav gallery-next" aria-label="Next image">&gt;</button>
+          </div>
+          <div class="gallery-thumbs" id="galleryThumbs">
+            <!-- Thumbnails will be added here -->
+          </div>
+        </div>
+        <div class="modal-info">
+          <h2 class="modal-title" id="modalTitle">Product Title</h2>
+          <div class="modal-description" id="modalDescription">
+            <p>Description will go here...</p>
+          </div>
+          <div class="modal-details">
+            <div class="detail-item">
+              <span class="detail-label">Material:</span>
+              <span class="detail-value" id="materialValue">Sterling Silver</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Gemstone:</span>
+              <span class="detail-value" id="gemstoneValue">Moonstone</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Dimensions:</span>
+              <span class="detail-value" id="dimensionsValue">Adjustable</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Handcrafted in:</span>
+              <span class="detail-value" id="locationValue">Singapore</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-btn primary"><i class="fas fa-shopping-bag"></i> Inquire Now</button>
+            <button class="modal-btn"><i class="fas fa-heart"></i> Add to Wishlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
-</html>
