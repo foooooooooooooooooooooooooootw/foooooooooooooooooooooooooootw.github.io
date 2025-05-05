@@ -15,6 +15,63 @@
       --card-color: #ffffff;
       --transition-speed: 0.3s;
     }
+
+      /* Add these styles to support video elements */
+    .media-indicator {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .collection-image {
+      position: relative;
+    }
+    
+    .video-thumb {
+      position: relative;
+    }
+    
+    .video-indicator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    
+    .main-video {
+      width: 100%;
+      max-height: 600px;
+    }
+    
+    #mainMediaContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-height: 600px;
+    }
+    
+    #mainImage {
+      max-width: 100%;
+      max-height: 600px;
+    }
+
     /* Modal Styles */
     .modal {
       display: none;
@@ -53,6 +110,146 @@
 
     .modal.show .modal-content {
       transform: scale(1);
+    }
+
+    /* Improved media container styles */
+    .main-media-container {
+      position: relative;
+      width: 100%;
+      height: 400px; /* Fixed height for consistency */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.03); /* Subtle background to see container bounds */
+      overflow: hidden; /* Prevents content from spilling outside */
+    }
+
+    /* Fix main image and video sizing for centered cropping */
+    #mainImage, #mainVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* This will crop to fill the container */
+      object-position: center; /* Centers the content so cropping happens from edges */
+    }
+
+    /* Gallery main container improvements */
+    .gallery-main {
+      width: 100%;
+      position: relative;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.03);
+      overflow: hidden; /* Prevent overflow */
+    }
+
+    .gallery-main img, .gallery-main video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Using cover for consistent appearance */
+      object-position: center; /* Centers the content */
+      transition: opacity 0.3s ease;
+    }
+
+    /* Better thumbnail handling */
+    .gallery-thumbs {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+      background-color: var(--primary-color);
+      gap: 10px; /* Even spacing between thumbnails */
+    }
+
+    .gallery-thumb {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      border: 2px solid transparent;
+      overflow: hidden; /* Prevent content from spilling out */
+    }
+
+    .gallery-thumb img, .gallery-thumb video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* For thumbnails, cover is fine to create uniform appearance */
+    }
+
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+      .modal-body {
+        flex-direction: row;
+        max-height: 80vh;
+      }
+      
+      .gallery-main {
+        height: 500px;
+      }
+      
+      .main-media-container {
+        height: 500px;
+      }
+    }
+
+    /* Update modal content to better handle media */
+    .modal-content {
+      background-color: var(--card-color);
+      width: 95%;
+      max-width: 1000px;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Add a toggle option for aspect ratio handling */
+    .aspect-toggle {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      z-index: 10;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* Define class for contain mode that can be toggled via JS */
+    .main-media-container.contain-mode #mainImage,
+    .main-media-container.contain-mode #mainVideo,
+    .gallery-main.contain-mode img,
+    .gallery-main.contain-mode video {
+      object-fit: contain;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* Improved video indicator positioning */
+    .video-indicator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      width: 40px; /* Larger for better visibility */
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .modal-close {
@@ -1193,11 +1390,12 @@
         Lapis Lazuli is "sky stone" in latin, and you can definitely see why its named that. It looks like a blue sky streaked with white clouds. It also gives off a magical feeling, with the ancient style of the band coupled with the blue, white and gold stone.
         <br><br>
         The band was found in Chatuchak market in Bangkok, Thailand with its stone missing. It was brought back to Singapore for me to work on.`,
-        images: [
-          "img/lapis1.jpg",
-          "/api/placeholder/800/601",
-          "/api/placeholder/800/602",
-          "/api/placeholder/800/603"
+        media: [
+          {
+            type: "image",
+            src: "img/lapis1.jpg",
+            thumbnail: "img/lapis1.jpg"
+          },
         ],
         material: "Gold-plated steel(?)",
         gemstone: "Lapis Lazuli",
@@ -1205,22 +1403,27 @@
         location: "Singapore"
       },
       {
-        id: "aurora-necklace",
-        title: "Aurora Gold Necklace",
-        description: `The Aurora Gold Necklace features a handcrafted pendant inspired by the northern lights. Each pendant is individually formed from 14k gold-filled sheet, carefully textured and polished to create beautiful light reflections.
+        id: "purple-fluorite",
+        title: "Purple Fluorite Ring",
+        description: `
+        Graceful, grounding, and subtly luminous—this striking ring features a polished purple fluorite gemstone, delicately cradled in a silver-toned adjustable band for a perfect, comfortable fit. The crystal catches the light beautifully, revealing flecks of inner fire that dance with each movement.
         <br><br>
-        The flowing, organic shape captures the ethereal movement of the aurora borealis, while subtle hammer marks create texture that catches the light from different angles.
-        <br><br>
-        The pendant hangs from a delicate but durable 18-inch gold-filled chain with a secure lobster clasp. This necklace sits beautifully at the collarbone and makes a subtle yet distinctive statement.`,
-        images: [
-          "/api/placeholder/800/610",
-          "/api/placeholder/800/611",
-          "/api/placeholder/800/612",
-          "/api/placeholder/800/613"
+        Purple fluorite is often associated with clarity, intuition, and calm—a stone favored by healers and creatives alike. Its soft violet hues are layered and ethereal, giving it a mystical quality that enhances both modern and boho styles.`,
+        media: [
+          {
+            type: "image",
+            src: "img/fluorite1.jpg",
+            thumbnail: "img/fluorite1.jpg"
+          },
+          {
+            type: "video",
+            src: "img/fr.mp4",
+            thumbnail: "img/fr1thumb.jpg"
+          },
         ],
-        material: "14k Gold-Filled",
-        gemstone: "None",
-        dimensions: "Pendant: 1.25\" × 0.75\", Chain: 18\"",
+        material: "Silver",
+        gemstone: "Purple Fluorite",
+        dimensions: "Adjustable Band",
         location: "Singapore"
       },
       {
@@ -1231,11 +1434,28 @@
         The copper develops a natural patina over time that enhances its character, though it can be polished back to a bright finish if preferred. The bracelet has been carefully formed for comfort and features smooth, rounded ends.
         <br><br>
         Sized to fit most wrists with a small opening allowing for easy on and off. The substantial weight and texture make this piece both a tactile pleasure to wear and a striking visual addition to any outfit.`,
-        images: [
-          "/api/placeholder/800/620",
-          "/api/placeholder/800/621",
-          "/api/placeholder/800/622",
-          "/api/placeholder/800/623"
+        media: [
+          {
+            type: "image",
+            src: "/api/placeholder/800/620",
+            thumbnail: "/api/placeholder/400/320"
+          },
+          {
+            type: "image",
+            src: "/api/placeholder/800/621",
+            thumbnail: "/api/placeholder/400/321"
+          },
+          {
+            type: "video",
+            src: "videos/bracelet-forge.mp4",
+            thumbnail: "/api/placeholder/400/322",
+            poster: "/api/placeholder/800/622"
+          },
+          {
+            type: "image",
+            src: "/api/placeholder/800/623",
+            thumbnail: "/api/placeholder/400/323"
+          }
         ],
         material: "Pure Copper",
         gemstone: "None",
@@ -1247,7 +1467,7 @@
     // Modal functionality
     document.addEventListener('DOMContentLoaded', function() {
       const modal = document.getElementById('jewelryModal');
-      const mainImage = document.getElementById('mainImage');
+      const mediaContainer = document.getElementById('mainMediaContainer');
       const modalTitle = document.getElementById('modalTitle');
       const modalDescription = document.getElementById('modalDescription');
       const materialValue = document.getElementById('materialValue');
@@ -1260,7 +1480,7 @@
       const nextButton = document.querySelector('.gallery-next');
       
       let currentItemId = null;
-      let currentImageIndex = 0;
+      let currentMediaIndex = 0;
       
       // Add click event to all "View Details" buttons
       const detailButtons = document.querySelectorAll('.collection-btn');
@@ -1304,7 +1524,7 @@
         if (!item) return;
         
         currentItemId = itemId;
-        currentImageIndex = 0;
+        currentMediaIndex = 0;
         
         // Populate modal with item data
         modalTitle.textContent = item.title;
@@ -1316,19 +1536,26 @@
         
         // Create thumbnails
         galleryThumbs.innerHTML = '';
-        item.images.forEach((src, index) => {
+        item.media.forEach((media, index) => {
           const thumb = document.createElement('div');
           thumb.className = index === 0 ? 'gallery-thumb active' : 'gallery-thumb';
-          thumb.innerHTML = `<img src="${src}" alt="${item.title} view ${index + 1}">`;
+          
+          // Add video icon indicator for video thumbnails
+          if (media.type === 'video') {
+            thumb.classList.add('video-thumb');
+          }
+          
+          thumb.innerHTML = `<img src="${media.thumbnail}" alt="${item.title} ${media.type} ${index + 1}">
+                           ${media.type === 'video' ? '<span class="video-indicator"><i class="fas fa-play"></i></span>' : ''}`;
+          
           thumb.addEventListener('click', function() {
-            updateMainImage(index);
+            updateMainMedia(index);
           });
           galleryThumbs.appendChild(thumb);
         });
         
-        // Set main image
-        mainImage.src = item.images[0];
-        mainImage.alt = item.title;
+        // Set main media
+        updateMainMedia(0);
         
         // Show modal
         modal.classList.add('show');
@@ -1337,21 +1564,48 @@
       
       // Close the modal
       function closeModal() {
+        // Pause any playing videos
+        const videoElements = mediaContainer.querySelectorAll('video');
+        videoElements.forEach(video => {
+          video.pause();
+        });
+        
         modal.classList.remove('show');
         document.body.style.overflow = ''; // Restore scrolling
       }
       
-      // Update main image when thumbnail is clicked
-      function updateMainImage(index) {
+      // Update main media when thumbnail is clicked
+      function updateMainMedia(index) {
         if (!currentItemId) return;
         
         const item = jewelryData.find(item => item.id === currentItemId);
-        if (!item || index < 0 || index >= item.images.length) return;
+        if (!item || index < 0 || index >= item.media.length) return;
         
-        currentImageIndex = index;
+        currentMediaIndex = index;
+        const media = item.media[index];
         
-        // Update main image
-        mainImage.src = item.images[index];
+        // Clear existing content
+        mediaContainer.innerHTML = '';
+        
+        // Add appropriate media element
+        if (media.type === 'image') {
+          const img = document.createElement('img');
+          img.src = media.src;
+          img.alt = `${item.title} view ${index + 1}`;
+          img.id = 'mainImage';
+          mediaContainer.appendChild(img);
+        } else if (media.type === 'video') {
+          const video = document.createElement('video');
+          video.src = media.src;
+          video.controls = true;
+          video.poster = media.poster;
+          video.id = 'mainVideo';
+          video.className = 'main-video';
+          video.autoplay = true;
+          video.muted = true; // Required for autoplay to work in most browsers
+          video.playsInline = true; // For iOS Safari
+          mediaContainer.appendChild(video);
+        }
         
         // Update active thumbnail
         const thumbs = galleryThumbs.querySelectorAll('.gallery-thumb');
@@ -1371,13 +1625,19 @@
         const item = jewelryData.find(item => item.id === currentItemId);
         if (!item) return;
         
-        let newIndex = currentImageIndex + direction;
+        let newIndex = currentMediaIndex + direction;
+        
+        // Pause any playing videos before changing
+        const videoElements = mediaContainer.querySelectorAll('video');
+        videoElements.forEach(video => {
+          video.pause();
+        });
         
         // Wrap around
-        if (newIndex < 0) newIndex = item.images.length - 1;
-        if (newIndex >= item.images.length) newIndex = 0;
+        if (newIndex < 0) newIndex = item.media.length - 1;
+        if (newIndex >= item.media.length) newIndex = 0;
         
-        updateMainImage(newIndex);
+        updateMainMedia(newIndex);
       }
       
       // Keyboard navigation for gallery
@@ -1390,7 +1650,8 @@
           navigateGallery(1);
         }
       });
-    });</script>
+    });
+  </script>
 </head>
 <body>
   <header>
@@ -1440,7 +1701,7 @@
     <h2 class="section-title">Latest Works</h2>
     <p class="section-subtitle">Discover unique pieces handcrafted with passion</p>
     
-    <div class="collection-grid">
+        <div class="collection-grid">
       <div class="collection-card">
         <div class="collection-image">
           <img src="img/lapis1.jpg" alt="Lapis Ring" />
@@ -1456,11 +1717,14 @@
       
       <div class="collection-card">
         <div class="collection-image">
-          <img src="/api/placeholder/600/600" alt="Gold Necklace" />
+          <img src="img/fluorite1.jpg" alt="Purple Fluorite Ring" />
+          <div class="media-indicator">
+            <i class="fas fa-film"></i> Video Available
+          </div>
         </div>
         <div class="collection-info">
-          <h3 class="collection-title">Aurora Gold Necklace</h3>
-          <p class="collection-description">Delicate gold chain with handcrafted pendant inspired by the northern lights.</p>
+          <h3 class="collection-title">Purple Fluorite Ring</h3>
+          <p class="collection-description">Delicate purple fluorite set in an adjustable silver ring.</p>
           <div class="collection-details">
             <button class="collection-btn">View Details</button>
           </div>
@@ -1487,7 +1751,9 @@
       <div class="modal-body">
         <div class="modal-gallery">
           <div class="gallery-main">
-            <img id="mainImage" src="/api/placeholder/800/600" alt="Jewelry piece">
+            <div id="mainMediaContainer">
+              <!-- Main media (image or video) will be inserted here -->
+            </div>
             <button class="gallery-nav gallery-prev" aria-label="Previous image">&lt;</button>
             <button class="gallery-nav gallery-next" aria-label="Next image">&gt;</button>
           </div>
