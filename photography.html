@@ -21,6 +21,221 @@
       box-sizing: border-box;
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      overflow: auto;
+    }
+    
+    /* Loading indicator styles */
+    .modal-loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.3);
+      z-index: 5;
+    }
+    
+    .modal-loader i {
+      color: white;
+      font-size: 3rem;
+    }
+    
+    .modal-image.loading {
+      opacity: 0.3;
+    }
+    
+    .modal-container {
+      position: relative;
+      width: 90%;
+      max-width: 1200px;
+      margin: 40px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .modal-image-container {
+      width: 100%;
+      background-color: #000;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .modal-image {
+      width: 100%;
+      display: block;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+    
+    .modal-details {
+      padding: 20px;
+      color: var(--text-color);
+    }
+    
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+    
+    .modal-location {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+    }
+    
+    .modal-location i {
+      margin-right: 6px;
+    }
+    
+    .modal-description {
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+    
+    .modal-exif {
+      background-color: #f4f4f4;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+    
+    .modal-exif h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+    
+    .exif-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    
+    .exif-item {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .exif-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 2px;
+    }
+    
+    .exif-value {
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 35px;
+      height: 35px;
+      background-color: rgba(0,0,0,0.5);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      z-index: 10;
+    }
+    
+    .modal-close:hover {
+      background-color: var(--accent-color);
+    }
+    
+    .modal-navigation {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-nav-btn {
+      background-color: rgba(0,0,0,0.3);
+      color: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 0 20px;
+    }
+    
+    .modal-nav-btn:hover {
+      background-color: var(--accent-color);
+    }
+    
+    @media (max-width: 768px) {
+      .modal-container {
+        width: 95%;
+        margin: 20px auto;
+      }
+      
+      .modal-title {
+        font-size: 1.5rem;
+      }
+      
+      .exif-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .modal-container {
+        width: 100%;
+        border-radius: 0;
+        margin: 0;
+        height: 100%;
+      }
+      
+      .modal-image {
+        max-height: 50vh;
+      }
+      
+      .exif-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-nav-btn {
+        width: 40px;
+        height: 40px;
+        margin: 0 10px;
+      }
+    }
     
     body {
       background-color: var(--background-color);
@@ -633,26 +848,26 @@
     
     <div class="gallery-grid">
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Nature Photography" />
+        <img src="img/photog/thumb-id1.jpg" alt="Urban Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">Sunset Horizon</h3>
-          <p class="gallery-description">Beautiful sunset captured at the beach</p>
+          <h3 class="gallery-title">School of the Arts</h3>
+          <p class="gallery-description">Clear skies & harsh sunlight above SOTA</p>
         </div>
       </div>
       
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Sky Photography" />
+        <img src="img/photog/thumb-id2.jpg" alt="Sky Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">Stormy Clouds</h3>
-          <p class="gallery-description">Dramatic cloud formations before a storm</p>
+          <h3 class="gallery-title">Cloudy or Clear?</h3>
+          <p class="gallery-description">This is kind of what I imagine heaven to be like</p>
         </div>
       </div>
       
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Landscape Photography" />
+        <img src="img/photog/thumb-id3.jpg" alt="Urban Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">Mountain View</h3>
-          <p class="gallery-description">Majestic mountains at sunrise</p>
+          <h3 class="gallery-title">Station at Twilight</h3>
+          <p class="gallery-description">Office buildings darken as people commute home</p>
         </div>
       </div>
       
@@ -712,8 +927,51 @@
   </div>
 
   <div class="modal">
-    <span class="modal-close">&times;</span>
-    <img class="modal-content" id="expandedImg">
+    <div class="modal-container">
+      <span class="modal-close"><i class="fas fa-times"></i></span>
+      <div class="modal-image-container">
+        <img class="modal-image" id="expandedImg">
+        <div class="modal-navigation">
+          <div class="modal-nav-btn prev-btn"><i class="fas fa-chevron-left"></i></div>
+          <div class="modal-nav-btn next-btn"><i class="fas fa-chevron-right"></i></div>
+        </div>
+      </div>
+      <div class="modal-details">
+        <h3 class="modal-title">Image Title</h3>
+        <div class="modal-location"><i class="fas fa-map-marker-alt"></i> <span>Location</span></div>
+        <p class="modal-description">Detailed description of the photograph and the story behind it.</p>
+        
+        <div class="modal-exif">
+          <h4>Technical Details</h4>
+          <div class="exif-grid">
+            <div class="exif-item">
+              <span class="exif-label">Camera</span>
+              <span class="exif-value">Sony A7 III</span>
+            </div>
+            <div class="exif-item">
+              <span class="exif-label">Lens</span>
+              <span class="exif-value">24-70mm f/2.8</span>
+            </div>
+            <div class="exif-item">
+              <span class="exif-label">Aperture</span>
+              <span class="exif-value">f/5.6</span>
+            </div>
+            <div class="exif-item">
+              <span class="exif-label">Shutter Speed</span>
+              <span class="exif-value">1/125 sec</span>
+            </div>
+            <div class="exif-item">
+              <span class="exif-label">ISO</span>
+              <span class="exif-value">100</span>
+            </div>
+            <div class="exif-item">
+              <span class="exif-label">Focal Length</span>
+              <span class="exif-value">35mm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -837,6 +1095,265 @@
       window.addEventListener('click', function(e) {
         if (e.target === modal) {
           modal.style.display = 'none';
+        }
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // Keep your existing script functionality
+      
+      // Enhanced gallery and modal functionality
+      const modal = document.querySelector('.modal');
+      const modalImg = document.querySelector('.modal-image');
+      const modalClose = document.querySelector('.modal-close');
+      const modalTitle = document.querySelector('.modal-title');
+      const modalLocation = document.querySelector('.modal-location span');
+      const modalDescription = document.querySelector('.modal-description');
+      const prevBtn = document.querySelector('.prev-btn');
+      const nextBtn = document.querySelector('.next-btn');
+      
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      let currentIndex = 0;
+      
+      // Image data - in a real implementation, this would come from your backend
+      // or be embedded as data attributes in your HTML
+      const imageData = [
+        {
+          id: 1,
+          title: "School of the Arts",
+          location: "Zubir Said Drive, Singapore",
+          description: "A breathtaking sunset captured along the shoreline of Malibu Beach. The golden hour light created a magical atmosphere as the sun dipped below the horizon, casting vibrant orange and pink hues across the sky and reflecting off the gentle waves.",
+          highResUrl: "img/photog/id1.jpg", // Replace with your actual high-res image path
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/1636 sec",
+          iso: "50",
+          focalLength: "5mm"
+        },
+        {
+          id: 2,
+          title: "Cloudy or Clear?",
+          location: "Bukit Timah, Singapore",
+          description: "Heavy cloud formations juxtaposed with clear, deep blue skies.",
+          highResUrl: "img/photog/id2.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/1645 sec",
+          iso: "50",
+          focalLength: "5mm"
+        },
+        {
+          id: 3,
+          title: "Station at Twilight",
+          location: "Paya Lebar, Singapore",
+          description: "Office buildings darken as people commute home.",
+          highResUrl: "img/photog/id3.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/50 sec",
+          iso: "849",
+          focalLength: "5mm"
+        },
+        {
+          id: 4,
+          title: "City Lights",
+          location: "Tokyo, Japan",
+          description: "The vibrant urban landscape of Tokyo at night, showcasing the city's iconic neon lights and bustling energy. Shot from an elevated observation deck, this long exposure captures the flow of traffic and the electric atmosphere of one of the world's most dynamic cities.",
+          highResUrl: "/api/placeholder/1200/800",
+          camera: "Fujifilm GFX 100S",
+          lens: "GF 32-64mm f/4 R LM WR",
+          aperture: "f/11",
+          shutterSpeed: "8 sec",
+          iso: "100",
+          focalLength: "45mm"
+        },
+        {
+          id: 5,
+          title: "Forest Path",
+          location: "Olympic National Park, Washington",
+          description: "A serene walking path through the ancient Hoh Rainforest in Olympic National Park. The filtered sunlight creates a magical atmosphere as it penetrates through the dense canopy, illuminating the vibrant moss and ferns that blanket the forest floor.",
+          highResUrl: "/api/placeholder/1200/800",
+          camera: "Canon EOS 5D Mark IV",
+          lens: "Canon EF 16-35mm f/4L IS USM",
+          aperture: "f/11",
+          shutterSpeed: "1/15 sec",
+          iso: "400",
+          focalLength: "24mm"
+        },
+        {
+          id: 6,
+          title: "Starry Night",
+          location: "Death Valley National Park, California",
+          description: "The Milky Way galaxy stretching across the night sky above the dramatic landscape of Death Valley. This image is a composite of multiple exposures to capture both the intricate details of the galaxy and the subtle features of the foreground terrain.",
+          highResUrl: "/api/placeholder/1200/800",
+          camera: "Sony A7S III",
+          lens: "Sony 24mm f/1.4 GM",
+          aperture: "f/2.0",
+          shutterSpeed: "20 sec",
+          iso: "3200",
+          focalLength: "24mm"
+        },
+        {
+          id: 7,
+          title: "Street Life",
+          location: "Marrakech, Morocco",
+          description: "A candid moment capturing the vibrant daily life in the busy streets of Marrakech. The afternoon light creates dramatic shadows and highlights the rich colors of the marketplace, telling a story of tradition and culture in this historic city.",
+          highResUrl: "/api/placeholder/1200/800",
+          camera: "Leica Q2",
+          lens: "Fixed Summilux 28mm f/1.7 ASPH",
+          aperture: "f/4",
+          shutterSpeed: "1/250 sec",
+          iso: "200",
+          focalLength: "28mm"
+        },
+        {
+          id: 8,
+          title: "Desert Sands",
+          location: "Sahara Desert, Morocco",
+          description: "The endless golden dunes of the Sahara Desert stretching to the horizon at sunset. This photograph captures the ever-changing patterns in the sand created by the wind, along with the warm light of the setting sun that enhances the texture and form of this magnificent landscape.",
+          highResUrl: "/api/placeholder/1200/800",
+          camera: "Nikon D850",
+          lens: "Nikon 70-200mm f/2.8E FL ED VR",
+          aperture: "f/8",
+          shutterSpeed: "1/125 sec",
+          iso: "64",
+          focalLength: "85mm"
+        }
+      ];
+      
+      // Update EXIF data in the modal
+      function updateExifData(imageData) {
+        const exifItems = document.querySelectorAll('.exif-item');
+        
+        // Update Camera
+        exifItems[0].querySelector('.exif-value').textContent = imageData.camera;
+        
+        // Update Lens
+        exifItems[1].querySelector('.exif-value').textContent = imageData.lens;
+        
+        // Update Aperture
+        exifItems[2].querySelector('.exif-value').textContent = imageData.aperture;
+        
+        // Update Shutter Speed
+        exifItems[3].querySelector('.exif-value').textContent = imageData.shutterSpeed;
+        
+        // Update ISO
+        exifItems[4].querySelector('.exif-value').textContent = imageData.iso;
+        
+        // Update Focal Length
+        exifItems[5].querySelector('.exif-value').textContent = imageData.focalLength;
+      }
+      
+      // Display image in modal with its data
+      function displayImage(index) {
+        currentIndex = index;
+        const data = imageData[index];
+        
+        // Show loading state
+        modalImg.src = ''; // Clear current image
+        modalImg.classList.add('loading');
+        
+        // Add a loading indicator if not already present
+        let loader = document.querySelector('.modal-loader');
+        if (!loader) {
+          loader = document.createElement('div');
+          loader.className = 'modal-loader';
+          loader.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+          document.querySelector('.modal-image-container').appendChild(loader);
+        }
+        loader.style.display = 'flex';
+        
+        // Update text content immediately
+        modalTitle.textContent = data.title;
+        modalLocation.textContent = data.location;
+        modalDescription.textContent = data.description;
+        updateExifData(data);
+        
+        // Show modal
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        
+        // Load high-res image
+        const highResImage = new Image();
+        highResImage.onload = function() {
+          // Once loaded, update the modal image
+          modalImg.src = data.highResUrl;
+          modalImg.classList.remove('loading');
+          loader.style.display = 'none';
+        };
+        
+        highResImage.onerror = function() {
+          // Fallback to thumbnail if high-res fails to load
+          modalImg.src = galleryItems[index].querySelector('img').src;
+          modalImg.classList.remove('loading');
+          loader.style.display = 'none';
+        };
+        
+        // Start loading the high-res image
+        highResImage.src = data.highResUrl;
+      }
+      
+      // Add click event to gallery items
+      galleryItems.forEach((item, index) => {
+        item.addEventListener('click', function() {
+          // First set the modal image to the thumbnail while high-res loads
+          // This gives immediate visual feedback to the user
+          modal.style.display = 'block';
+          modalImg.src = this.querySelector('img').src;
+          
+          // Then display the high-res version with metadata
+          displayImage(index);
+        });
+      });
+      
+      // Previous image button
+      prevBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        let newIndex = currentIndex - 1;
+        if (newIndex < 0) newIndex = galleryItems.length - 1;
+        displayImage(newIndex);
+      });
+      
+      // Next image button
+      nextBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        let newIndex = currentIndex + 1;
+        if (newIndex >= galleryItems.length) newIndex = 0;
+        displayImage(newIndex);
+      });
+      
+      // Close modal
+      modalClose.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
+      });
+      
+      // Close modal when clicking outside of content
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', function(e) {
+        if (modal.style.display === 'block') {
+          if (e.key === 'ArrowLeft') {
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = galleryItems.length - 1;
+            displayImage(newIndex);
+          } else if (e.key === 'ArrowRight') {
+            let newIndex = currentIndex + 1;
+            if (newIndex >= galleryItems.length) newIndex = 0;
+            displayImage(newIndex);
+          } else if (e.key === 'Escape') {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+          }
         }
       });
     });
