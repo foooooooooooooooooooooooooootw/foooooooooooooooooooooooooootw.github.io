@@ -271,7 +271,8 @@
       opacity: 0.7;
       background-size: cover;
       background-position: center;
-      animation: zoomEffect 20s infinite alternate;
+      animation: zoomEffect 6s infinite alternate;
+      transition: opacity 1.2s ease-in-out;
     }
     
     @keyframes zoomEffect {
@@ -797,7 +798,8 @@
 </head>
 <body>
   <header>
-    <div class="header-background" style="background-image: url('/api/placeholder/1200/800');"></div>
+    <div class="header-background" id="backgroundImage1" style="opacity: 1;"></div>
+    <div class="header-background" id="backgroundImage2" style="opacity: 0;"></div>
     <div class="header-content">
       <div class="header-text">
         <h1>Foo T'suen Wei</h1>
@@ -1357,6 +1359,48 @@
         }
       });
     });
+
+  // Array of background images
+  const backgroundImages = [
+      'img/photog/bedhead.jpg',
+      'img/photog/hotel.jpg',
+    ];
+    
+    let currentImageIndex = 0;
+    let nextImageIndex = 1;
+    let activeBackground = 1; // Tracks which background div is currently visible
+    
+    const bg1 = document.getElementById('backgroundImage1');
+    const bg2 = document.getElementById('backgroundImage2');
+    
+    // Set initial backgrounds
+    bg1.style.backgroundImage = `url('${backgroundImages[0]}')`;
+    bg2.style.backgroundImage = `url('${backgroundImages[1]}')`;
+    
+    // Change background every 5 seconds
+    setInterval(crossfadeBackground, 5000);
+    
+    function crossfadeBackground() {
+      // Get the currently visible and hidden background elements
+      const currentBg = activeBackground === 1 ? bg1 : bg2;
+      const nextBg = activeBackground === 1 ? bg2 : bg1;
+      
+      // Set the next image before starting the transition
+      nextBg.style.backgroundImage = `url('${backgroundImages[nextImageIndex]}')`;
+      
+      // Fade in the next image (which is currently hidden)
+      nextBg.style.opacity = '1';
+      
+      // Fade out the current image
+      currentBg.style.opacity = '0';
+      
+      // Toggle which background is active
+      activeBackground = activeBackground === 1 ? 2 : 1;
+      
+      // Update the indices for the next cycle
+      currentImageIndex = nextImageIndex;
+      nextImageIndex = (nextImageIndex + 1) % backgroundImages.length;
+    }
   </script>
 </body>
 </html>
