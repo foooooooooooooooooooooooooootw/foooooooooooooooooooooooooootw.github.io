@@ -25,7 +25,7 @@
     .modal {
       display: none;
       position: fixed;
-      z-index: 999;
+      z-index: 1000; /* Increased z-index to ensure it's above everything */
       top: 0;
       left: 0;
       width: 100%;
@@ -68,6 +68,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      z-index: 1001; /* Make sure container is above the modal background */
     }
     
     .modal-image-container {
@@ -193,6 +194,7 @@
       cursor: pointer;
       transition: background-color 0.3s;
       margin: 0 20px;
+      z-index: 5; /* Ensure nav buttons are above the image */
     }
     
     .modal-nav-btn:hover {
@@ -625,44 +627,6 @@
       opacity: 0.7;
     }
     
-    /* Modal for image viewing */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.9);
-      overflow: auto;
-    }
-    
-    .modal-content {
-      margin: auto;
-      display: block;
-      max-width: 90%;
-      max-height: 90%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: #f1f1f1;
-      font-size: 40px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    
-    .modal-close:hover {
-      color: var(--accent-color);
-    }
-    
     /* Responsive */
     @media (max-width: 992px) {
       .header-text h1 {
@@ -842,7 +806,7 @@
     
     <div class="categories">
       <button class="category-btn active">All</button>
-      <button class="category-btn">Nature</button>
+      <button class="category-btn">Food</button>
       <button class="category-btn">Sky</button>
       <button class="category-btn">Landscape</button>
       <button class="category-btn">Urban</button>
@@ -874,34 +838,34 @@
       </div>
       
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Urban Photography" />
+        <img src="img/photog/thumb-id4.jpg" alt="Sky Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">City Lights</h3>
-          <p class="gallery-description">Nighttime cityscape with vibrant lights</p>
+          <h3 class="gallery-title">Concrete Apeture</h3>
+          <p class="gallery-description">In a concrete jungle, surrounded by monoliths, the sky rarely shows itself.</p>
         </div>
       </div>
       
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Nature Photography" />
+        <img src="img/photog/thumb-id5.jpg" alt="Food Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">Forest Path</h3>
-          <p class="gallery-description">Serene walkway through ancient trees</p>
+          <h3 class="gallery-title">Birthday Roast Beef</h3>
+          <p class="gallery-description">A meal fit for a king, but it made me wonder when the last time I got a toy as a gift was.</p>
         </div>
       </div>
       
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Sky Photography" />
+        <img src="img/photog/thumb-id6.jpg" alt="Urban Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">Starry Night</h3>
-          <p class="gallery-description">Milky way visible on a clear night</p>
+          <h3 class="gallery-title">Modern Obelisk</h3>
+          <p class="gallery-description">Once originally dedicated to Gods - no different by today's standards.</p>
         </div>
       </div>
       
       <div class="gallery-item">
-        <img src="/api/placeholder/600/600" alt="Urban Photography" />
+        <img src="img/photog/thumb-id7.jpg" alt="Urban Photography" />
         <div class="gallery-overlay">
-          <h3 class="gallery-title">Street Life</h3>
-          <p class="gallery-description">Capturing everyday moments in the city</p>
+          <h3 class="gallery-title">Seaside Mosque</h3>
+          <p class="gallery-description">A fitting place to walk over water</p>
         </div>
       </div>
       
@@ -975,6 +939,7 @@
       </div>
     </div>
   </div>
+
 
   <footer>
     <div class="footer-content">
@@ -1116,16 +1081,14 @@
       
       const galleryItems = document.querySelectorAll('.gallery-item');
       let currentIndex = 0;
-      
-      // Image data - in a real implementation, this would come from your backend
-      // or be embedded as data attributes in your HTML
+
       const imageData = [
         {
           id: 1,
           title: "School of the Arts",
           location: "Zubir Said Drive, Singapore",
-          description: "A breathtaking sunset captured along the shoreline of Malibu Beach. The golden hour light created a magical atmosphere as the sun dipped below the horizon, casting vibrant orange and pink hues across the sky and reflecting off the gentle waves.",
-          highResUrl: "img/photog/id1.jpg", // Replace with your actual high-res image path
+          description: "Harsh sunlight & clear skies on a weekend, over SOTA.",
+          highResUrl: "img/photog/id1.jpg",
           camera: "Xiaomi",
           lens: "POCO F2 Pro",
           aperture: "f/1.9",
@@ -1161,55 +1124,55 @@
         },
         {
           id: 4,
-          title: "City Lights",
-          location: "Tokyo, Japan",
-          description: "The vibrant urban landscape of Tokyo at night, showcasing the city's iconic neon lights and bustling energy. Shot from an elevated observation deck, this long exposure captures the flow of traffic and the electric atmosphere of one of the world's most dynamic cities.",
-          highResUrl: "/api/placeholder/1200/800",
-          camera: "Fujifilm GFX 100S",
-          lens: "GF 32-64mm f/4 R LM WR",
-          aperture: "f/11",
-          shutterSpeed: "8 sec",
-          iso: "100",
-          focalLength: "45mm"
+          title: "Concrete Apeture",
+          location: "Beauty World, Singapore",
+          description: "In a concrete jungle, surrounded by monoliths, the sky rarely shows itself.",
+          highResUrl: "img/photog/id4.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/1645 sec",
+          iso: "50",
+          focalLength: "5mm"
         },
         {
           id: 5,
-          title: "Forest Path",
-          location: "Olympic National Park, Washington",
-          description: "A serene walking path through the ancient Hoh Rainforest in Olympic National Park. The filtered sunlight creates a magical atmosphere as it penetrates through the dense canopy, illuminating the vibrant moss and ferns that blanket the forest floor.",
-          highResUrl: "/api/placeholder/1200/800",
-          camera: "Canon EOS 5D Mark IV",
-          lens: "Canon EF 16-35mm f/4L IS USM",
-          aperture: "f/11",
-          shutterSpeed: "1/15 sec",
-          iso: "400",
-          focalLength: "24mm"
+          title: "Birthday Roast Beef",
+          location: "Lawry's The Prime Rib, Singapore",
+          description: "A meal fit for a king, but it made me wonder when the last time I got a toy as a gift was.",
+          highResUrl: "img/photog/id5.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/100 sec",
+          iso: "292",
+          focalLength: "5mm"
         },
         {
           id: 6,
-          title: "Starry Night",
-          location: "Death Valley National Park, California",
-          description: "The Milky Way galaxy stretching across the night sky above the dramatic landscape of Death Valley. This image is a composite of multiple exposures to capture both the intricate details of the galaxy and the subtle features of the foreground terrain.",
-          highResUrl: "/api/placeholder/1200/800",
-          camera: "Sony A7S III",
-          lens: "Sony 24mm f/1.4 GM",
-          aperture: "f/2.0",
-          shutterSpeed: "20 sec",
-          iso: "3200",
-          focalLength: "24mm"
+          title: "Modern Obelisk",
+          location: "Tun Razak Exchange, Malaysia",
+          description: "Once originally dedicated to Gods - no different by today's standards.",
+          highResUrl: "img/photog/id6.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/138 sec",
+          iso: "50",
+          focalLength: "5mm"
         },
         {
           id: 7,
-          title: "Street Life",
-          location: "Marrakech, Morocco",
-          description: "A candid moment capturing the vibrant daily life in the busy streets of Marrakech. The afternoon light creates dramatic shadows and highlights the rich colors of the marketplace, telling a story of tradition and culture in this historic city.",
-          highResUrl: "/api/placeholder/1200/800",
-          camera: "Leica Q2",
-          lens: "Fixed Summilux 28mm f/1.7 ASPH",
-          aperture: "f/4",
-          shutterSpeed: "1/250 sec",
-          iso: "200",
-          focalLength: "28mm"
+          title: "Seaside Mosque",
+          location: "Masjid Selat Melaka, Malacca",
+          description: "A fitting place to walk over water",
+          highResUrl: "img/photog/id7.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/325 sec",
+          iso: "50",
+          focalLength: "5mm"
         },
         {
           id: 8,
@@ -1364,6 +1327,7 @@
   const backgroundImages = [
       'img/photog/bedhead.jpg',
       'img/photog/hotel.jpg',
+      'img/photog/temple.jpg',
     ];
     
     let currentImageIndex = 0;
