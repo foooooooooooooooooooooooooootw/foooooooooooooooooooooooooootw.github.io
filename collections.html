@@ -4,14 +4,439 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Jewelry Collections</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --primary-color: #333;
+      --accent-color: #c0a080;
+      --light-color: #f8f8f8;
+      --dark-color: #222;
+      --transition: all 0.3s ease;
+      --shadow: 0 5px 15px rgba(0,0,0,0.1);
+      --font-main: 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-main);
+      line-height: 1.6;
+      color: var(--primary-color);
+      background-color: #fff;
+      overflow-x: hidden;
+    }
+    
+    h1, h2, h3 {
+      font-weight: 300;
+      line-height: 1.2;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    h2 {
+      font-size: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+      position: relative;
+    }
+    
+    h2:after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 2px;
+      background: var(--accent-color);
+      margin: 0.5rem auto;
+    }
+    
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+    
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      transition: var(--transition);
+    }
+    
+    /* Header */
+    header {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1617038220319-276d3cfab638?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+    
+    .header-content {
+      padding: 2rem;
+      z-index: 1;
+    }
+    
+    .tagline {
+      font-size: 1.2rem;
+      font-style: italic;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+    
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      padding: 1rem 5%;
+    }
+    
+    .navbar nav {
+      display: flex;
+      justify-content: center;
+    }
+    
+    .menu-list {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+    
+    .menu-list a {
+      color: var(--primary-color);
+      font-weight: 400;
+      position: relative;
+      padding: 0.5rem 0;
+      transition: var(--transition);
+    }
+    
+    .menu-list a:hover {
+      color: var(--accent-color);
+    }
+    
+    .menu-list a:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-color);
+      transition: var(--transition);
+    }
+    
+    .menu-list a:hover:after {
+      width: 100%;
+    }
+    
+    .has-dropdown {
+      position: relative;
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: white;
+      min-width: 180px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: var(--transition);
+      list-style: none;
+      padding: 1rem 0;
+      border-radius: 4px;
+      z-index: 100;
+    }
+    
+    .has-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .dropdown-menu a {
+      display: block;
+      padding: 0.5rem 1.5rem;
+    }
+    
+    .dropdown-indicator {
+      margin-left: 0.25rem;
+      font-size: 0.8rem;
+    }
+    
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--primary-color);
+    }
+    
+    /* Main content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 5%;
+    }
+    
+    .collection-gallery {
+      display: grid;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+    
+    .collection-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    
+    .item-text {
+      padding: 1rem;
+    }
+    
+    .item-text p {
+      margin-bottom: 0.5rem;
+      line-height: 1.8;
+    }
+    
+    .item-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .item-images a {
+      display: block;
+      overflow: hidden;
+      border-radius: 4px;
+      box-shadow: var(--shadow);
+      cursor: zoom-in;
+      /* Added fixed aspect ratio container */
+      position: relative;
+      padding-top: 100%; /* 1:1 Aspect Ratio */
+    }
+    
+    .item-images img {
+      transition: transform 0.5s ease;
+      /* Make images fill the container while maintaining aspect ratio */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cover the container area */
+    }
+    
+    .item-images a:hover img {
+      transform: scale(1.05);
+    }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      padding: 2rem;
+      overflow: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 1;
+    }
+    
+    .modal-content {
+      position: relative;
+      max-width: 80%;
+      max-height: 80vh;
+    }
+    
+    .modal-content img {
+      max-height: 80vh;
+      object-fit: contain;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: -2rem;
+      right: -2rem;
+      color: white;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+    
+    .close-modal:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    
+    .modal-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      z-index: 2001;
+    }
+    
+    .modal-nav button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transform: translateY(-50%);
+      transition: var(--transition);
+    }
+    
+    .modal-nav button:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+    
+    /* Poem styling */
+    .poem {
+      font-style: italic;
+      padding: 1rem 0;
+      line-height: 1.8;
+    }
+    
+    /* Footer */
+    footer {
+      background-color: var(--dark-color);
+      color: var(--light-color);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+    
+    /* Media Queries */
+    @media (max-width: 768px) {
+      header {
+        height: 40vh;
+      }
+      
+      .menu-toggle {
+        display: block;
+        position: absolute;
+        right: 5%;
+        top: 1.5rem;
+      }
+      
+      .navbar nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 70%;
+        height: 100vh;
+        background: white;
+        transition: var(--transition);
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        z-index: 1001;
+      }
+      
+      .navbar nav.active {
+        left: 0;
+      }
+      
+      .menu-list {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        padding: 0.5rem 0 0.5rem 1rem;
+        display: none;
+      }
+      
+      .has-dropdown.active .dropdown-menu {
+        display: block;
+      }
+      
+      .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+      }
+      
+      .navbar nav.active + .menu-overlay {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .collection-item {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        max-width: 95%;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="header-content">
       <div class="header-text">
-        <h1>Jewelry Collections</h1>
-        <p class="tagline">Handmade Jewelry with Love</p>
+        <h1>The Collection.</h1>
+        <p class="tagline">Visions, curated.</p>
       </div>
     </div>
   </header>
@@ -19,7 +444,6 @@
   <div class="navbar">
     <button class="menu-toggle" aria-label="Menu">☰</button>
     <nav>
-      <div class="menu-overlay"></div>
       <ul class="menu-list">
         <li><a href="index.html">Home</a></li>
         <li class="has-dropdown">
@@ -41,11 +465,8 @@
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
+    <div class="menu-overlay"></div>
   </div>
-  <br>
-  <br>
-  <br>
-  <br>
 
   <main>
     <section>
@@ -54,36 +475,22 @@
         <article class="collection-item">
           <div class="item-text">
             <h3>Sun & Moon</h3>
-            <p>Twin rings, one silver with a sunstone and the other brass with a moonstone. Both show their special properties when hit with light at certain angles.</p>
-            <br>
-            <br>
-            <br>
-            <br>
+            <p>A striking pair of opposites, captured in silver and brass. The sunstone, with its vibrant orange hue, sits in a rectangular band adorned with vertical prongs that radiate like sunrays. <br><br> In contrast, the moonstone’s soft blue glow rests in an oval setting, its band intricately designed with cutouts that create delicate gaps, evoking the quiet, open beauty of the night. <br><br>One band found in a bustling flea market, the other imported from across the sea — yet together, they mirror the eternal dance of day and night. When light strikes them, each stone reveals its own luminous character.</p>
           </div>
           <div class="item-images">
-            <a href="#lightbox-img1"><img src="img/sunstone1.jpg" alt="sunstone ring" /></a>
-            <a href="#lightbox-img2"><img src="img/moonstone1.jpg" alt="moonstone ring" /></a>
+            <a href="#" class="gallery-item" data-img="img/sunstone1.jpg" data-alt="sunstone ring">
+              <img src="img/sunstone1.jpg" alt="sunstone ring" />
+            </a>
+            <a href="#" class="gallery-item" data-img="img/moonstone1.jpg" data-alt="moonstone ring">
+              <img src="img/moonstone1.jpg" alt="moonstone ring" />
+            </a>
           </div>
         </article>
-        
-        <!-- Lightbox overlays -->
-        <div class="lightbox" id="lightbox-img1">
-          <div class="lightbox-content">
-            <a href="#" class="close-btn">&times;</a>
-            <img src="img/sunstone1.jpg" alt="sunstone ring" />
-          </div>
-        </div>
-        <div class="lightbox" id="lightbox-img2">
-          <div class="lightbox-content">
-            <a href="#" class="close-btn">&times;</a>
-            <img src="img/moonstone1.jpg" alt="moonstone ring" />
-          </div>
-        </div>
 
         <article class="collection-item">
           <div class="item-text">
             <h3>Chatuchak</h3>
-            
+            <div class="poem">
               <p>On the final days of twenty four,</p>
               <p>I chanced across a peculiar store;</p>
               <p>Discarded jewelry in crates galore.</p>
@@ -92,23 +499,28 @@
               <p>Till I found these pieces two.</p>
               <p>And then a spark within my brain;</p>
               <p>I saw them both - born again.</p>
-            
+            </div>
           </div>
           <div class="item-images">
-            <a href="#lightbox-img"><img src="img/chatuchak1.jpg" alt="Lapis & Charoite" /></a>
+            <a href="#" class="gallery-item" data-img="img/chatuchak1.jpg" data-alt="Lapis & Charoite">
+              <img src="img/chatuchak1.jpg" alt="Lapis & Charoite" />
+            </a>
           </div>
         </article>
-        
-        <!-- Lightbox overlays -->
-        <div class="lightbox" id="lightbox-img">
-          <div class="lightbox-content">
-            <a href="#" class="close-btn">&times;</a>
-            <img src="img/chatuchak1.jpg" alt="Lapis & Charoite" />
-          </div>
-        </div>
-      </div><!-- Close collection-gallery -->
+      </div>
     </section>
   </main>
+
+  <div class="modal" id="imageModal">
+    <button class="close-modal">&times;</button>
+    <div class="modal-content">
+      <img src="" alt="" id="modalImage">
+    </div>
+    <div class="modal-nav">
+      <button class="prev-btn">&#10094;</button>
+      <button class="next-btn">&#10095;</button>
+    </div>
+  </div>
 
   <footer>
     <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
@@ -116,34 +528,123 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
+      // Mobile menu functionality
       const menuToggle = document.querySelector('.menu-toggle');
       const nav = document.querySelector('nav');
       const menuOverlay = document.querySelector('.menu-overlay');
-  
-      // Toggle menu when hamburger is clicked
+      
       menuToggle.addEventListener('click', function() {
-        nav.classList.toggle('active');
-  
-        if (nav.classList.contains('active')) {
-          menuToggle.style.display = 'none'; // Hide button when menu is open
-        }
+        nav.classList.add('active');
       });
-  
-      // Close menu when overlay is clicked
+      
       menuOverlay.addEventListener('click', function() {
         nav.classList.remove('active');
-        menuToggle.style.display = 'block'; // Show button again
       });
-  
-      // Close menu when a link is clicked (in portrait mode only)
-      const navLinks = document.querySelectorAll('nav a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          if (window.matchMedia('(orientation: portrait)').matches) {
-            nav.classList.remove('active');
-            menuToggle.style.display = 'block'; // Show button again
+      
+      // Dropdown toggles for mobile
+      const dropdownItems = document.querySelectorAll('.has-dropdown');
+      
+      dropdownItems.forEach(item => {
+        const link = item.querySelector('a');
+        
+        link.addEventListener('click', function(e) {
+          if (window.innerWidth <= 768) {
+            e.preventDefault();
+            item.classList.toggle('active');
           }
         });
+      });
+      
+      // Image modal/lightbox functionality
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      const closeBtn = document.querySelector('.close-modal');
+      const prevBtn = document.querySelector('.prev-btn');
+      const nextBtn = document.querySelector('.next-btn');
+      const galleryItems = document.querySelectorAll('.gallery-item');
+      
+      let currentIndex = 0;
+      
+      // Create array of all gallery images
+      const galleryImages = [];
+      galleryItems.forEach(item => {
+        galleryImages.push({
+          src: item.getAttribute('data-img'),
+          alt: item.getAttribute('data-alt')
+        });
+      });
+      
+      // Open modal with clicked image
+      galleryItems.forEach((item, index) => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          currentIndex = index;
+          openModal(item.getAttribute('data-img'), item.getAttribute('data-alt'));
+        });
+      });
+      
+      function openModal(src, alt) {
+        modalImg.src = src;
+        modalImg.alt = alt;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+      }
+      
+      // Close modal
+      closeBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Re-enable scrolling
+      });
+      
+      // Close modal with escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+      
+      // Navigate through images
+      prevBtn.addEventListener('click', function() {
+        currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+        updateModalImage();
+      });
+      
+      nextBtn.addEventListener('click', function() {
+        currentIndex = (currentIndex + 1) % galleryImages.length;
+        updateModalImage();
+      });
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        
+        if (e.key === 'ArrowLeft') {
+          currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+          updateModalImage();
+        } else if (e.key === 'ArrowRight') {
+          currentIndex = (currentIndex + 1) % galleryImages.length;
+          updateModalImage();
+        }
+      });
+      
+      function updateModalImage() {
+        const image = galleryImages[currentIndex];
+        modalImg.src = image.src;
+        modalImg.alt = image.alt;
+      }
+      
+      // Prevent modal from closing when clicking on the image
+      modalImg.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
+      // Close modal when clicking outside the image
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
       });
     });
   </script>
