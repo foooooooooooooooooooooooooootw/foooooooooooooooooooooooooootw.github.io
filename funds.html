@@ -457,6 +457,13 @@
             right: 1rem;
             top: 1rem;
         }
+
+        .converted {
+            color: grey;
+            font-size: 0.9em;
+            margin-left: 6px;
+        }
+
     </style>
 </head>
 <body>
@@ -496,9 +503,10 @@
         </div>
     <img src="img/1738827794719_034344~2.png" alt="Fund Manager" class="circle-img">
 </div>
-
+        <br>
         <h2 class="section-title">Active Fundraising Campaigns</h2>
-        
+        <h3>Funds are held in SGD$ even if the fund recipients are overseas. This might create differences due to forex.</h3>
+        <br>
         <div class="funds-container" id="funds-container">
             <!-- Fund cards will be dynamically generated here -->
         </div>
@@ -563,7 +571,7 @@
         let funds = [
             {
                 id: 1,
-                name: "Risen PC Fund",
+                name: "Risen PC Fund (HKD)",
                 raised: 21,
                 goal: 0,
                 donors: [
@@ -593,6 +601,18 @@
             document.getElementById('total-raised').textContent = `${totalRaised.toLocaleString()}`;
             document.getElementById('total-donors').textContent = totalDonors;
             document.getElementById('goals-completed').textContent = `${goalsCompleted}/${goalsTotal}`;
+        }
+
+        let sgdToHkdRate = 6; // fallback default
+
+        async function fetchExchangeRate() {
+            try {
+                const res = await fetch('https://api.frankfurter.app/latest?from=SGD&to=HKD');
+                const data = await res.json();
+                sgdToHkdRate = data.rates.HKD;
+            } catch (err) {
+                console.error("Failed to fetch exchange rate, using fallback:", err);
+            }
         }
 
         // Function to create fund cards
@@ -636,7 +656,10 @@
                         </div>`
                     }
                     <div class="fund-details">
-                        <div class="amount">${fund.raised.toLocaleString()}</div>
+                        <div class="amount">
+                            $${fund.raised.toLocaleString()}
+                            <span class="converted">(HK$${(fund.raised * sgdToHkdRate).toLocaleString(undefined, { maximumFractionDigits: 0 })})</span>
+                        </div>
                         ${hasGoal ? 
                             `<div class="goal">of ${fund.goal.toLocaleString()}</div>` : 
                             `<div class="goal">Ongoing Fund</div>`
@@ -777,7 +800,11 @@
 
         // Initialize the dashboard
         updateStats();
-        renderFundCards();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await fetchExchangeRate();
+            renderFundCards();
+        });
+
 
         // Chart.js global settings for dark theme
         Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
