@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundraising Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --secondary-light: #34d399;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --card-bg: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            --card-bg-alt: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            --card-bg-third: linear-gradient(135deg, #7e22ce 0%, #8b5cf6 100%);
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+            --card-glow: 0 0 15px rgba(99, 102, 241, 0.5);
+            --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            color: var(--light);
+            font-size: 2.25rem;
+            font-weight: 700;
+            text-shadow: var(--text-shadow);
+            background: linear-gradient(to right, var(--primary), var(--secondary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-glow);
+        }
+
+        .stat-card:nth-child(1) {
+            background: var(--card-bg);
+        }
+
+        .stat-card:nth-child(2) {
+            background: var(--card-bg-alt);
+        }
+
+        .stat-card:nth-child(3) {
+            background: var(--card-bg-third);
+        }
+
+        .stat-card h3 {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: var(--text-shadow);
+        }
+
+        .stat-card .change {
+            display: flex;
+            align-items: center;
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .funds-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .fund-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .fund-card:hover {
+            box-shadow: var(--card-glow);
+            transform: translateY(-3px);
+        }
+
+        .fund-card .fund-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .fund-card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .fund-card .progress {
+            height: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 0 1.5rem;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .fund-card .progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        }
+
+        .fund-card .fund-details {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .fund-card .amount {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .fund-card .goal {
+            color: var(--gray);
+        }
+
+        .fund-details-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        .fund-details-content {
+            padding: 1.5rem;
+        }
+
+        .expanded .fund-details-panel {
+            max-height: 600px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .donors-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .donors-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .donors-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .donors-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .donors-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .donor-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .donor-item:last-child {
+            border-bottom: none;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            background: rgba(15, 23, 42, 0.3);
+            padding: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .add-donation-form {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .add-donation-form input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            background: rgba(15, 23, 42, 0.3);
+            color: white;
+        }
+
+        .add-donation-form input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .add-donation-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .stats-container,
+            .funds-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .color-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .donor-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        h3 {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            text-shadow: var(--text-shadow);
+        }
+
+        .section-title {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: var(--text-shadow);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            margin-right: 0.75rem;
+            border-radius: 2px;
+        }
+
+        .fund-badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .glow-effect {
+            position: relative;
+        }
+
+        .glow-effect::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .glow-effect:hover::after {
+            opacity: 1;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+        
+        .open-ended-indicator {
+            height: 4px;
+            margin: 0 1.5rem;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+        }
+        
+        .pulse-bar {
+            position: absolute;
+            height: 100%;
+            width: 30%;
+            border-radius: 9999px;
+            animation: pulse-slide 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.7);
+        }
+        
+        @keyframes pulse-slide {
+            0% {
+                left: -30%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+        
+        .fund-badge.open-ended {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fundraising Dashboard</h1>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-card glow-effect">
+                <h3>Total Raised</h3>
+                <div class="stat" id="total-raised">$0</div>
+                <div class="change">↑ 0% from last month</div>
+            </div>
+            <div class="stat-card glow-effect">
+                <h3>Total Donors</h3>
+                <div class="stat" id="total-donors">0</div>
+                <div class="change">↑ 0% from last month</div>
+            </div>
+            <div class="stat-card glow-effect">
+                <h3>Funding Goals Completed</h3>
+                <div class="stat" id="goals-completed">0/1</div>
+                <div class="change">No campaigns closing soon</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Active Fundraising Campaigns</h2>
+        
+        <div class="funds-container" id="funds-container">
+            <!-- Fund cards will be dynamically generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data - this would normally come from a backend
+        let funds = [
+            {
+                id: 1,
+                name: "Risen PC Fund",
+                raised: 21,
+                goal: 0,
+                donors: [
+                    { name: "Punished Mezz", amount: 1, date: "2025-04-15" },
+                    { name: "Chrose", amount: 20, date: "2025-04-20" },
+                ]
+            },
+        ];
+
+        // Colors for donor charts - vibrant palette that matches the dark theme
+        const donorColors = [
+            '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', 
+            '#f97316', '#eab308', '#22c55e', '#14b8a6', 
+            '#0ea5e9', '#3b82f6', '#a855f7', '#d946ef'
+        ];
+
+        // Function to update statistics
+        function updateStats() {
+            const totalRaised = funds.reduce((sum, fund) => sum + fund.raised, 0);
+            const totalDonors = [...new Set(funds.flatMap(fund => fund.donors.map(donor => donor.name)))].length;
+            
+            // Only count funds with goals (goal > 0)
+            const fundsWithGoals = funds.filter(fund => fund.goal > 0);
+            const goalsCompleted = fundsWithGoals.filter(fund => fund.raised >= fund.goal).length;
+            const goalsTotal = fundsWithGoals.length;
+
+            document.getElementById('total-raised').textContent = `${totalRaised.toLocaleString()}`;
+            document.getElementById('total-donors').textContent = totalDonors;
+            document.getElementById('goals-completed').textContent = `${goalsCompleted}/${goalsTotal}`;
+        }
+
+        // Function to create fund cards
+        function renderFundCards() {
+            const fundsContainer = document.getElementById('funds-container');
+            fundsContainer.innerHTML = '';
+
+            funds.forEach(fund => {
+                const hasGoal = fund.goal > 0;
+                const progress = hasGoal ? (fund.raised / fund.goal) * 100 : 0;
+                const card = document.createElement('div');
+                card.className = 'fund-card glow-effect';
+                card.dataset.fundId = fund.id;
+
+                // Determine color based on progress or use primary for open-ended funds
+                let progressColor;
+                if (!hasGoal) {
+                    progressColor = 'var(--primary)';
+                } else if (progress < 33) {
+                    progressColor = 'var(--danger)';
+                } else if (progress < 66) {
+                    progressColor = 'var(--warning)';
+                } else {
+                    progressColor = 'var(--success)';
+                }
+
+                card.innerHTML = `
+                    <div class="fund-header">
+                        <h2>${fund.name}</h2>
+                        ${hasGoal ? 
+                            `<span class="fund-badge">${Math.round(progress)}%</span>` : 
+                            `<span class="fund-badge open-ended">Ongoing</span>`
+                        }
+                    </div>
+                    ${hasGoal ? 
+                        `<div class="progress">
+                            <div class="progress-bar" style="width: ${progress}%; background-color: ${progressColor}"></div>
+                        </div>` : 
+                        `<div class="open-ended-indicator">
+                            <div class="pulse-bar" style="background-color: ${progressColor}"></div>
+                        </div>`
+                    }
+                    <div class="fund-details">
+                        <div class="amount">${fund.raised.toLocaleString()}</div>
+                        ${hasGoal ? 
+                            `<div class="goal">of ${fund.goal.toLocaleString()}</div>` : 
+                            `<div class="goal">Ongoing Fund</div>`
+                        }
+                    </div>
+                    <div class="fund-details-panel">
+                        <div class="fund-details-content">
+                            <h3>Donor Breakdown</h3>
+                            <div class="chart-container">
+                                <canvas id="chart-${fund.id}"></canvas>
+                            </div>
+                            <div class="donor-legend" id="legend-${fund.id}">
+                                <!-- Legend items will be added here -->
+                            </div>
+                            <h3 style="margin-top: 1.5rem">Recent Donations</h3>
+                            <div class="donors-list">
+                                ${fund.donors.map(donor => `
+                                    <div class="donor-item">
+                                        <div>${donor.name}</div>
+                                        <div>$${donor.amount.toLocaleString()}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <h3 style="margin-top: 1.5rem">Add Donation</h3>
+                            <form class="add-donation-form" data-fund-id="${fund.id}">
+                                <input type="text" placeholder="Donor Name" required name="donor-name">
+                                <input type="number" placeholder="Amount" required name="donation-amount">
+                                <button type="submit" class="btn pulse">Add</button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+
+                fundsContainer.appendChild(card);
+
+                // Add event listeners
+                card.querySelector('.fund-header').addEventListener('click', () => {
+                    card.classList.toggle('expanded');
+                    if (card.classList.contains('expanded')) {
+                        renderDonorChart(fund);
+                    }
+                });
+
+                // Handle form submission
+                card.querySelector('.add-donation-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const fundId = parseInt(form.dataset.fundId);
+                    const name = form.querySelector('[name="donor-name"]').value;
+                    const amount = parseFloat(form.querySelector('[name="donation-amount"]').value);
+                    
+                    if (name && amount > 0) {
+                        addDonation(fundId, name, amount);
+                        form.reset();
+                    }
+                });
+            });
+        }
+
+        // Function to render donor chart for a fund
+        function renderDonorChart(fund) {
+            const ctx = document.getElementById(`chart-${fund.id}`).getContext('2d');
+            const legendContainer = document.getElementById(`legend-${fund.id}`);
+            
+            // Prepare data for the chart
+            const donors = fund.donors;
+            const labels = donors.map(donor => donor.name);
+            const data = donors.map(donor => donor.amount);
+            
+            // Create legend
+            legendContainer.innerHTML = '';
+            donors.forEach((donor, index) => {
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                legendItem.innerHTML = `
+                    <span class="color-indicator" style="background-color: ${donorColors[index % donorColors.length]}"></span>
+                    <span>${donor.name}</span>
+                `;
+                legendContainer.appendChild(legendItem);
+            });
+            
+            // Create the chart
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: donors.map((_, i) => donorColors[i % donorColors.length]),
+                        borderWidth: 1,
+                        borderColor: 'rgba(15, 23, 42, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += '$' + context.parsed.toLocaleString();
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to add a new donation
+        function addDonation(fundId, donorName, amount) {
+            const fund = funds.find(f => f.id === fundId);
+            if (fund) {
+                const today = new Date();
+                const dateStr = today.toISOString().split('T')[0];
+                
+                fund.donors.push({
+                    name: donorName,
+                    amount: amount,
+                    date: dateStr
+                });
+                
+                fund.raised += amount;
+                
+                // Re-render everything
+                updateStats();
+                renderFundCards();
+                
+                // Find and expand the card that was just updated
+                const card = document.querySelector(`.fund-card[data-fund-id="${fundId}"]`);
+                if (card) {
+                    card.classList.add('expanded');
+                    renderDonorChart(fund);
+                }
+            }
+        }
+
+        // Initialize the dashboard
+        updateStats();
+        renderFundCards();
+
+        // Chart.js global settings for dark theme
+        Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    </script>
+</body>
+</html>
