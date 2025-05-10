@@ -193,10 +193,10 @@
         }
 
         .fund-details-panel {
-            max-height: 0;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease;
-            background-color: rgba(15, 23, 42, 0.8);
         }
 
         .fund-details-content {
@@ -204,8 +204,9 @@
         }
 
         .expanded .fund-details-panel {
-            max-height: 600px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 1;
+            height: auto;
+            padding-top: 1rem;
         }
 
         .donors-list {
@@ -446,6 +447,16 @@
             background: linear-gradient(to right, var(--primary), var(--primary-light));
             color: white;
         }
+
+        .circle-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -472,6 +483,20 @@
             </div>
         </div>
 
+        <div class="stat-card glow-effect" style="margin-top: 2rem; position: relative; display: flex; align-items: center; justify-content: space-between; padding-right: 100px;">
+        <div>
+            <h3>Fund Manager</h3>
+            <p><strong>Name:</strong> T'suen Wei</p>
+            <p><strong>Transfer Options:</strong></p>
+                <li>Wise: <a href="https://wise.com/pay/me/t-suenf">https://wise.com/pay/me/t-suenf</a></li>
+                <li>PayNow (SG)</li> 
+                <li>DuitNow (MY)</li>
+                <li>PromptPay (THB)</li>
+            </ul>
+        </div>
+    <img src="img/1738827794719_034344~2.png" alt="Fund Manager" class="circle-img">
+</div>
+
         <h2 class="section-title">Active Fundraising Campaigns</h2>
         
         <div class="funds-container" id="funds-container">
@@ -479,8 +504,62 @@
         </div>
     </div>
 
+    <div class="currency-converter glow-effect" style="margin: 3rem auto; max-width: 400px; padding: 1.5rem;">
+        <h3>Currency Converter</h3>
+        <input type="number" id="amount" placeholder="Amount" style="width: 100%; margin-bottom: 0.5rem;" />
+        
+        <div style="display: flex; gap: 4%; margin-bottom: 0.5rem;">
+            <select id="from-currency" style="width: 48%;">
+                <option value="MYR">MYR</option>
+                <option value="PHP">PHP</option>
+                <option value="HKD">HKD</option>
+                <option value="THB">THB</option>
+                <option value="AUD">AUD</option>
+                <option value="TWD">USD</option>
+            </select>
+            <select id="to-currency" style="width: 48%;">
+                <option value="SGD">SGD</option>
+            </select>
+        </div>
+
+    <button onclick="convertCurrency()" class="btn pulse" style="width: 100%;">Convert</button>
+    <div id="conversion-result" style="margin-top: 1rem;"></div>
+</div>
+
     <script>
         // Sample data - this would normally come from a backend
+
+        async function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const from = document.getElementById('from-currency').value;
+            const to = document.getElementById('to-currency').value;
+            const resultDiv = document.getElementById('conversion-result');
+
+            if (!amount || amount <= 0) {
+                resultDiv.textContent = "Enter a valid amount.";
+                return;
+            }
+
+            if (from === to) {
+                resultDiv.textContent = `${amount} ${from} = ${amount.toFixed(2)} ${to}`;
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.frankfurter.app/latest?amount=${amount}&from=${from}&to=${to}`);
+                const data = await response.json();
+
+                if (data.rates && data.rates[to]) {
+                    const converted = data.rates[to].toFixed(2);
+                    resultDiv.textContent = `${amount} ${from} = ${converted} ${to}`;
+                } else {
+                    resultDiv.textContent = "Conversion not available for selected currencies.";
+                }
+            } catch (error) {
+                resultDiv.textContent = "Conversion failed. Try again later.";
+            }
+        }
+
         let funds = [
             {
                 id: 1,
@@ -581,12 +660,6 @@
                                     </div>
                                 `).join('')}
                             </div>
-                            <h3 style="margin-top: 1.5rem">Add Donation</h3>
-                            <form class="add-donation-form" data-fund-id="${fund.id}">
-                                <input type="text" placeholder="Donor Name" required name="donor-name">
-                                <input type="number" placeholder="Amount" required name="donation-amount">
-                                <button type="submit" class="btn pulse">Add</button>
-                            </form>
                         </div>
                     </div>
                 `;
@@ -594,26 +667,16 @@
                 fundsContainer.appendChild(card);
 
                 // Add event listeners
-                card.querySelector('.fund-header').addEventListener('click', () => {
+                card.addEventListener('click', (e) => {
+                    // Prevent clicks inside form or interactive elements from toggling
+                    if (e.target.closest('form') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+
                     card.classList.toggle('expanded');
                     if (card.classList.contains('expanded')) {
                         renderDonorChart(fund);
                     }
                 });
 
-                // Handle form submission
-                card.querySelector('.add-donation-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const form = e.target;
-                    const fundId = parseInt(form.dataset.fundId);
-                    const name = form.querySelector('[name="donor-name"]').value;
-                    const amount = parseFloat(form.querySelector('[name="donation-amount"]').value);
-                    
-                    if (name && amount > 0) {
-                        addDonation(fundId, name, amount);
-                        form.reset();
-                    }
-                });
             });
         }
 
