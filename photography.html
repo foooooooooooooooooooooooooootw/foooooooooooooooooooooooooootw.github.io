@@ -271,8 +271,111 @@
       grid-template-columns: 1fr;
     }
   }
+  /* Zoom Controls Styling */
+  .zoom-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1001;
+  }
 
-  /* Rest of your CSS remains unchanged */
+  .zoom-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .zoom-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+
+  .zoom-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Modal image styling for zoom functionality */
+  .modal-image {
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+    max-width: none;
+    max-height: none;
+    user-select: none;
+  }
+
+  .modal-image.loading {
+    opacity: 0.5;
+  }
+
+  /* Ensure modal content container can handle zoomed images */
+  .modal-image-container {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Loading spinner for modal */
+  .modal-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Responsive adjustments for mobile */
+  @media (max-width: 768px) {
+    .zoom-controls {
+      top: 15px;
+      right: 15px;
+      gap: 8px;
+    }
+    
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 14px;
+    }
+  }
+
+  /* Prevent text selection when dragging */
+  .modal.zoom-active {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  /* Custom cursor styles */
+  .modal-image[style*="scale"] {
+    cursor: grab;
+  }
+
+  .modal-image[style*="scale"]:active {
+    cursor: grabbing;
+  }
   body {
     background-color: var(--background-color);
     color: var(--text-color);
@@ -1242,6 +1345,61 @@
           <p class="gallery-description">What is it doing? Its best.</p>
         </div>
       </div>
+
+      <div class="gallery-item">
+      <picture>
+        <source srcset="img/photog/web-optimized/thumb-id36.webp" type="image/webp">
+        <img src="img/photog/thumb-id36.jpg" alt="Sky Nature Photography" />
+      </picture>
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Corvus Adversus Caelum</h3>
+          <p class="gallery-description">Corvus solus, contra lucem.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+      <picture>
+        <source srcset="img/photog/web-optimized/thumb-id37.webp" type="image/webp">
+        <img src="img/photog/thumb-id37.jpg" alt="Sky Photography" />
+      </picture>
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Rainbow's end</h3>
+          <p class="gallery-description">At the end was where my girl was waiting</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+      <picture>
+        <source srcset="img/photog/web-optimized/thumb-id38.webp" type="image/webp">
+        <img src="img/photog/thumb-id38.jpg" alt="Food Photography" />
+      </picture>
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Duck by the Sea</h3>
+          <p class="gallery-description">A meal with friends by the sea in the evening. The secret bottom level of Maslow's hierarchy of needs.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+      <picture>
+        <source srcset="img/photog/web-optimized/thumb-id39.webp" type="image/webp">
+        <img src="img/photog/thumb-id39.jpg" alt="Nature Photography" />
+      </picture>
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Droplets on Leaf</h3>
+          <p class="gallery-description">No idea why I attempted macro photography on a random leaf but I did.</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+      <picture>
+        <source srcset="img/photog/web-optimized/thumb-id40.webp" type="image/webp">
+        <img src="img/photog/thumb-id40.jpg" alt="Sky Photography" />
+      </picture>
+        <div class="gallery-overlay">
+          <h3 class="gallery-title">Sky Canvas</h3>
+          <p class="gallery-description">The sky that day had colours I could never capture on my camera, much to my dismay.</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1934,7 +2092,7 @@
           id: 33,
           title: "Towers in the Lake",
           location: "Hindhede Quarry, Singapore",
-          description: "I slip through gates, soft as breath, A silent trail, no trace I've left. The water waits, the towers loom, In secret dance beneath the moon. Reflections stir with careful grace, Towers blur in twilight’s face. Taking aim; my lens aligns, In silence, under moonlit sign.",
+          description: "I slip through gates, soft as breath, A silent trail, no trace I've left. The water waits, the towers loom, In secret dance beneath the moon. Reflections stir with careful grace, Spires blur in twilight’s face. Taking aim; my lens aligns, 'Neath starlight in this forest shrine.'.",
           highResUrl: "img/photog/id33.jpg",
           camera: "Sony SLT α58",
           lens: "Olympus OM F.Zuiko Auto-S 50mm f/1.8",
@@ -1975,7 +2133,254 @@
           dimensions: "5200 x 3902",
           fileSize: "1.42 MB"
         },
+        {
+          id: 36,
+          title: "Corvus Adversus Caelum",
+          location: "Haw Par Villa, Singapore",
+          description: "Corvus solus, contra lucem.",
+          highResUrl: "img/photog/id36.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/1025 sec",
+          iso: "50",
+          focalLength: "5mm",
+          dimensions: "4624 x 3472",
+          fileSize: "6.51 MB"
+        },
+        {
+          id: 37,
+          title: "Rainbow's end",
+          location: "Newton, Singapore",
+          description: "At the end was where my girl was waiting",
+          highResUrl: "img/photog/id37.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/1358 sec",
+          iso: "50",
+          focalLength: "5mm",
+          dimensions: "4624 x 3472",
+          fileSize: "5.16 MB"
+        },
+        {
+          id: 38,
+          title: "Duck by the Sea",
+          location: "The Cove, Persiaran Waterfront, Port Dickson, Malaysia",
+          description: "A meal with friends by the sea in the evening. The secret bottom level of Maslow's hierarchy of needs.",
+          highResUrl: "img/photog/id38.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/1.9",
+          shutterSpeed: "1/25 sec",
+          iso: "1385",
+          focalLength: "5mm",
+          dimensions: "6944 x 8976",
+          fileSize: "14.5 MB"
+        },
+        {
+          id: 39,
+          title: "Droplets on Leaf",
+          location: "Batu Caves, Malaysia",
+          description: "No idea why I attempted macro photography on a random leaf but I did.",
+          highResUrl: "img/photog/id39.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "f/2.4",
+          shutterSpeed: "1/100 sec",
+          iso: "88",
+          focalLength: "4mm",
+          dimensions: "2592 x 1944",
+          fileSize: "2.32 MB"
+        },
+        {
+          id: 40,
+          title: "Sky Canvas",
+          location: "Rail Corridor, Singapore",
+          description: "The sky that day had colours I could never capture on my camera, much to my dismay.",
+          highResUrl: "img/photog/id40.jpg",
+          camera: "Xiaomi",
+          lens: "POCO F2 Pro",
+          aperture: "-",
+          shutterSpeed: "-",
+          iso: "-",
+          focalLength: "-",
+          dimensions: "7488 x 1744",
+          fileSize: "2.77 MB"
+        },
       ];
+
+        // Zoom functionality variables
+      let scale = 1;
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let translateX = 0, translateY = 0;
+      let initialDistance = 0;
+      let initialScale = 1;
+      
+      // Create zoom controls
+      function createZoomControls() {
+        // Check if zoom controls already exist
+        if (document.querySelector('.zoom-controls')) return;
+        
+        const zoomControls = document.createElement('div');
+        zoomControls.className = 'zoom-controls';
+        zoomControls.innerHTML = `
+          <button class="zoom-btn zoom-in" title="Zoom In">
+            <i class="fas fa-plus"></i>
+          </button>
+          <button class="zoom-btn zoom-out" title="Zoom Out">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button class="zoom-btn zoom-reset" title="Reset Zoom">
+            <i class="fas fa-expand-arrows-alt"></i>
+          </button>
+        `;
+        
+        // Insert zoom controls into modal
+        const modalContent = document.querySelector('.modal-content') || modal;
+        modalContent.appendChild(zoomControls);
+        
+        // Add event listeners for zoom buttons
+        const zoomInBtn = zoomControls.querySelector('.zoom-in');
+        const zoomOutBtn = zoomControls.querySelector('.zoom-out');
+        const zoomResetBtn = zoomControls.querySelector('.zoom-reset');
+        
+        zoomInBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          zoomIn();
+        });
+        
+        zoomOutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          zoomOut();
+        });
+        
+        zoomResetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetZoom();
+        });
+      }
+      
+      // Zoom functions
+      function zoomIn() {
+        scale = Math.min(scale * 1.2, 5); // Max zoom 5x
+        updateImageTransform();
+      }
+      
+      function zoomOut() {
+        scale = Math.max(scale / 1.2, 0.5); // Min zoom 0.5x
+        updateImageTransform();
+      }
+      
+      function resetZoom() {
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        updateImageTransform();
+      }
+      
+      function updateImageTransform() {
+        modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        modalImg.style.cursor = scale > 1 ? 'grab' : 'default';
+      }
+      
+      // Mouse wheel zoom
+      // function handleWheel(e) {
+      //   if (modal.style.display === 'block') {
+      //     e.preventDefault();
+          
+      //     const rect = modalImg.getBoundingClientRect();
+      //     const x = e.clientX - rect.left;
+      //     const y = e.clientY - rect.top;
+          
+      //     const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      //     const newScale = Math.min(Math.max(scale * delta, 0.5), 5);
+          
+      //     if (newScale !== scale) {
+      //       // Zoom towards mouse position
+      //       const scaleChange = newScale / scale;
+      //       translateX = x - (x - translateX) * scaleChange;
+      //       translateY = y - (y - translateY) * scaleChange;
+      //       scale = newScale;
+      //       updateImageTransform();
+      //     }
+      //   }
+      // }
+      
+      // Mouse drag functionality
+      function handleMouseDown(e) {
+        if (scale > 1) {
+          isDragging = true;
+          startX = e.clientX - translateX;
+          startY = e.clientY - translateY;
+          modalImg.style.cursor = 'grabbing';
+          e.preventDefault();
+        }
+      }
+      
+      function handleMouseMove(e) {
+        if (isDragging && scale > 1) {
+          translateX = e.clientX - startX;
+          translateY = e.clientY - startY;
+          updateImageTransform();
+        }
+      }
+      
+      function handleMouseUp() {
+        isDragging = false;
+        if (scale > 1) {
+          modalImg.style.cursor = 'grab';
+        }
+      }
+      
+      // Touch events for mobile zoom and pan
+      function handleTouchStart(e) {
+        if (e.touches.length === 1) {
+          // Single touch - start dragging if zoomed
+          if (scale > 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
+          }
+        } else if (e.touches.length === 2) {
+          // Two touches - start pinch zoom
+          const touch1 = e.touches[0];
+          const touch2 = e.touches[1];
+          initialDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+          );
+          initialScale = scale;
+        }
+        e.preventDefault();
+      }
+      
+      function handleTouchMove(e) {
+        if (e.touches.length === 1 && isDragging && scale > 1) {
+          // Single touch drag
+          translateX = e.touches[0].clientX - startX;
+          translateY = e.touches[0].clientY - startY;
+          updateImageTransform();
+        } else if (e.touches.length === 2) {
+          // Pinch zoom
+          const touch1 = e.touches[0];
+          const touch2 = e.touches[1];
+          const currentDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+          );
+          
+          const newScale = Math.min(Math.max(initialScale * (currentDistance / initialDistance), 0.5), 5);
+          scale = newScale;
+          updateImageTransform();
+        }
+        e.preventDefault();
+      }
+      
+      function handleTouchEnd() {
+        isDragging = false;
+      }
       
       // Update EXIF data in the modal
       function updateExifData(imageData) {
@@ -2007,6 +2412,7 @@
       // Display image in modal with its data
       function displayImage(index) {
         currentIndex = index;
+        resetZoom();
         const data = imageData[index];
         
         // Show loading state
@@ -2052,6 +2458,19 @@
         // Start loading the high-res image
         highResImage.src = data.highResUrl;
       }
+
+        // Initialize zoom controls
+      createZoomControls();
+      
+      // Add event listeners for zoom functionality
+      modalImg.addEventListener('mousedown', handleMouseDown);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      // Touch events for mobile
+      modalImg.addEventListener('touchstart', handleTouchStart, { passive: false });
+      modalImg.addEventListener('touchmove', handleTouchMove, { passive: false });
+      modalImg.addEventListener('touchend', handleTouchEnd);
       
       // Add click event to gallery items
       galleryItems.forEach((item, index) => {
@@ -2097,23 +2516,33 @@
       });
       
       // Keyboard navigation
-      document.addEventListener('keydown', function(e) {
-        if (modal.style.display === 'block') {
-          if (e.key === 'ArrowLeft') {
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = galleryItems.length - 1;
-            displayImage(newIndex);
-          } else if (e.key === 'ArrowRight') {
-            let newIndex = currentIndex + 1;
-            if (newIndex >= galleryItems.length) newIndex = 0;
-            displayImage(newIndex);
-          } else if (e.key === 'Escape') {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+        document.addEventListener('keydown', function(e) {
+          if (modal.style.display === 'block') {
+            if (e.key === 'ArrowLeft') {
+              let newIndex = currentIndex - 1;
+              if (newIndex < 0) newIndex = galleryItems.length - 1;
+              displayImage(newIndex);
+            } else if (e.key === 'ArrowRight') {
+              let newIndex = currentIndex + 1;
+              if (newIndex >= galleryItems.length) newIndex = 0;
+              displayImage(newIndex);
+            } else if (e.key === 'Escape') {
+              modal.style.display = 'none';
+              document.body.style.overflow = 'auto';
+              resetZoom();
+            } else if (e.key === '+' || e.key === '=') {
+              e.preventDefault();
+              zoomIn();
+            } else if (e.key === '-') {
+              e.preventDefault();
+              zoomOut();
+            } else if (e.key === '0') {
+              e.preventDefault();
+              resetZoom();
+            }
           }
-        }
+        });
       });
-    });
 
   // Array of background images
   const backgroundImages = [
