@@ -574,6 +574,7 @@
                 name: "Risen PC Fund (HKD)",
                 raised: 21,
                 goal: 0,
+                displayCurrency: "HKD",
                 donors: [
                     { name: "Punished Mezz", amount: 1, date: "2025-04-15" },
                     { name: "Chrose", amount: 20, date: "2025-04-20" },
@@ -583,11 +584,22 @@
                 id: 2,
                 name: "Isutokin's Phasmo Fund (MYR)",
                 raised: 0,
+                displayCurrency: "MYR",
                 goal: 14.90,
                 donors: [
                 ]
             },
         ];
+
+        let exchangeRates = {
+            HKD: 6,
+            USD: 0.74,
+            MYR: 3.2,
+            PHP: 42,
+            THB: 24,
+            AUD: 1.1,
+            TWD: 23
+        };
 
         // Colors for donor charts - vibrant palette that matches the dark theme
         const donorColors = [
@@ -611,105 +623,116 @@
             document.getElementById('goals-completed').textContent = `${goalsCompleted}/${goalsTotal}`;
         }
 
-        let sgdToHkdRate = 6; // fallback default
-
-        async function fetchExchangeRate() {
+        async function fetchAllExchangeRates() {
             try {
-                const res = await fetch('https://api.frankfurter.app/latest?from=SGD&to=HKD');
-                const data = await res.json();
-                sgdToHkdRate = data.rates.HKD;
+                const currencies = ['HKD', 'USD', 'MYR', 'PHP', 'THB', 'AUD', 'TWD'];
+                const response = await fetch(`https://api.frankfurter.app/latest?from=SGD&to=${currencies.join(',')}`);
+                const data = await response.json();
+                
+                if (data.rates) {
+                    Object.assign(exchangeRates, data.rates);
+                }
             } catch (err) {
-                console.error("Failed to fetch exchange rate, using fallback:", err);
+                console.error("Failed to fetch exchange rates, using fallback:", err);
             }
         }
 
         // Function to create fund cards
-        function renderFundCards() {
-            const fundsContainer = document.getElementById('funds-container');
-            fundsContainer.innerHTML = '';
+        // Modified renderFundCards function - replace the fund-details div section with this:
+function renderFundCards() {
+    const fundsContainer = document.getElementById('funds-container');
+    fundsContainer.innerHTML = '';
 
-            funds.forEach(fund => {
-                const hasGoal = fund.goal > 0;
-                const progress = hasGoal ? (fund.raised / fund.goal) * 100 : 0;
-                const card = document.createElement('div');
-                card.className = 'fund-card glow-effect';
-                card.dataset.fundId = fund.id;
+    funds.forEach(fund => {
+        const hasGoal = fund.goal > 0;
+        const progress = hasGoal ? (fund.raised / fund.goal) * 100 : 0;
+        const card = document.createElement('div');
+        card.className = 'fund-card glow-effect';
+        card.dataset.fundId = fund.id;
 
-                // Determine color based on progress or use primary for open-ended funds
-                let progressColor;
-                if (!hasGoal) {
-                    progressColor = 'var(--primary)';
-                } else if (progress < 33) {
-                    progressColor = 'var(--danger)';
-                } else if (progress < 66) {
-                    progressColor = 'var(--warning)';
-                } else {
-                    progressColor = 'var(--success)';
-                }
-
-                card.innerHTML = `
-                    <div class="fund-header">
-                        <h2>${fund.name}</h2>
-                        ${hasGoal ? 
-                            `<span class="fund-badge">${Math.round(progress)}%</span>` : 
-                            `<span class="fund-badge open-ended">Ongoing</span>`
-                        }
-                    </div>
-                    ${hasGoal ? 
-                        `<div class="progress">
-                            <div class="progress-bar" style="width: ${progress}%; background-color: ${progressColor}"></div>
-                        </div>` : 
-                        `<div class="open-ended-indicator">
-                            <div class="pulse-bar" style="background-color: ${progressColor}"></div>
-                        </div>`
-                    }
-                    <div class="fund-details">
-                        <div class="amount">
-                            $${fund.raised.toLocaleString()}
-                            <span class="converted">(HK$${(fund.raised * sgdToHkdRate).toLocaleString(undefined, { maximumFractionDigits: 0 })})</span>
-                        </div>
-                        ${hasGoal ? 
-                            `<div class="goal">of ${fund.goal.toLocaleString()}</div>` : 
-                            `<div class="goal">Ongoing Fund</div>`
-                        }
-                    </div>
-                    <div class="fund-details-panel">
-                        <div class="fund-details-content">
-                            <h3>Donor Breakdown</h3>
-                            <div class="chart-container">
-                                <canvas id="chart-${fund.id}"></canvas>
-                            </div>
-                            <div class="donor-legend" id="legend-${fund.id}">
-                                <!-- Legend items will be added here -->
-                            </div>
-                            <h3 style="margin-top: 1.5rem">Recent Donations</h3>
-                            <div class="donors-list">
-                                ${fund.donors.map(donor => `
-                                    <div class="donor-item">
-                                        <div>${donor.name}</div>
-                                        <div>$${donor.amount.toLocaleString()}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                fundsContainer.appendChild(card);
-
-                // Add event listeners
-                card.addEventListener('click', (e) => {
-                    // Prevent clicks inside form or interactive elements from toggling
-                    if (e.target.closest('form') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-
-                    card.classList.toggle('expanded');
-                    if (card.classList.contains('expanded')) {
-                        renderDonorChart(fund);
-                    }
-                });
-
-            });
+        // Determine color based on progress or use primary for open-ended funds
+        let progressColor;
+        if (!hasGoal) {
+            progressColor = 'var(--primary)';
+        } else if (progress < 33) {
+            progressColor = 'var(--danger)';
+        } else if (progress < 66) {
+            progressColor = 'var(--warning)';
+        } else {
+            progressColor = 'var(--success)';
         }
+
+        // Get display currency and conversion
+        const displayCurrency = fund.displayCurrency || 'SGD';
+        const rate = exchangeRates[displayCurrency] || 1;
+        const convertedAmount = fund.raised * rate;
+        
+        // Only show conversion if it's not SGD
+        const currencyDisplay = displayCurrency === 'SGD' ? 
+            `$${fund.raised.toLocaleString()}` : 
+            `$${fund.raised.toLocaleString()}<span class="converted">(${displayCurrency}$${convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })})</span>`;
+
+        card.innerHTML = `
+            <div class="fund-header">
+                <h2>${fund.name}</h2>
+                ${hasGoal ? 
+                    `<span class="fund-badge">${Math.round(progress)}%</span>` : 
+                    `<span class="fund-badge open-ended">Ongoing</span>`
+                }
+            </div>
+            ${hasGoal ? 
+                `<div class="progress">
+                    <div class="progress-bar" style="width: ${progress}%; background-color: ${progressColor}"></div>
+                </div>` : 
+                `<div class="open-ended-indicator">
+                    <div class="pulse-bar" style="background-color: ${progressColor}"></div>
+                </div>`
+            }
+            <div class="fund-details">
+                <div class="amount">
+                    ${currencyDisplay}
+                </div>
+                ${hasGoal ? 
+                    `<div class="goal">of ${fund.goal.toLocaleString()}</div>` : 
+                    `<div class="goal">Ongoing Fund</div>`
+                }
+            </div>
+            <div class="fund-details-panel">
+                <div class="fund-details-content">
+                    <h3>Donor Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-${fund.id}"></canvas>
+                    </div>
+                    <div class="donor-legend" id="legend-${fund.id}">
+                        <!-- Legend items will be added here -->
+                    </div>
+                    <h3 style="margin-top: 1.5rem">Recent Donations</h3>
+                    <div class="donors-list">
+                        ${fund.donors.map(donor => `
+                            <div class="donor-item">
+                                <div>${donor.name}</div>
+                                <div>$${donor.amount.toLocaleString()}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        fundsContainer.appendChild(card);
+
+        // Add event listeners
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('form') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+
+            card.classList.toggle('expanded');
+            if (card.classList.contains('expanded')) {
+                renderDonorChart(fund);
+            }
+        });
+    });
+}
+
 
         // Function to render donor chart for a fund
         function renderDonorChart(fund) {
@@ -808,10 +831,12 @@
 
         // Initialize the dashboard
         updateStats();
+        // Update the initialization to fetch all rates
         window.addEventListener('DOMContentLoaded', async () => {
-            await fetchExchangeRate();
+            await fetchAllExchangeRates();
             renderFundCards();
         });
+
 
 
         // Chart.js global settings for dark theme
