@@ -1437,41 +1437,76 @@
         location: "Singapore"
       },
       {
-        id: "twisted-bracelet",
-        title: "Twisted Copper Bracelet",
-        description: `This statement bracelet is crafted from pure copper that has been forged, twisted, and hammered by hand to create its distinctive spiral pattern. Each piece is unique, with variations in the twist pattern making no two exactly alike.
-        <br><br>
-        The copper develops a natural patina over time that enhances its character, though it can be polished back to a bright finish if preferred. The bracelet has been carefully formed for comfort and features smooth, rounded ends.
-        <br><br>
-        Sized to fit most wrists with a small opening allowing for easy on and off. The substantial weight and texture make this piece both a tactile pleasure to wear and a striking visual addition to any outfit.`,
+        id: "sunstone-ring",
+        title: "Sunstone Ring",
+        description: `
+        This rectangular sunstone ring captures the essence of sunlight. The polished stone rests beautifully within a silver band, creating a subtle contrast of color and light. Sunstone’s inner fire is revealed as the light dances across its surface and is known for its connection to joy and optimism. This ring invites a sense of grounded energy and radiant spirit. 
+        `,
         media: [
           {
             type: "image",
-            src: "/api/placeholder/800/620",
-            thumbnail: "/api/placeholder/400/320"
+            src: "img/jewelry/sunstone1.jpg",
+            thumbnail: "img/jewelry/sunstone1.jpg"
           },
           {
             type: "image",
-            src: "/api/placeholder/800/621",
-            thumbnail: "/api/placeholder/400/321"
+            src: "img/jewelry/sunstone_white.jpg",
+            thumbnail: "img/jewelry/web-optimized/sunstone_white.webp"
           },
           {
             type: "video",
-            src: "videos/bracelet-forge.mp4",
-            thumbnail: "/api/placeholder/400/322",
-            poster: "/api/placeholder/800/622"
+            src: "img/jewelry/sunmoon.mp4",
+            thumbnail: "img/jewelry/sunmoon.jpg"
+          },
+        ],
+        material: "Silver",
+        gemstone: "Sunstone",
+        dimensions: "Adjustable Band",
+        location: "Singapore"
+      },
+      {
+        id: "mossagate-ring",
+        title: "Moss Agate Ring",
+        description: `
+        Rooted in nature’s beauty, this captivating ring showcases the ethereal beauty of moss agate, with a mesmerizing swirl of greens and milky clear spaces that evoke the feeling of a forest floor. The stone’s rich, layered hues – from deep emerald to pale jade – are beautifully framed by a substantial silver band. Stylized antelope figures, seemingly emerging from a landscape of leaves and blossoms, stand proudly amongst the design, their horns dramatically curled backwards in a gesture of strength and grace. <br><br>
+        Moss Agate is considered to be a symbol of prosperity, new beginnings, healing and tranquility. 
+        `,
+        media: [
+          {
+            type: "image",
+            src: "img/jewelry/mossagate1_white.jpg",
+            thumbnail: "img/jewelry/web-optimized/mossagate1_white.webp"
           },
           {
             type: "image",
-            src: "/api/placeholder/800/623",
-            thumbnail: "/api/placeholder/400/323"
+            src: "img/jewelry/mossagate2_white.jpg",
+            thumbnail: "img/jewelry/web-optimized/mossagate2_white.webp"
           }
         ],
-        material: "Pure Copper",
-        gemstone: "None",
-        dimensions: "Inner Diameter: 2.5\", Width: 0.4\"",
+        material: "Silver",
+        gemstone: "Moss Agate",
+        dimensions: "Adjustable Band",
         location: "Singapore"
-      }
+      },
+      {
+        id: "charoite-pendant",
+        title: "Charoite Pendant",
+        description: `
+        This captivating necklace showcases the mesmerizing beauty of charoite, with its rich purple colour and swirling patterns reminiscent of ink mixing around in a bottle. The stone boasts three to four distinct shades of purple, ranging from deep amethyst to lighter lavender hues, beautifully framed by a delicate silver-coloured setting shaped like a teardrop, and adorned with a profusion of surrounding flowers and three graceful leaves at the bottom. <br><br>
+        Charoite, a rare mildy-radioactive gemstone found only in Siberia, is known for transformation and emotional reinforcement. Transformation is strangely apt, since the pendant was found discarded with its gemstone missing in Thailand.
+        `,
+        media: [
+          {
+            type: "image",
+            src: "img/jewelry/charoite_white.jpg",
+            thumbnail: "img/jewelry/web-optimized/charoite_white.webp"
+          },
+        ],
+        material: "?",
+        gemstone: "Charoite",
+        dimensions: "-",
+        location: "Singapore"
+      },
     ];
   
     // Modal functionality
@@ -1736,6 +1771,48 @@
         <div class="collection-info">
           <h3 class="collection-title">Purple Fluorite Ring</h3>
           <p class="collection-description">Delicate purple fluorite set in an adjustable silver ring.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="img/jewelry/sunstone1.jpg" alt="Sunstone Ring" />
+          <div class="media-indicator">
+            <i class="fas fa-film"></i> Video Available
+          </div>
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Sunstone Ring</h3>
+          <p class="collection-description">Hardened sunlight condensed and set into silver ramparts.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="img/jewelry/mossagate1_white.jpg" alt="Moss Agate Ring" />
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Moss Agate Ring</h3>
+          <p class="collection-description">The forest forged into ring form.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="img/jewelry/charoite_white.jpg" alt="Charoite Pendant" />
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Charoite Pendant</h3>
+          <p class="collection-description">Swirling shades of purple contained in metal.</p>
           <div class="collection-details">
             <button class="collection-btn">View Details</button>
           </div>
