@@ -1405,7 +1405,8 @@
         material: "Gold-plated steel(?)",
         gemstone: "Lapis Lazuli",
         dimensions: "US Size 11",
-        location: "Singapore"
+        location: "Afghanistan(?)",
+        location2: "Thailand"
       },
       {
         id: "purple-fluorite",
@@ -1434,7 +1435,8 @@
         material: "Silver",
         gemstone: "Purple Fluorite",
         dimensions: "Adjustable Band",
-        location: "Singapore"
+        location: "China",
+        location2: "China"
       },
       {
         id: "sunstone-ring",
@@ -1462,7 +1464,8 @@
         material: "Silver",
         gemstone: "Sunstone",
         dimensions: "Adjustable Band",
-        location: "Singapore"
+        location: "China",
+        location2: "China"
       },
       {
         id: "moonstone-ring",
@@ -1490,7 +1493,8 @@
         material: "Brass(?)",
         gemstone: "Moonstone",
         dimensions: "-",
-        location: "Singapore"
+        location: "China",
+        location2: "Malaysia"
       },
       {
         id: "mossagate-ring",
@@ -1500,6 +1504,11 @@
         Moss Agate is considered to be a symbol of prosperity, new beginnings, healing and tranquility. 
         `,
         media: [
+          {
+            type: "image",
+            src: "img/jewelry/mossagate2.jpg",
+            thumbnail: "img/jewelry/web-optimized/mossagate2.webp"
+          },
           {
             type: "image",
             src: "img/jewelry/mossagate1_white.jpg",
@@ -1514,7 +1523,37 @@
         material: "Silver",
         gemstone: "Moss Agate",
         dimensions: "Adjustable Band",
-        location: "Singapore"
+        location: "Singapore",
+        location2: "Malaysia"
+      },
+      {
+        id: "demantoid-ring",
+        title: "Demantoid Ring",
+        description: `
+        This small demantoid ring evokes both nature’s grace and its enduring strength. The band, slender and organic, flows seamlessly into the fan-shaped leaves - symbols of resilience and ancient beauty. At the center rests a circular cabochon demantoid, its soft, rounded surface glowing with green fire. <br><br>Within the gem, fine thread-like inclusions mimic the delicate structure of branches - each one a tiny world, frozen in time. These natural features, known as "horsetail" inclusions, are not flaws but signatures of authenticity. The overall design hints at quiet luxury, its charm lying in subtlety rather than spectacle.<br><br>Spiritually, the demantoid is said to be associated with prosperity, protection and perhaps even adventure. Paired with the ginkgo, an ancient tree known for endurance, memory, and peace - this ring becomes more than adornment; it is a talisman of vitality and growth. A gentle reminder that strength can be soft, and that even the smallest things can carry great depth.
+        `,
+        media: [
+          {
+            type: "image",
+            src: "img/jewelry/demantoid.jpg",
+            thumbnail: "img/jewelry/web-optimized/demantoid.webp"
+          },
+          {
+            type: "image",
+            src: "img/jewelry/demantoidginko.jpg",
+            thumbnail: "img/jewelry/web-optimized/demantoidginko.webp"
+          },
+          {
+            type: "video",
+            src: "img/jewelry/fs.mp4",
+            thumbnail: "img/jewelry/web-optimized/fsthumbnail.webp"
+          }
+        ],
+        material: "Silver",
+        gemstone: "Demantoid",
+        dimensions: "Adjustable Band",
+        location: "China",
+        location2: "China"
       },
       {
         id: "charoite-pendant",
@@ -1533,7 +1572,8 @@
         material: "?",
         gemstone: "Charoite",
         dimensions: "-",
-        location: "Singapore"
+        location: "Siberia",
+        location2: "Thailand"
       },
     ];
   
@@ -1606,6 +1646,7 @@
         gemstoneValue.textContent = item.gemstone;
         dimensionsValue.textContent = item.dimensions;
         locationValue.textContent = item.location;
+        location2Value.textContent = item.location2;
         
         // Create thumbnails
         galleryThumbs.innerHTML = '';
@@ -1729,7 +1770,7 @@
 </head>
 <body>
   <header>
-    <div class="header-background" style="background-image: url('/api/placeholder/1200/800');"></div>
+    <div class="header-background" style="background-image: url('https://images.unsplash.com/photo-1614674688981-afa9d1a291ef?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0');"></div>
     <div class="header-content">
       <div class="header-text">
         <h1>Foo T'suen Wei</h1>
@@ -1839,11 +1880,30 @@
 
       <div class="collection-card">
         <div class="collection-image">
-          <img src="img/jewelry/web-optimized/mossagate1_white.webp" alt="Moss Agate Ring" />
+          <img src="img/jewelry/web-optimized/mossagate2.webp" alt="Moss Agate Ring" />
+          <div class="media-indicator">
+            <i class="fas fa-film"></i> Video Available
+          </div>
         </div>
         <div class="collection-info">
           <h3 class="collection-title">Moss Agate Ring</h3>
           <p class="collection-description">Like a forest floor under glass.</p>
+          <div class="collection-details">
+            <button class="collection-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="collection-card">
+        <div class="collection-image">
+          <img src="img/jewelry/web-optimized/demantoid.webp" alt="Demantoid Ring" />
+          <div class="media-indicator">
+            <i class="fas fa-film"></i> Video Available
+          </div>
+        </div>
+        <div class="collection-info">
+          <h3 class="collection-title">Demantoid Ring</h3>
+          <p class="collection-description">A Miniature Tree, Worn Close.</p>
           <div class="collection-details">
             <button class="collection-btn">View Details</button>
           </div>
@@ -1899,8 +1959,12 @@
               <span class="detail-value" id="dimensionsValue">Adjustable</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Handcrafted in:</span>
+              <span class="detail-label">Stone Source:</span>
               <span class="detail-value" id="locationValue">Singapore</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Metal Source:</span>
+              <span class="detail-value" id="location2Value">Singapore</span>
             </div>
           </div>
         </div>
