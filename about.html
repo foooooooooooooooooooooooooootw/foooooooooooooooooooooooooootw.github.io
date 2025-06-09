@@ -1,192 +1,1330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About Me</title>
-  <link rel="stylesheet" href="css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me</title>
+    <style>
+iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    
+    /* CRITICAL: Fix blurriness with better properties */
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+    /* Force crisp rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    /* Override any inherited font smoothing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+iframe:hover {
+  filter: none !important;
+  transform: none !important;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* CHANGE: Use antialiased instead of subpixel-antialiased */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    line-height: 1.6;
+}
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    transition: all 0.8s ease;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+@media (orientation: portrait) {
+.responsive-image-2 {
+    width: 100% !important; /* Take up full width on mobile devices */
+    height: auto;
+    margin: 0 auto;
+}
+}
+
+/* Default styles for landscape orientation */
+.responsive-image-2 {
+width: 40%;
+height: auto; /* Maintain aspect ratio */
+display: block;
+margin: 0 auto;
+}
+
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    /* CHANGE: Remove backdrop-filter blur that affects iframe */
+    /* backdrop-filter: blur(1px); */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.header {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 255, 255, 0.9);
+    margin-bottom: 30px;
+    object-fit: cover;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, background 0.5s ease;
+    background: linear-gradient(135deg, #FFFA6B -1%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    overflow: hidden;
+    /* Add sharp rendering */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-image:hover {
+    /* Use translate3d for hardware acceleration without blur */
+    -webkit-transform: scale3d(1.05, 1.05, 1);
+    transform: scale3d(1.05, 1.05, 1);
+}
+
+.header h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 1s ease;
+}
+
+.header p {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease 0.3s both;
+}
+
+/* Toggle Switch Styles */
+.mode-toggle {
+    position: fixed;
+    top: 5px;
+    right: 15px;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 12px 20px;
+    color: white;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    /* Use translate3d for sharp transforms */
+    -webkit-transform: translate3d(0, -2px, 0);
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-label {
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-switch.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    /* Add sharp rendering */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.toggle-switch.active .toggle-slider {
+    -webkit-transform: translate3d(30px, 0, 0);
+    transform: translate3d(30px, 0, 0);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.section {
+    min-height: 100vh;
+    padding: 100px 0;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section.switching-out {
+    opacity: 0;
+    /* Use translate3d for hardware acceleration */
+    -webkit-transform: translate3d(-100px, 0, 0) scale3d(0.95, 0.95, 1);
+    transform: translate3d(-100px, 0, 0) scale3d(0.95, 0.95, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section.switching-in {
+    opacity: 0;
+    -webkit-transform: translate3d(100px, 0, 0) scale3d(0.95, 0.95, 1);
+    transform: translate3d(100px, 0, 0) scale3d(0.95, 0.95, 1);
+    animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideInRight {
+    to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    }
+}
+
+.section-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 80px;
+    border-radius: 30px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    transform: scale(1);
+    transition: box-shadow 0.3s ease, background 0.3s ease;
+    /* Add sharp rendering */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.section-content:hover {
+    /* Use scale3d for sharp scaling */
+    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.section-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    border-radius: 30px 30px 0 0;
+}
+
+.section h2 {
+    font-size: 3rem;
+    margin-bottom: 40px;
+    color: #1a1a1a;
+    text-align: left;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+.section p {
+    font-size: 1.3rem;
+    color: #4a4a4a;
+    margin-bottom: 24px;
+    text-align: left;
+    line-height: 1.8;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    transition: all 0.3s ease;
+}
+
+.section p:first-of-type {
+    font-size: 1.4rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.section p:first-of-type::first-letter {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    float: left;
+    margin: 0 8px 0 0;
+    color: #667eea;
+}
+
+.quote-section {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 0;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quote-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.quote-section.switching-out {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -50px, 0) scale3d(0.9, 0.9, 1);
+    transform: translate3d(0, -50px, 0) scale3d(0.9, 0.9, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quote-section.switching-in {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 50px, 0) scale3d(0.9, 0.9, 1);
+    transform: translate3d(0, 50px, 0) scale3d(0.9, 0.9, 1);
+    animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+
+@keyframes fadeInScale {
+    to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    }
+}
+
+.quote-content {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 50px;
+    border-radius: 20px;
+    color: white;
+    max-width: 800px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    /* Add sharp rendering */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.quote-content:hover {
+    background: rgba(0, 0, 0, 0.8);
+    -webkit-transform: translate3d(0, -5px, 0);
+    transform: translate3d(0, -5px, 0);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.quote-content blockquote {
+    font-size: 2rem;
+    font-style: italic;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.quote-content cite {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.skill-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    /* Add sharp rendering */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.skill-card:hover {
+    /* Use translate3d and scale3d for sharp transforms */
+    -webkit-transform: translate3d(0, -10px, 0) scale3d(1.03, 1.03, 1);
+    transform: translate3d(0, -10px, 0) scale3d(1.03, 1.03, 1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.skill-card h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+    transition: color 0.3s ease;
+}
+
+.skill-card:hover h3 {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.skill-card p {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.mode-toggle.switching {
+    animation: pulse 0.3s ease;
+}
+
+@media (orientation: portrait) {
+    .header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .header p {
+        font-size: 1.2rem;
+    }
+    
+    .section-content {
+        padding: 50px 30px;
+    }
+    
+    .section h2 {
+        font-size: 2.2rem;
+    }
+    
+    .section p {
+        font-size: 1.1rem;
+    }
+    
+    .section p:first-of-type {
+        font-size: 1.2rem;
+    }
+    
+    .section p:first-of-type::first-letter {
+        font-size: 3rem;
+    }
+    
+    .profile-image {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .mode-toggle {
+        top: 20px;
+        right: 20px;
+        padding: 10px 16px;
+        font-size: 12px;
+        gap: 10px;
+    }
+
+    .toggle-switch {
+        width: 50px;
+        height: 25px;
+    }
+
+    .toggle-slider {
+        width: 19px;
+        height: 19px;
+    }
+
+    .toggle-switch.active .toggle-slider {
+        -webkit-transform: translate3d(25px, 0, 0);
+        transform: translate3d(25px, 0, 0);
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .skill-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .skill-card:hover {
+        -webkit-transform: translate3d(0, -10px, 0);
+        transform: translate3d(0, -10px, 0);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        border-color: #667eea;
+    }
+
+    .skill-card h4 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+}
+
+/* ======= NAVBAR (DESKTOP DEFAULT) ======= */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  padding: 0 20px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: all 0.3s ease;
+}
+
+.navbar:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  position: relative;
+  z-index: 1101;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  position: static;
+  height: auto;
+  transform: none;
+  z-index: auto;
+}
+
+.menu-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.menu-list > li > a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.menu-list > li > a:hover {
+  color: #667eea;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ======= DROPDOWN (DESKTOP) ======= */
+.has-dropdown {
+  position: relative;
+}
+
+.dropdown-indicator {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.has-dropdown:hover .dropdown-indicator {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  padding: 15px 0;
+  list-style: none;
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 999;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.has-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu a {
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.dropdown-menu a:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+/* ======= MOBILE NAV (WIDTH-BASED) ======= */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex !important;
+  }
+
+  nav {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    z-index: 999;
+  }
+
+  nav.open {
+    display: flex;
+    transform: translateX(0);
+  }
+
+  .menu-list {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .menu-list > li > a {
+    font-size: 2rem;
+    font-weight: 300;
+    padding: 15px 30px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  .dropdown-menu {
+    position: static;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-top: 10px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: max-height 0.4s ease;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+  }
+
+  .has-dropdown.mobile-open .dropdown-menu {
+    max-height: 500px;
+    padding: 20px 0;
+  }
+
+  .dropdown-menu a {
+    font-size: 1.8rem;
+    padding: 10px 40px;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin: 5px 20px;
+  }
+
+  .has-dropdown:hover .dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+  }
+
+  .has-dropdown:hover .dropdown-indicator {
+    transform: none;
+  }
+
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 998;
+  }
+
+  .menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+.menu-toggle.active {
+  transform: rotate(90deg);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+    </style>
 </head>
 <body>
-  <header>
-    <div class="header-content">
-      <div class="header-text">
-        <h1>About Me</h1>
-        <h2>At a Glance</h2>
-        <p class="tagline">Enneagram 6 "Skeptic Loyalist" | INFP "Mediator"  | Servant Leader</p>
-      </div>
+    <div class="background-container" id="bgContainer">
+        <div class="background-overlay"></div>
     </div>
-  </header>
-          <img src="img/formal.png" alt="formalwear" class="responsive-image-2" />
-  <br></br>
-
-  <div class="navbar">
-    <button class="menu-toggle" aria-label="Menu">☰</button>
-    <nav>
-      <div class="menu-overlay"></div>
-      <ul class="menu-list">
-        <li><a href="index.html">Home</a></li>
-        <li class="has-dropdown">
-          <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="bio.html">Bio</a></li>
-            <li><a href="music.html">Music</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown">
-          <a>Portfolio<span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="jewelry.html">Jewelry</a></li>
-            <li><a href="collections.html">Collections</a></li>
-            <li><a href="photography.html">Photography</a></li>
-          </ul>
-        </li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
-  <br>
-  <br>
-  <br>
-  <br>
-    
-  <header>
-    <div class="header-content">
-      <div class="header-text">
-        <h2><q>Specialization is for insects.</q></h2>
-        <h3>- Robert Heinlein</h3>
-      </div>
-    </div>
-  </header>
-    
-    <section>
-      <h3>Who am I?</h3>
-      <p>I'm T'suen Wei - A music, analytics, software/hardware, firearm & gem enthusiast. </p>
-      <p>In my free time, I enjoy refurbishing hardware, programming, writing, playing music and creating jewelry.</p>
-    </section>
-    <br>
-    <section>
-      <h3>Name</h3>
-      <p>Strange name? Well, by now people have called me everything; my nicknames include shen, FT, Foo, shuen, etc the list goes on.</p>
-      <br>
-      <p>Feel free to just call me Foo if it's easier for you since I have no english/christian name; it's how most of my foreign friends address me. If you're curious as to how my first name is pronounced, get google translate to pronounce this:</p>
-      <h5>Шуен уеи</h5>
-      <br>
-      <p>My chinese name is <h5>符[Talisman, Seal, Symbol]
-        <br>传[Pass on, Spread, Transmit, Conduct, Summon] 
-        <br>晖[Sunlight]</h5></p>
-    </section>
-    <br>
-    <section>
-      <h3>Background</h3>
-      <p>My childhood wasn’t conventional; my parents were accomplished lawyers - their job revolved around challenging others with a sharp, adversarial style.
-        However, I learned that a shift in perspective – coupled with a warm smile – could unlock friendships with almost anyone. Now, I’m fortunate to have a diverse circle of friends across Southeast Asia, Europe, and the Americas.
-      </p>
-      <br>
-      <p>For a more in-depth read of my background, check out <a href="bio.html">my biography</a>.</p>
-    </section>
-    <br>
-    <section>
-      <h3>Hobbies & Interests</h3>
-      <h4>Lapidary</h4>
-      <p>I like cutting & polishing stones before setting them into jewelry. Right now my tools are limited but I am going to pick up gemcutting and faceting once I get a faceting machine.</p>
-      <br>
-      <h4>Music</h4>
-      <p>Personally, I have an alto saxophone, electric guitar, accordion and piano which I play to varying levels of skill.</p>
-      <br>
-      <h4>Language</h4>
-      <p>I'm interested in learning different languages, since languages are bridges that we build. South East Asia is probably the most densely populated area on the planet with all these different cultures and languages,
-        and if I want to learn about them and connect I have to learn to speak and read. Right now, I'm learning Russian and Bahasa, with a bit of tagalog on the side. 
-      </p>
-      <br>
-      <h4>Keyboards</h4>
-      <p>I love assembling custom keyboards too, and trying new types of mechanical switches. My favourite ones I've built so far is made to look like a retro keyboard complete with beige case and dark brown, white lettered SA keycaps.</p>
-      <br>
-      <h4>Retro Technology</h4>
-      <p>I also collect some old tech that I use frequently, I have a few IBM/Lenovo thinkpads from decades ago, and an IBM Model M Keyboard.</p>
-   </section>
-    <br>
-    <header>
-      <div class="header-content">
-        <div class="header-text">
-          <h3><q>Worlds end. And when yours does, make sure you have a partner you can rely on.</q></h3>
-          <h4>- Germaine</h4>
+    <div class="mode-toggle" id="modeToggle">
+        <span class="toggle-label" id="leftLabel">Professional</span>
+        <div class="toggle-switch" id="toggleSwitch">
+            <div class="toggle-slider"></div>
         </div>
-      </div>
-    </header>
-    <section>
-      <h3>Values & Philosophy</h3>
-      <br>
-      <p>I'm anti-war and anti-military. Most people in Asia face mandatory conscription, and I refuse to fight a war against my brothers overseas - regardless of race or religion. This shared view has allowed me to quickly form strong bonds with any conscript I've met in Asia. </p>
-      <br><h3 style="text-align: center;">&#x1F1F8;&#x1F1EC;&#x1F1F2;&#x1F1FE;&#x1F1F5;&#x1F1ED;&#x1F1F9;&#x1F1FC;&#x1F1FB;&#x1F1F3;&#x1F1F9;&#x1F1ED;&#x1F1EE;&#x1F1E9;&#x1F1F2;&#x1F1F2;</h3>
-      <img src="img/ex-soldiers1.jpg" alt="3 soldiers" class="responsive-image-2" style="border-radius: 20px;">
-      <br><p>I make friends wherever I go, introduce them to each other and turn that into a strong network.</p>
-      <p>People have often described me as having ‘the patience of a saint,’ perhaps with a touch of concern about a ‘savior complex.’ I genuinely believe that when someone asks for help, it’s a serious matter that deserves a response, and I feel a responsibility to see things through to the end.</p>
-      <br><p>I'm also pro-consumer, typically right to repair, and generally harbour a strong resentment towards consumerism. If it's any indicator, my phone is 6 years old and has undergone a screen replacement, 2 battery replacements, a rear camera replacement, charging port replacement, side button fixes and even a fingerprint scanner replacement. All carried out by yours truly of course.</p>
-      <br>
-      <img src="img/replaced.jpg" alt="phone repair" class="responsive-image-2" style="border-radius: 20px;">
-    </section>
-    <br>
-    <section>
-      <h3>Skills & Experience</h3>
-      <h4>Software</h4>
-      <ul>Webdev (HTML/CSS/JS)</ul>
-      <ul>Database Management (SQL, SQLite)</ul>
-      <ul>Android Development (Java)</ul>
-      <ul>General Programming (Python, Java, VB)</ul>
-      <ul>Quantum Computing (QISKIT)</ul>
-      <ul>Data Science (Python, CASL)</ul>
-      <br><h4>Hardware</h4>
-      <ul>Computer Assembly & Maintainence (Servers, Desktops, Laptops, SBCs)</ul>
-      <ul>Refurbishment (Phones, Laptops, Scavenged computer parts)</ul>
-      <ul>Soldering</ul>
-      <br><h4>Photography & Videography</h4>
-      <ul>Photo Editing & touchup (Photoshop, Krita)</ul>
-      <ul>Video Editing Montages etc. (Sony Vegas)</ul>
-      <br><h4>Languages</h4>
-      <ul>English (Native/Fluent)</ul>
-      <ul>Chinese (Conversational)</ul>
-      <ul>Bahasa Malaysia(Basic)</ul>
-      <ul>Russian (Basic)</ul>
-    </section>
-  </main>
+        <span class="toggle-label" id="rightLabel">Personal</span>
+    </div>
+    <div class="navbar">
+        <button class="menu-toggle" aria-label="Menu">☰</button>
+        <div class="menu-overlay"></div>
+        <nav>
+            <ul class="menu-list">
+                <li><a href="index.html">Home</a></li>
+                <li class="has-dropdown">
+                    <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="bio.html">Bio</a></li>
+                        <li><a href="music.html">Music</a></li>
+                    </ul>
+                </li>
+                <li class="has-dropdown">
+                    <a href="#">Portfolio<span class="dropdown-indicator">▾</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="jewelry.html">Jewelry</a></li>
+                        <li><a href="collections.html">Collections</a></li>
+                        <li><a href="photography.html">Photography</a></li>
+                    </ul>
+                </li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
 
-  <footer>
-    <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
-  </footer>
+    <div class="container">
+        <section class="header" data-bg="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80">
+            <div class="profile-image">
+                <img id="profile-img" src="img/formal.png" alt="Professional Profile Photo" style="display: none;" onerror="this.style.display='none'; this.parentElement.innerHTML='Your Photo';" onload="this.style.display='block'; this.parentElement.style.fontSize='0';">
+            </div>
+            <h1>Foo T'suen Wei</h1>
+            <p>Enneagram 6 "Skeptic Loyalist" | INFP "Mediator"  | Servant Leader</p>
+        </section>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const menuToggle = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('nav');
-      const menuOverlay = document.querySelector('.menu-overlay');
-  
-      // Toggle menu when hamburger is clicked
-      menuToggle.addEventListener('click', function() {
-        nav.classList.toggle('active');
-  
-        if (nav.classList.contains('active')) {
-          menuToggle.style.display = 'none'; // Hide button when menu is open
-        }
-      });
-  
-      // Close menu when overlay is clicked
-      menuOverlay.addEventListener('click', function() {
-        nav.classList.remove('active');
-        menuToggle.style.display = 'block'; // Show button again
-      });
-  
-      // Close menu when a link is clicked (in portrait mode only)
-      const navLinks = document.querySelectorAll('nav a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          if (window.matchMedia('(orientation: portrait)').matches) {
-            nav.classList.remove('active');
-            menuToggle.style.display = 'block'; // Show button again
-          }
+        <section class="quote-section" data-bg="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80">
+            <div class="quote-content">
+                <blockquote>"Specialization is for insects."</blockquote>
+                <cite>- Robert Heinlein</cite>
+            </div>
+        </section>
+
+        <!-- Professional Sections -->
+        <section class="section professional-section" data-bg="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80">
+            <div class="section-content">
+                <h2>Professional Journey</h2>
+                <p>I'm currently a freshgrad from Singapore Management University's Master of IT in Business (Fintech-Analytics). My journey has been a strange one, no doubt, starting from business studies during my 'O' Levels, my Marine Engineering Diploma, and even my Bachelor's degree in IT.</p>
+                <p>My strong desire to learn and close held belief that people should be able to do anything and everything has brought me here. I look forward to expanding my horizons further.</p>
+            </div>
+        </section>
+
+                <!-- Personal Sections -->
+        <section class="section personal-section hidden" data-bg="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80">
+            <div class="section-content">
+                <h2>Personal Story</h2>
+                <p>I'm T'suen Wei - A music, analytics, software/hardware, firearm & gem enthusiast. </p>
+                <p>In my free time, I enjoy refurbishing hardware, programming, writing, playing music and creating jewelry.</p>
+                <p>My childhood wasn’t conventional; my parents were accomplished lawyers - their job revolved around challenging others with a sharp, adversarial style.
+                    However, I learned that a shift in perspective – coupled with a warm smile – could unlock friendships with almost anyone. Now, I’m fortunate to have a diverse circle of friends across Southeast Asia, Europe, and the Americas.
+                </p>
+                <br>
+            </div>
+        </section>
+
+        <section class="section personal-section hidden" data-bg="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80">
+            <div class="section-content">
+                <h3>Name</h3>
+                <p>Strange name? Well, by now people have called me everything; my nicknames include shen, FT, Foo, shuen, etc the list goes on.</p>
+                <br>
+                <p>Feel free to just call me Foo if it's easier for you since I have no english/christian name; it's how most of my foreign friends address me. If you're curious as to how my first name is pronounced, get google translate to pronounce this:</p>
+                <h4>Шуен уеи</h4>
+                <br>
+                <p>My chinese name is 
+                    <h4>符[Talisman, Seal, Symbol]
+                    <br>传[Pass on, Spread, Transmit, Conduct, Summon] 
+                    <br>晖[Sunlight]</h4></p>
+        </section>
+
+        <section class="section professional-section personal-section" data-bg="https://images.unsplash.com/photo-1466584241662-8cb021032c1a?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0">
+            <div class="section-content">
+                <h2>Hobbies & Interests</h2>
+                <p>My hobbies are pretty wide and span multiple fields. </p>
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <h3>💍 Lapidary</h3>
+                        <p>I like cutting & polishing stones before setting them into jewelry. Right now my tools are limited but I am going to pick up gemcutting and faceting once I get a faceting machine.</p>
+                    </div>
+                    <div class="skill-card">
+                        <h3>🎼 Music</h3>
+                        <p>Personally, I have an alto saxophone, electric guitar, accordion and piano which I play to varying levels of skill.</p>
+                    </div>
+                    <div class="skill-card">
+                        <h3>🌐 Language</h3>
+                        <p>I'm interested in learning different languages, since languages are bridges that we build. South East Asia is probably the most densely populated area on the planet with all these different cultures and languages,
+                        and if I want to learn about them and connect I have to learn to speak and read. Right now, I'm learning Russian and Bahasa, with a bit of tagalog on the side.</p>
+                    </div>
+                    <div class="skill-card">
+                        <h3>⌨️ Keyboards</h3>
+                        <p>I love assembling custom keyboards too, and trying new types of mechanical switches. My favourite ones I've built so far is made to look like a retro keyboard complete with beige case and dark brown, white lettered SA keycaps.</p>
+                    </div>
+
+                    <div class="skill-card">
+                        <h3>📼 Retro Technology</h3>
+                        <p>I also collect some old tech that I use frequently, I have a few IBM/Lenovo thinkpads from decades ago, and an IBM Model M Keyboard.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quote-section personal-section hidden" data-bg="img/ex-soldiers1.jpg">
+            <div class="quote-content">
+                <blockquote>"Worlds end. And when yours does, make sure you have a partner you can rely on."</blockquote>
+                <cite>- Germaine</cite>
+            </div>
+        </section>
+
+        <section class="section personal-section hidden" data-bg="img/ex-soldiers1.jpg">
+            <div class="section-content">
+                <h2>Values & Philosophy</h2>
+                <br><h3 style="text-align: center;">&#x1F1F8;&#x1F1EC;&#x1F1F2;&#x1F1FE;&#x1F1F5;&#x1F1ED;&#x1F1F9;&#x1F1FC;&#x1F1FB;&#x1F1F3;&#x1F1F9;&#x1F1ED;&#x1F1EE;&#x1F1E9;&#x1F1F2;&#x1F1F2;</h3>
+                <p>I'm anti-war and anti-military. Most people in Asia face mandatory conscription, and I refuse to fight a war against my brothers overseas - regardless of race or religion. This shared view has allowed me to quickly form strong bonds with any conscript I've met in Asia. </p>
+                <br><p>I make friends wherever I go, introduce them to each other and turn that into a strong network.</p>
+                <p>People have often described me as having ‘the patience of a saint,’ perhaps with a touch of concern about a ‘savior complex.’ I genuinely believe that when someone asks for help, it’s a serious matter that deserves a response, and I feel a responsibility to see things through to the end.</p>
+                <br><p>I'm also pro-consumer, typically right to repair, and generally harbour a strong resentment towards consumerism. If it's any indicator, my phone is 6 years old and has undergone a screen replacement, 2 battery replacements, a rear camera replacement, charging port replacement, side button fixes and even a fingerprint scanner replacement. All carried out by yours truly of course.</p>
+                <img src="img/replaced.jpg" alt="phone repair" class="responsive-image-2" style="border-radius: 20px;">
+            </div>
+        </section>
+
+        <section class="section professional-section" data-bg="https://images.unsplash.com/photo-1597733336794-12d05021d510?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0">
+            <div class="section-content">
+                <h2>Frequently Asked Questions</h2>
+                <p>Common questions employers ask about my background and capabilities</p>
+                
+                <!-- Save the FAQ as a separate HTML file (e.g., faq.html) and reference it -->
+                <iframe src="faq.html" 
+                        width="100%" 
+                        height="600" 
+                        style="display: block; border: none;">
+                </iframe>
+            </div>
+        </section>
+    </div>
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const nav = document.querySelector('nav');
+            const menuOverlay = document.querySelector('.menu-overlay');
+            const body = document.body;
+            const dropdownParents = document.querySelectorAll('.has-dropdown');
+            
+            let isMenuOpen = false;
+            let isMobile = window.innerWidth <= 768;
+            
+            function checkMobile() {
+                isMobile = window.innerWidth <= 768;
+            }
+            
+            function toggleMenu(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                if (!isMobile) return;
+                
+                isMenuOpen = !isMenuOpen;
+                
+                if (isMenuOpen) {
+                    nav.classList.add('open');
+                    menuOverlay.classList.add('active');
+                    menuToggle.classList.add('active');
+                    body.classList.add('menu-open');
+                    menuToggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    nav.classList.remove('open');
+                    menuOverlay.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    
+                    dropdownParents.forEach(parent => {
+                        parent.classList.remove('mobile-open');
+                    });
+                }
+            }
+            
+            // Event listeners with proper event handling
+            if (menuToggle) {
+                menuToggle.addEventListener('click', toggleMenu);
+                menuToggle.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    toggleMenu(e);
+                });
+            }
+            
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', function() {
+                    if (isMenuOpen && isMobile) {
+                        toggleMenu();
+                    }
+                });
+            }
+            
+            // Handle dropdown clicks on mobile
+            dropdownParents.forEach(parent => {
+                const link = parent.querySelector('a');
+                
+                link.addEventListener('click', function(e) {
+                    if (!isMobile || !isMenuOpen) return;
+                    
+                    e.preventDefault();
+                    
+                    dropdownParents.forEach(otherParent => {
+                        if (otherParent !== parent) {
+                            otherParent.classList.remove('mobile-open');
+                        }
+                    });
+                    
+                    parent.classList.toggle('mobile-open');
+                });
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const wasMobile = isMobile;
+                checkMobile();
+                
+                if (wasMobile && !isMobile && isMenuOpen) {
+                    toggleMenu();
+                }
+                
+                if (!isMobile) {
+                    nav.classList.remove('open');
+                    menuOverlay.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    body.classList.remove('menu-open');
+                    dropdownParents.forEach(parent => {
+                        parent.classList.remove('mobile-open');
+                    });
+                    isMenuOpen = false;
+                }
+            });
+            
+            // Prevent nav clicks from bubbling
+            if (nav) {
+                nav.addEventListener('click', function(e) {
+                    if (isMobile) {
+                        e.stopPropagation();
+                    }
+                });
+            }
+            
+            // Close menu on regular link clicks
+            const regularMenuLinks = document.querySelectorAll('.menu-list > li:not(.has-dropdown) a, .dropdown-menu a');
+            regularMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (isMenuOpen && isMobile) {
+                        setTimeout(() => {
+                            toggleMenu();
+                        }, 150);
+                    }
+                });
+            });
+            
+            // Initialize
+            checkMobile();
+            
+            if (menuToggle) {
+                menuToggle.setAttribute('aria-expanded', 'false');
+                menuToggle.setAttribute('aria-controls', 'navigation-menu');
+            }
+            if (nav) {
+                nav.setAttribute('id', 'navigation-menu');
+            }
         });
-      });
-    });
-  </script>
+
+        let currentMode = 'professional';
+        let isAnimating = false;
+        const modeToggle = document.getElementById('modeToggle');
+        const toggleSwitch = document.getElementById('toggleSwitch');
+        const leftLabel = document.getElementById('leftLabel');
+        const rightLabel = document.getElementById('rightLabel');
+        const bgContainer = document.getElementById('bgContainer');
+        
+        // Background images for different sections
+        const backgrounds = {
+            header: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+            header2: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0',
+            professional1: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+            professional2: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+            personal1: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+            personal3: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+        };
+
+        // Set initial background
+        bgContainer.style.backgroundImage = `url(${backgrounds.header})`;
+
+        // Enhanced mode toggle functionality
+        function toggleMode() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            const newMode = currentMode === 'professional' ? 'personal' : 'professional';
+            
+            // Add switching class to toggle
+            modeToggle.classList.add('switching');
+            
+            // Toggle the switch
+            toggleSwitch.classList.toggle('active');
+            
+            // Update label opacity
+            if (newMode === 'personal') {
+                leftLabel.style.opacity = '0.6';
+                rightLabel.style.opacity = '1';
+            } else {
+                leftLabel.style.opacity = '1';
+                rightLabel.style.opacity = '0.6';
+            }
+            
+            // Get current and new sections
+            const currentSections = document.querySelectorAll(`.${currentMode}-section:not(.hidden)`);
+            const newSections = document.querySelectorAll(`.${newMode}-section`);
+            
+            // Animate out current sections
+            currentSections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.classList.add('switching-out');
+                }, index * 100);
+            });
+            
+            // After animation, hide current sections and show new ones
+            setTimeout(() => {
+                // Hide current sections
+                currentSections.forEach(section => {
+                    section.classList.add('hidden');
+                    section.classList.remove('switching-out', 'visible');
+                });
+                
+                // Show new sections with animation
+                newSections.forEach((section, index) => {
+                    section.classList.remove('hidden');
+                    section.classList.add('switching-in');
+                    
+                    setTimeout(() => {
+                        section.classList.remove('switching-in');
+                        section.classList.add('visible');
+                    }, 600);
+                });
+                
+                currentMode = newMode;
+
+                updateProfilePicture(newMode);
+
+                const headerBgKey = newMode === 'professional' ? 'header' : 'header2';
+                bgContainer.style.backgroundImage = `url(${backgrounds[headerBgKey]})`;
+                
+                // Remove switching class
+                setTimeout(() => {
+                    modeToggle.classList.remove('switching');
+                    isAnimating = false;
+                }, 300);
+                
+            }, 400);
+        }
+
+        // New function to update profile picture
+        function updateProfilePicture(mode) {
+            const profileImg = document.getElementById('profile-img');
+            const profileContainer = document.querySelector('.profile-image');
+            
+            // Define image sources for each mode
+            const imageSources = {
+                professional: 'img/formal.png',
+                personal: 'img/eea99c18-823c-4474-9290-c5b8ecd400ed3-2048x1167.png'
+            };
+            
+            // Define background gradients for each mode
+            const backgroundGradients = {
+                professional: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                personal: 'linear-gradient(135deg, #87CEEB 20%, #FFD700 100%)' // Light blue to yellow (beach colors)
+            };
+            
+            // Add fade-out effect
+            profileImg.style.opacity = '0.3';
+            profileImg.style.transition = 'opacity 0.3s ease';
+            
+            // Update background gradient
+            profileContainer.style.background = backgroundGradients[mode];
+            
+            setTimeout(() => {
+                // Change the image source
+                profileImg.src = imageSources[mode];
+                profileImg.alt = `${mode.charAt(0).toUpperCase() + mode.slice(1)} Profile Photo`;
+                
+                // Handle image load
+                profileImg.onload = function() {
+                    this.style.display = 'block';
+                    this.style.opacity = '1';
+                    profileContainer.style.fontSize = '0';
+                };
+                
+                // Handle image error
+                profileImg.onerror = function() {
+                    this.style.display = 'none';
+                    this.style.opacity = '1';
+                    profileContainer.innerHTML = 'Your Photo';
+                    profileContainer.style.fontSize = '';
+                };
+            }, 150);
+        }
+
+
+
+        // Add click event to the entire toggle area
+        modeToggle.addEventListener('click', toggleMode);
+
+        // Initialize label opacity
+        leftLabel.style.opacity = '1';
+        rightLabel.style.opacity = '0.6';
+
+        // Intersection Observer for section animations
+        const observerOptions = {
+            threshold: [0.1, 0.5],
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        let currentSection = null;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('hidden')) {
+                    entry.target.classList.add('visible');
+                    
+                    // Only change background if this is a new section
+                    if (currentSection !== entry.target) {
+                        currentSection = entry.target;
+                        
+                        // Determine background based on current mode and section
+                        let bgKey = '';
+                        
+                        if (entry.target.classList.contains('header')) {
+                            bgKey = currentMode === 'professional' ? 'headerProfessional' : 'headerPersonal';
+                        } else if (entry.target.classList.contains('quote-section')) {
+                            bgContainer.style.backgroundImage = `url(${dataBg})`
+                        } else {
+                            // For other sections, check if they have a data-bg attribute
+                            const dataBg = entry.target.dataset.bg;
+                            if (dataBg) {
+                                // Use the data-bg if it exists
+                                bgContainer.style.backgroundImage = `url(${dataBg})`;
+                                return; // Exit early to avoid the backgrounds[bgKey] logic
+                            }
+                        }
+                        
+                        // Only change background if we have a valid key
+                        if (bgKey && backgrounds[bgKey]) {
+                            bgContainer.style.backgroundImage = `url(${backgrounds[bgKey]})`;
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('.section, .quote-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Initialize first view
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.section, .quote-section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        checkMobile();
+    </script>
 </body>
 </html>

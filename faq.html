@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>FAQ for Employers</title>
+    <style>
+        * {
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Force sharp rendering */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            /* Ensure crisp rendering */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-perspective: 1000;
+            perspective: 1000;
+        }
+
+        .section {
+            max-width: 100% !important;
+            margin: 0 !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 15px !important;
+            padding: 30px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+            /* Removed backdrop-filter: blur(10px) - this was likely causing the issue */
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .section p {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .faq-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .faq-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            /* Force sharp rendering and prevent blur during transforms */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            /* Use pixel-perfect transforms */
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        .faq-card:hover {
+            /* Use pixel-perfect transform to avoid blur */
+            -webkit-transform: translate3d(0, -2px, 0);
+            transform: translate3d(0, -2px, 0);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .faq-card.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+        }
+
+        .faq-question {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-question h4 {
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+        }
+
+        .faq-icon {
+            font-size: 1.2rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .faq-card.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .faq-card.active .faq-answer {
+            max-height: 200px;
+        }
+
+        .faq-answer-content {
+            padding: 0 25px 20px 25px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .section h2 {
+                font-size: 2rem;
+            }
+            
+            .faq-question {
+                padding: 15px 20px;
+            }
+            
+            .faq-question h4 {
+                font-size: 1rem;
+            }
+            
+            .faq-answer-content {
+                padding: 0 20px 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="section">
+        <h2>Frequently Asked Questions</h2>
+        <p>Common questions employers ask about my background and capabilities</p>
+        <br>
+        <div class="faq-container">
+            <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>What makes you stand out from other candidates?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        My <span class="highlight">Master's degree major (Fintech-Analytics)</span> gives me a unique perspective that bridges technical implementation with business strategy. I combine hands-on experience in AI/ML, full-stack development, and system architecture with the finance/marketing side and communication skills.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>How would your friends describe you personally?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        I would say they describe me as someone who is <span class="highlight">knowledgeable in many fields and reliable.</span> I say this because it seems I'm the first one they turn to when they have any problem, even if I don't actually know anything in that field.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>How do you stay current with rapidly changing technology?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        I maintain active involvement in <span class="highlight">emerging technologies like Qiskit for quantum computing</span> and stay current with AI/ML developments. I also typically stay afloat with new developments in older technology and languages, like updates to C or Python.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>What's your experience with team leadership and management?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        My soft skills include <span class="highlight">people management and leadership</span>, combining technical expertise with the ability to guide teams, communicate complex concepts clearly, and solve problems collaboratively across different stakeholder groups. I personally head a little online community with over a hundred people, managed by me alone.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>What's your biggest weakness?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        I tend to be a perfectionist at times, with feelings of unease if things are not perfect before they are released. However, I've been armed with knowledge of <span class="highlight">Agile, SCRUM and MVPs</span> to better manage time and know when something is "good enough". 
+                    </div>
+                </div>
+            </div>
+
+                        <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>Can you handle both development and production deployment?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, I have DevOps experience with <span class="highlight">AWS, Gunicorn, Nginx, and load balancing</span>. I understand the full software lifecycle from security early in development to secure production deployment and monitoring.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-card" onclick="toggleFAQ(this)">
+                <div class="faq-question">
+                    <h4>What types of data analysis and AI projects have you worked on?</h4>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        I have experience with <span class="highlight">NLP, sentiment analysis, and various prediction models</span> including Prophet, LSTM, SARIMAX, and XGBoost. I can work with both cloud-based and local language models for diverse AI applications, although I am very aware of data sensitivity + sovreignty and prefer offline options. A lot of my projects revolve around financial forecasting.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleFAQ(card) {
+            // Close all other cards
+            const allCards = document.querySelectorAll('.faq-card');
+            allCards.forEach(otherCard => {
+                if (otherCard !== card) {
+                    otherCard.classList.remove('active');
+                }
+            });
+            
+            // Toggle the clicked card
+            card.classList.toggle('active');
+        }
+
+        // Optional: Close FAQ when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.faq-card')) {
+                const allCards = document.querySelectorAll('.faq-card');
+                allCards.forEach(card => {
+                    card.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
