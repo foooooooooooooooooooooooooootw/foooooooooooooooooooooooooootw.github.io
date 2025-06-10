@@ -873,7 +873,7 @@ body.menu-open {
     </div>
 
     <div class="container">
-        <section class="header" data-bg="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80">
+        <section class="header">
             <div class="profile-image">
                 <img id="profile-img" src="img/formal.png" alt="Professional Profile Photo" style="display: none;" onerror="this.style.display='none'; this.parentElement.innerHTML='Your Photo';" onload="this.style.display='block'; this.parentElement.style.fontSize='0';">
             </div>
@@ -1227,7 +1227,7 @@ body.menu-open {
             
             // Define background gradients for each mode
             const backgroundGradients = {
-                professional: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                professional: 'linear-gradient(135deg, #FFFA6B -1%, #764ba2 100%)',
                 personal: 'linear-gradient(135deg, #87CEEB 20%, #FFD700 100%)' // Light blue to yellow (beach colors)
             };
             
@@ -1260,8 +1260,6 @@ body.menu-open {
             }, 150);
         }
 
-
-
         // Add click event to the entire toggle area
         modeToggle.addEventListener('click', toggleMode);
 
@@ -1276,50 +1274,78 @@ body.menu-open {
         };
 
         let currentSection = null;
+        let intersectingSections = new Set();
 
         const observer = new IntersectionObserver((entries) => {
+            // Update the set of intersecting sections
             entries.forEach(entry => {
                 if (entry.isIntersecting && !entry.target.classList.contains('hidden')) {
+                    intersectingSections.add(entry.target);
                     entry.target.classList.add('visible');
-                    
-                    // Only change background if this is a new section
-                    if (currentSection !== entry.target) {
-                        currentSection = entry.target;
-                        
-                        // Determine background based on current mode and section
-                        let bgKey = '';
-                        
-                        if (entry.target.classList.contains('header')) {
-                            bgKey = currentMode === 'professional' ? 'header' : 'header2';
-                        } else if (entry.target.classList.contains('quote-section')) {
-                            bgContainer.style.backgroundImage = `url(${dataBg})`
-                        } else {
-                            // For other sections, check if they have a data-bg attribute
-                            const dataBg = entry.target.dataset.bg;
-                            if (dataBg) {
-                                // Use the data-bg if it exists
-                                bgContainer.style.backgroundImage = `url(${dataBg})`;
-                                return; // Exit early to avoid the backgrounds[bgKey] logic
-                            }
-                        }
-                        
-                        // Only change background if we have a valid key
-                        if (bgKey && backgrounds[bgKey]) {
-                            bgContainer.style.backgroundImage = `url(${backgrounds[bgKey]})`;
-                        }
-                    }
+                } else {
+                    intersectingSections.delete(entry.target);
                 }
             });
+
+            // Find the most prominent section (highest intersection ratio)
+            let mostVisibleSection = null;
+            let highestRatio = 0;
+
+            intersectingSections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+
+                const visibleTop = Math.max(0, -rect.top);
+                const visibleBottom = Math.min(rect.height, viewportHeight - rect.top);
+                const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+                const ratio = visibleHeight / rect.height;
+
+                if (ratio > highestRatio) {
+                    highestRatio = ratio;
+                    mostVisibleSection = section;
+                }
+            });
+
+            // Only change background if we have a new most visible section
+            if (mostVisibleSection && currentSection !== mostVisibleSection) {
+                currentSection = mostVisibleSection;
+
+                if (mostVisibleSection.classList.contains('header')) {
+                    const bgKey = currentMode === 'professional' ? 'header' : 'header2';
+                    bgContainer.style.backgroundImage = `url(${backgrounds[bgKey]})`;
+                } else if (mostVisibleSection.classList.contains('quote-section')) {
+                    const dataBg = mostVisibleSection.dataset.bg;
+                    if (dataBg) {
+                        bgContainer.style.backgroundImage = `url(${dataBg})`;
+                    }
+                } else {
+                    const dataBg = mostVisibleSection.dataset.bg;
+                    if (dataBg) {
+                        bgContainer.style.backgroundImage = `url(${dataBg})`;
+                    }
+                }
+            }
+
+            // Extra fallback if nothing is intersecting and user scrolled to top
+            if (!mostVisibleSection && window.scrollY < 100) {
+                const header = document.querySelector('.header');
+                if (currentSection !== header) {
+                    currentSection = header;
+                    const bgKey = currentMode === 'professional' ? 'header' : 'header2';
+                    bgContainer.style.backgroundImage = `url(${backgrounds[bgKey]})`;
+                }
+            }
+
         }, observerOptions);
 
         // Observe sections
-        document.querySelectorAll('.section, .quote-section').forEach(section => {
+        document.querySelectorAll('.section, .quote-section, .header').forEach(section => {
             observer.observe(section);
         });
 
         // Initialize first view
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.section, .quote-section').forEach(section => {
+            document.querySelectorAll('.section, .quote-section, .header').forEach(section => {
                 observer.observe(section);
             });
         });
