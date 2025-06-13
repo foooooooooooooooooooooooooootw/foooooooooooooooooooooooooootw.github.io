@@ -755,19 +755,19 @@ nav {
     letter-spacing: 0.02em;
   }
 
-  /* FIXED: Mobile dropdown styling */
+  /* FIXED: Mobile dropdown styling - completely override desktop hover */
   .dropdown-menu {
-    position: static;
+    position: static !important;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     margin-top: 10px;
     max-height: 0;
     overflow: hidden;
-    opacity: 0;
-    visibility: hidden;
-    transform: scaleY(0);
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scaleY(0) !important;
     transform-origin: top;
-    transition: all 0.4s ease;
+    transition: all 0.4s ease !important;
     padding: 0;
     box-shadow: none;
     border: none;
@@ -775,11 +775,11 @@ nav {
 
   /* FIXED: When dropdown is open on mobile */
   .has-dropdown.mobile-open .dropdown-menu {
-    max-height: 500px;
-    padding: 20px 0;
-    opacity: 1;
-    visibility: visible;
-    transform: scaleY(1);
+    max-height: 500px !important;
+    padding: 20px 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scaleY(1) !important;
   }
 
   .dropdown-menu a {
@@ -798,15 +798,26 @@ nav {
     transform: translateX(0);
   }
 
-  /* Disable desktop hover effects on mobile */
+  /* COMPLETELY DISABLE desktop hover effects on mobile */
   .has-dropdown:hover .dropdown-menu {
-    opacity: 0;
-    visibility: hidden;
-    transform: scaleY(0);
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scaleY(0) !important;
+    max-height: 0 !important;
+    padding: 0 !important;
   }
 
   .has-dropdown:hover .dropdown-indicator {
-    transform: none;
+    transform: none !important;
+  }
+
+  /* Ensure mobile-open overrides hover */
+  .has-dropdown.mobile-open:hover .dropdown-menu {
+    max-height: 500px !important;
+    padding: 20px 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scaleY(1) !important;
   }
 
   .menu-overlay {
@@ -1072,18 +1083,24 @@ body.menu-open {
             dropdownParents.forEach(parent => {
                 const link = parent.querySelector('a');
                 
-                link.addEventListener('click', function(e) {
-                    if (!isMobile || !isMenuOpen) return;
-                    
-                    e.preventDefault();
-                    
-                    dropdownParents.forEach(otherParent => {
-                        if (otherParent !== parent) {
-                            otherParent.classList.remove('mobile-open');
-                        }
+                // Add both click and touchstart for better mobile responsiveness
+                ['click', 'touchstart'].forEach(eventType => {
+                    link.addEventListener(eventType, function(e) {
+                        if (!isMobile || !isMenuOpen) return;
+                        
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Close other dropdowns
+                        dropdownParents.forEach(otherParent => {
+                            if (otherParent !== parent) {
+                                otherParent.classList.remove('mobile-open');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        parent.classList.toggle('mobile-open');
                     });
-                    
-                    parent.classList.toggle('mobile-open');
                 });
             });
             
