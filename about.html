@@ -755,6 +755,7 @@ nav {
     letter-spacing: 0.02em;
   }
 
+  /* FIXED: Mobile dropdown styling */
   .dropdown-menu {
     position: static;
     background: rgba(255, 255, 255, 0.05);
@@ -762,18 +763,23 @@ nav {
     margin-top: 10px;
     max-height: 0;
     overflow: hidden;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition: max-height 0.4s ease;
+    opacity: 0;
+    visibility: hidden;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: all 0.4s ease;
     padding: 0;
     box-shadow: none;
     border: none;
   }
 
+  /* FIXED: When dropdown is open on mobile */
   .has-dropdown.mobile-open .dropdown-menu {
     max-height: 500px;
     padding: 20px 0;
+    opacity: 1;
+    visibility: visible;
+    transform: scaleY(1);
   }
 
   .dropdown-menu a {
@@ -782,12 +788,21 @@ nav {
     color: rgba(255, 255, 255, 0.8);
     border-radius: 8px;
     margin: 5px 20px;
+    display: block;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
   }
 
+  /* FIXED: Animate dropdown items when parent opens */
+  .has-dropdown.mobile-open .dropdown-menu a {
+    transform: translateX(0);
+  }
+
+  /* Disable desktop hover effects on mobile */
   .has-dropdown:hover .dropdown-menu {
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
+    transform: scaleY(0);
   }
 
   .has-dropdown:hover .dropdown-indicator {
@@ -813,7 +828,7 @@ nav {
     visibility: visible;
   }
 }
-
+        
 body.menu-open {
   overflow: hidden;
 }
