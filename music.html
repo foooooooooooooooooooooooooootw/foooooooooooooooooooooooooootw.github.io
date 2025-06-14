@@ -18,6 +18,10 @@
             overflow-x: hidden;
         }
 
+        a {
+            color: #90D5FF;
+        }
+
         /* Navbar Styles */
         .navbar {
             position: fixed;
@@ -195,11 +199,12 @@
         }
 
         .background-layer {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* 👈 Push it behind everything else */
             opacity: 0;
             transition: opacity 1s ease-in-out;
             background-size: cover;
@@ -266,7 +271,7 @@
                 black 24px
             );
             animation: illusionFlow 30s linear infinite, waveSkew 12s ease-in-out infinite;
-            opacity: 0.2;
+            opacity: 0; /* Changed from 0.2 to 0 - will be controlled by .active class */
             z-index: 0;
             filter: contrast(1.4) brightness(1.6);
             transform-origin: center;
@@ -279,9 +284,6 @@
             75%  { transform: scale(1.01) skew(0.5deg, -0.5deg); }
             100% { transform: scale(1) skew(0deg, 0deg); }
         }
-
-
-
         
         @keyframes illusionFlow {
             0% {
@@ -329,32 +331,8 @@
             100% { transform: translateY(-100px); }
         }
 
-        .blues-bg {
-            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
-            position: relative;
-        }
+        
 
-        .blues-bg::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 50px,
-                rgba(0,100,200,0.1) 50px,
-                rgba(0,100,200,0.1) 51px
-            );
-            animation: blues-wave 6s ease-in-out infinite;
-        }
-
-        @keyframes blues-wave {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.1); }
-        }
 
         .content-overlay {
             position: absolute;
@@ -525,6 +503,16 @@
                 text-align: center; 
             }
         }
+
+        #embersCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: black;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -555,12 +543,14 @@
         </nav>
     </div>
 
+    <canvas id="embersCanvas"></canvas>
+
     <div class="gallery-container">
         <!-- Background Layers -->
         <div class="background-layer illusion-bg active" data-genre="psychedelic"></div>
         <div class="background-layer punk-bg" data-genre="punk"></div>
         <div class="background-layer jazz-bg" data-genre="jazz"></div>
-        <div class="background-layer blues-bg" data-genre="blues"></div>
+        <div class="background-layer rock-bg" data-genre="rock"></div>
 
         <!-- Content Overlay -->
         <div class="content-overlay">
@@ -573,7 +563,7 @@
                 <button class="genre-btn active" data-genre="psychedelic">Psychedelic</button>
                 <button class="genre-btn" data-genre="punk">Punk</button>
                 <button class="genre-btn" data-genre="jazz">Jazz</button>
-                <button class="genre-btn" data-genre="blues">Blues</button>
+                <button class="genre-btn" data-genre="rock">Rock</button>
             </div>
 
             <div class="cards-container" id="cardsContainer">
@@ -596,101 +586,111 @@
                     title: "The Black Angels",
                     type: "Psychedelic Rock",
                     description: "One of my favourite bands, they have a very heavy rock/psych sound with some of their music alluding to war and how countries send men to their deaths. ",
-                    fav: ["Bad Vibrations", "I'd Kill for Her", "Black Grease", "The First Vietnamese War", "Young Men Dead"]
+                    fav: ["<a href=https://youtu.be/cxaeFD67Rb8>Bad Vibrations</a>", "<a href=https://youtu.be/4C7tfkuGqe4>I'd Kill for Her</a>", "<a href=https://youtu.be/6G7yLulp4oI>Black Grease</a>", "<a href=https://youtu.be/ep-iQjlICNM>The First Vietnamese War</a>", "<a href=https://youtu.be/gvLJZKdrDZ4>Young Men Dead</a>"]
                 },
                 {
                     title: "Tame Impala",
                     type: "Neo-Psychedelic",
                     description: "No introduction needed, I like it for the very dream-like tune he often creates, 'Elephant' being the only exception.",
-                    fav: ["Elephant", "The Less I Know The Better", "Let It Happen", "Feels Like We Only Go Backwards"]
+                    fav: ["<a href=https://youtu.be/z7q9W2PNhJ4>Elephant</a>", "<a href=https://youtu.be/2SUwOgmvzK4>The Less I Know The Better</a>", "<a href=https://youtu.be/odeHP8N4LKc>Let It Happen</a>", "<a href=https://youtu.be/TZ-W40TEXNc>Feels Like We Only Go Backwards</a>"]
                 },
                 {
                     title: "Jefferson Airplane",
                     type: "Psychedelic Rock",
                     description: "One of the first psych bands I listened to, they also happened to put out hit after hit during the Vietnam War, and as such is associated with it.",
-                    fav: ["Somebody to Love", "She Has Funny Cars", "Volunteers", "White Rabbit"]
+                    fav: ["<a href=https://youtu.be/SrGSt5eDt9o>Somebody to Love</a>", "<a href=https://youtu.be/7anpSApXtUo>She Has Funny Cars</a>", "<a href=https://youtu.be/p53KddneD-k>Volunteers</a>", "<a href=https://youtu.be/TKZVUtvjBdM>White Rabbit</a>"]
                 },
                 {
                     title: "Dead Ghosts",
                     type: "Lo-fi Psychedelic Punk",
                     description: "One of the newer bands I discovered, the moment I heard their music I was hooked. Very surf-like, psychedelic sound while lo-fi.",
-                    fav: ["You Got Away", "Drugstore Supplies", "Freak", "Roky Said", "I Want You Back", "Waste My Time"]
+                    fav: ["<a href=https://youtu.be/NBZOD1ALFuk>You Got Away</a>", "<a href=https://youtu.be/xWRxjztC4vs>Drugstore Supplies</a>", "<a href=https://youtu.be/9iC6xIBa7Q4>Freak</a>", "<a href=https://youtu.be/7zqlO0NjiAk>Roky Said</a>", "<a href=https://youtu.be/ETlij852t0I>I Want You Back</a>", "<a href=https://youtu.be/Ab3ExGzUunc>Waste My Time</a>"]
                 }
             ],
             punk: [
                 {
-                    title: "The Clash",
-                    type: "Punk Rock Legends",
-                    description: "Political punk with reggae and ska influences. A band that appeared near the beginning of the cold war.",
-                    fav: ["Rock the Casbah", "Should I Stay or Should I Go", "I Fought the Law"]
-                },
-                {
                     title: "Bass Drum of Death",
                     type: "Lo-fi Garage Punk",
                     description: "My most listened to band for 2 years running now.",
-                    fav: ["I Wanna Be Forgotten", "Get Found", "Nerve Jamming", "Too Cold to Hold", "Just Business", "Smell The Night", "Way Out", "Burns My Eye", "I'm On The Run",
-                    "No Soul", "Find It", "Swerving", "Head Change"
+                    fav: ["<a href=https://youtu.be/3oukrCiMNq8>I Wanna Be Forgotten</a>", "<a href=https://youtu.be/1-sT-fUnxiI>Get Found</a>", "<a href=https://youtu.be/qsQ1846zhbY>Nerve Jamming</a>", "<a href=https://youtu.be/UPt3CYGBIjc>Too Cold to Hold</a>", "<a href=https://youtu.be/Rdbt3y2Sg-U>Just Business</a>", "<a href=https://youtu.be/YUTx89ouZFA>Smell The Night</a>", "<a href=https://youtu.be/uHL0-QpAYi0>Way Out</a>", "<a href=https://youtu.be/_vjmJUm_74w>Burns My Eye</a>", "<a href=https://youtu.be/a3ZmcXGMwg8>I'm On The Run</a>",
+                    "<a href=https://youtu.be/268fNYC_Bzs>No Soul</a>", "<a href=https://youtu.be/OF5nt0kq1S4>Find It</a>", "<a href=https://youtu.be/JvyZs9lyf90>Swerving</a>", "<a href=https://youtu.be/pmhbF3EPLs0>Head Change</a>"
                     ]
                 },
                 {
                     title: "Death Lens",
                     type: "Surf Punk",
                     description: "Pretty underrated, heavy instrumentals with very fierce vocals. 'Moontower' was my most listened to song in 2024.",
-                    fav: ["Moontower", "Bombshell", "Dream State", "Knights of Erotica", "Witching Hour", "Warm Lies", "Lips"]
+                    fav: ["<a href=https://youtu.be/AtbYcnmcLJg>Moontower</a>", "<a href=https://youtu.be/vUwRnKgPR1Y>Bombshell</a>", "<a href=https://youtu.be/bJ-XD0Xzhgg>Dream State</a>", "<a href-https://youtu.be/uXCtYlYQr2k>Knights of Erotica</a>", "<a href=https://youtu.be/e5JrKvIwDwk>Witching Hour</a>", "<a href=https://youtu.be/pVUzWulBo98>Warm Lies</a>", "<a href=https://youtu.be/b8pOC1GSLaU>Lips</a>"]
+                },
+                {
+                    title: "White Reaper",
+                    type: "Garage Punk",
+                    description: "Another underrated band, they're what I imagine plays during house parties.",
+                    fav: ["<a href=https://youtu.be/IYu4USgcawU>Last 4th of July</a>", "<a href=https://youtu.be/uAnayCQzyyM>I Don't Think She Cares</a>", "<a href=https://youtu.be/WtNJCTZdtzM>Make Me Wanna Die</a>", "<a href=https://youtu.be/voWRVXIJrWw>Don't You Think I Know</a>", "<a href=https://youtu.be/YHJvQ0NGXlU>Party Next Door</a>", "<a href=https://youtu.be/ip6yEivcD5E>You Deserve Love</a>", "<a href=https://youtu.be/00MQxG9asPg>Fog Machine</a>", "<a href=https://youtu.be/VhU_e0RhN8U>Getting into Trouble w/ the Boss</a>", "<a href=https://youtu.be/6BVvEf85t6g>Crawlspace</a>"]
+                },
+                {
+                    title: "The Clash",
+                    type: "Punk Rock Legends",
+                    description: "Political punk with reggae and ska influences. A band that appeared near the beginning of the cold war.",
+                    fav: ["<a href=https://youtu.be/bJ9r8LMU9bQ>Rock the Casbah</a>", "<a href=https://youtu.be/BN1WwnEDWAM>Should I Stay or Should I Go</a>", "<a href=https://youtu.be/AL8chWFuM-s>I Fought the Law</a>"]
                 },
             ],
             jazz: [
                 {
-                    title: "Miles Davis",
-                    type: "Jazz Innovation",
-                    description: "Constant reinvention from bebop to fusion. His ability to evolve while maintaining artistic integrity makes him the ultimate musical chameleon."
+                    title: "Ella Mae Morse",
+                    type: "R&B Jazz",
+                    description: "Catchy tunes, with songs still featured today in games like Fallout.",
+                    fav: ["Pig Foot Pete", "Mr. Five by Five", "Cow-Cow Boogie"]
                 },
                 {
-                    title: "John Coltrane",
-                    type: "Spiritual Jazz",
-                    description: "Transcendent saxophone work that pushes the boundaries of harmony and spirituality. His later work reaches almost religious intensity."
+                    title: "Ella Fitzgerald",
+                    type: "Jazz",
+                    description: "One of the first and best jazz singers I've listened to - quite timeless.",
+                    fav: ["It Don't Mean a Thing", "When I Get Low I Get High", "Mack The Knife", "Baby It's Cold Outside"]
                 },
                 {
-                    title: "Herbie Hancock",
-                    type: "Jazz Fusion",
-                    description: "Master of both acoustic and electric jazz, seamlessly blending funk, rock, and electronic elements with sophisticated harmonic concepts."
+                    title: "Louis Jordan",
+                    type: "Swing Jazz",
+                    description: "Known for his trumpet mastery, probably the reason I will get a trumpet in the future.",
+                    fav: ["Is You or Is You Ain't My Baby", "Salt Pork, West Virginia", "Dirty Snake"]
                 },
                 {
-                    title: "Bebop Era",
-                    type: "Subgenre Deep Dive",
-                    description: "The intellectual revolution of jazz, featuring complex harmonies, fast tempos, and virtuosic improvisation that redefined musical possibilities."
-                },
-                {
-                    title: "Kamasi Washington",
-                    type: "Contemporary Jazz",
-                    description: "Modern jazz that incorporates hip-hop, R&B, and classical influences, proving that jazz continues to evolve and inspire new generations."
+                    title: "Cab Calloway",
+                    type: "Vaudeville Jazz",
+                    description: "When vaudeville started dying and jazz started to kick off, cab calloway was there. And his songs found their place amongst upcoming animations of the time, which is how I know of him.",
+                    fav: ["St James' Infirmary", "Minnie The Moocher"]
                 }
             ],
-            blues: [
+            rock: [
                 {
-                    title: "B.B. King",
-                    type: "Electric Blues Master",
-                    description: "The king of blues guitar with his expressive vibrato and emotional depth. Lucille was his voice, speaking truths that words couldn't express."
+                    title: "Radio Moscow",
+                    type: "Psychedelic Blues Rock",
+                    description: "Heavy blues rock songs that sound like they would be perfect for a fight scene.",
+                    fav: ["<a href=https://youtu.be/QkF3oxziUI4>Broke Down</a>", "<a href=https://youtu.be/1t4KLOm7pO0>So Alone</a>", "<a href=https://youtu.be/RlNhD0oS5bk>Frustrating Sound</a>", "<a href=https://youtu.be/DPyOhP1GTRQ>Brain Cycles</a>", "Brain Cycles", "No Jane", "Timebomb"]
                 },
                 {
-                    title: "Muddy Waters",
-                    type: "Chicago Blues",
-                    description: "Electrified Delta blues for the urban age. His powerful voice and innovative use of amplification laid the foundation for rock and roll."
+                    title: "Reignwolf",
+                    type: "Heavy Metal Pioneers",
+                    description: "Created the template for heavy metal with dark, heavy riffs and occult themes that influenced generations.",
+                    fav: ["<a href=https://youtu.be/K3b6SGoXdLM>Iron Man</a>", "<a href=https://youtu.be/0qanF-91aJo>Paranoid</a>", "<a href=https://youtu.be/CSb_hVX6R3g>War Pigs</a>", "<a href=https://youtu.be/8gEdY8esZfo>Sweet Leaf</a>"]
                 },
                 {
-                    title: "Stevie Ray Vaughan",
-                    type: "Blues Rock Revival",
-                    description: "Brought blues back to mainstream rock with incredible technical skill and passionate delivery. His guitar work was both powerful and deeply soulful."
+                    title: "Queen",
+                    type: "Arena Rock Royalty",
+                    description: "Masters of theatrical rock with incredible vocal harmonies and genre-blending compositions.",
+                    fav: ["<a href=https://youtu.be/fJ9rUzIMcZQ>Bohemian Rhapsody</a>", "<a href=https://youtu.be/04854XqcfCY>Don't Stop Me Now</a>", "<a href=https://youtu.be/HgzGwKwLmgM>Don't Stop Believin'</a>", "<a href=https://youtu.be/tbU3zdAgiX8>Killer Queen</a>"]
                 },
                 {
-                    title: "Delta Blues Roots",
-                    type: "Traditional Subgenre",
-                    description: "The raw, acoustic origins of blues featuring slide guitar, harmonica, and stories of struggle that laid the foundation for all modern music."
+                    title: "AC/DC",
+                    type: "Hard Rock Power",
+                    description: "Straightforward, powerful rock with driving rhythms and electrifying energy that never gets old.",
+                    fav: ["<a href=https://youtu.be/pAgnJDJN4VA>Back in Black</a>", "<a href=https://youtu.be/v2AC41dglnM>Thunderstruck</a>", "<a href=https://youtu.be/gEPmA3USJdI>Highway to Hell</a>", "<a href=https://youtu.be/ZnHmskwqCCQ>You Shook Me All Night Long</a>"]
                 },
                 {
-                    title: "Gary Clark Jr.",
-                    type: "Modern Blues",
-                    description: "Contemporary blues that incorporates rock, hip-hop, and R&B influences while maintaining the genre's emotional core and authenticity."
+                    title: "The Rolling Stones",
+                    type: "Rock and Roll Rebellion",
+                    description: "The bad boys of rock who brought raw energy and blues-based rock to the mainstream for decades.",
+                    fav: ["<a href=https://youtu.be/SGyOaCXr8Lw>Paint It Black</a>", "<a href=https://youtu.be/nrIPxlFzDi0>Satisfaction</a>", "<a href=https://youtu.be/ZRXGsPBUV5g>Start Me Up</a>", "<a href=https://youtu.be/RcZn2-bGXqQ>Gimme Shelter</a>"]
                 }
             ]
         };
@@ -772,6 +772,67 @@
                 }
             });
         });
+
+    const canvas = document.getElementById('embersCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Ember particle object
+    class Ember {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = height + Math.random() * 100;
+            this.radius = Math.random() * 2 + 1;
+            this.speedY = Math.random() * 0.5 + 0.5;
+            this.speedX = Math.random() * 0.4 - 0.2;
+            this.alpha = Math.random() * 0.6 + 0.2;
+            this.color = `rgba(${200 + Math.random()*55}, ${30 + Math.random()*50}, 0, ${this.alpha})`;
+        }
+
+        update() {
+            this.y -= this.speedY;
+            this.x += this.speedX;
+            if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+                this.reset();
+            }
+        }
+
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = this.color;
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Create embers
+    const embers = [];
+    const EMBER_COUNT = 150;
+    for (let i = 0; i < EMBER_COUNT; i++) {
+        embers.push(new Ember());
+    }
+
+    // Animate
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        embers.forEach(e => {
+            e.update();
+            e.draw(ctx);
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
     </script>
 </body>
 </html>
