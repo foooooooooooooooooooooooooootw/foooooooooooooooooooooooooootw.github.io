@@ -1378,18 +1378,85 @@
         padding: 0.8rem;
       }
     }
+    .modal-tabs {
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-buttons {
+      display: flex;
+      border-bottom: 2px solid #e5e5e5;
+      margin-bottom: 1rem;
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-button:hover {
+      color: #333;
+      background-color: #f8f8f8;
+    }
+
+    .tab-button.active {
+      color: #2c3e50;
+      border-bottom-color: #3498db;
+      background-color: #f8f9fa;
+    }
+
+    .tab-content {
+      min-height: 200px;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-description,
+    .modal-comments {
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .modal-comments {
+      font-style: italic;
+      color: #666;
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
-  <script>  // Jewelry item data
+  <script>
     const jewelryData = [
       {
         id: "lapis-ring",
         title: "Lapis Lazuli Ring",
-        description: `This enchanting Lapis Lazuli Ring captures the essence of the skies above and the mysteries of the past. A polished piece of lapis lazuli—deep blue and flecked with wisps of white like clouds drifting across a twilight sky—sits proudly atop an old-world, gold-colored band. Delicate blue enamel accents echo the stone’s celestial hues, giving the ring an almost otherworldly glow.
+        description: `This enchanting Lapis Lazuli Ring captures the essence of the skies above and the mysteries of the past. A polished piece of lapis lazuli - deep blue and flecked with wisps of white like clouds drifting across a twilight sky - sits proudly atop an old-world, gold-colored band. Delicate blue enamel accents echo the stone’s celestial hues, giving the ring an almost otherworldly glow.
         <br><br>
         Lapis Lazuli, known as lapis or “sky stone” in Latin, has long been associated with royalty, wisdom, and magic. This ring channels those ancient energies, its timeless setting evoking forgotten kingdoms and starlit rituals.
         <br><br>
         The band itself has its own story. Discovered in the vibrant chaos of Bangkok’s Chatuchak Market, it was missing its centerpiece. I brought it back to Singapore, where it was lovingly restored—now crowned with a stone worthy of its history.`,
+        artistComments:`One of my favourite pieces. The moment I laid eyes on that unset band in chatuchak, I already knew what I had to do. I\'d never seen what Lapis Lazuli looks like before, but I felt it would look perfect. 
+        <br><br> 
+        It turned out much better than I had hoped. The blue almost looks like it glows when light shines directly on it. The white streaks were like clouds against the sky. The only thing I was slightly disappointed by is that the pyrite flecks were not shiny, but I think it leans nicely into the rustic, antique look. 
+        <br><br>
+        This was the first stone I had to chisel into smaller pieces before I even attempted to shape it into a cabochon.
+        `,
         media: [
           {
             type: "image",
@@ -1415,6 +1482,13 @@
         Graceful, grounding, and subtly luminous—this striking ring features a polished purple fluorite gemstone, delicately cradled in a silver-toned adjustable band for a perfect, comfortable fit. The crystal catches the light beautifully, revealing flecks of inner fire that dance with each movement.
         <br><br>
         Purple fluorite is often associated with clarity, intuition, and calm—a stone favored by healers and creatives alike. Its soft violet hues are layered and ethereal, giving it a mystical quality that enhances both modern and boho styles.`,
+        artistComments:`
+        The second piece I ever made, when I had nothing but sandpaper. Fluorite is a stone I knew nothing about, but instantly fell in love with.
+        <br><br>
+        Unfortunately, I learnt the hard way why people don't typically use fluorite for jewellery. Beautiful, yes. Fragile - moreso. Incredibly soft stone. I looked at it wrong after I had set it and it cracked.
+        <br><br>
+        However, the crack did create beautiful reflections within the stone. Fluorite is normally clear and is prized for that - but this piece ended up with fire.
+        `,
         media: [
           {
             type: "image",
@@ -1444,6 +1518,11 @@
         description: `
         This rectangular sunstone ring captures the essence of sunlight. The polished stone rests beautifully within a silver band, creating a subtle contrast of color and light. Sunstone’s inner fire is revealed as the light dances across its surface and is known for its connection to joy and optimism. This ring invites a sense of grounded energy and radiant spirit. 
         `,
+        artistComments:`
+        This one was a bit of a challenge. The shine only appears at certain angles, and the uncut shape of the stone did not agree with me. I needed the base to be rectangular to fit in the ring but I wanted the shine to appear from the front as much as possible. For every bit of the stone I removed, I removed some of the reflective parts, so I decided on a triangular prism for the crown combined with a rectangular base.
+        <br><br>
+        I think this is the first ring I made that is distinctly masculine. 
+        `,
         media: [
           {
             type: "image",
@@ -1472,6 +1551,12 @@
         title: "Moonstone Ring",
         description: `
         This brass-toned ring cradles a luminous moonstone, known for its ethereal glow. Long revered as a stone of clairvoyance and clarity, moonstone is said to channel the moon, guiding the wearer through cycles of change. Set in the warmth of brass, it is a gentle reminder of inner light, no matter the phase.
+        `,
+        artistComments:`
+        Another ring that gave me a headache since the light effect only appears at certain angles and I have to cut for it. Although the result was pretty good or at least better than I expected. The only drawback is that there seems to be scratches on the surface no matter how much I polish,
+        which leads me to believe they are lamellar twinning planes that reach the surface. 
+        <br><br>
+        This can result in very interesting glowing weaves that show up while the rest of the stone remains "dark". The band was bought in a night market in malaysia, a place I like to frequent to find interesting band designs you don't normally see online.
         `,
         media: [
           {
@@ -1503,6 +1588,13 @@
         Rooted in nature’s beauty, this captivating ring showcases the ethereal beauty of moss agate, with a mesmerizing swirl of greens and milky clear spaces that evoke the feeling of a forest floor. The stone’s rich, layered hues – from deep emerald to pale jade – are beautifully framed by a substantial silver band. Stylized antelope figures, seemingly emerging from a landscape of leaves and blossoms, stand proudly amongst the design, their horns dramatically curled backwards in a gesture of strength and grace. <br><br>
         Moss Agate is considered to be a symbol of prosperity, new beginnings, healing and tranquility. 
         `,
+        artistComments:`
+        This pretty little thing took me over a month. A 7 on the mohs scale and it came to me as a fairly large, tumbled stone. I had to cut it down to a third of its size before I could even think about shaping it to fit into the band.
+        <br><br>
+        The silver band was also another one of those "precognition" events, where the moment I saw it I knew I had to slide in a moss agate, despite not really knowing what they look like outside descriptions of it.
+        <br><br>
+        Still, I'm really impressed with this one. If you look at the picture where it is set atop a mossy rock, it really does look like moss (save for the glossy finish).
+        `,
         media: [
           {
             type: "image",
@@ -1531,6 +1623,11 @@
         title: "Demantoid Ring",
         description: `
         This small demantoid ring evokes both nature’s grace and its enduring strength. The band, slender and organic, flows seamlessly into the fan-shaped leaves - symbols of resilience and ancient beauty. At the center rests a circular cabochon demantoid, its soft, rounded surface glowing with green fire. <br><br>Within the gem, fine thread-like inclusions mimic the delicate structure of branches - each one a tiny world, frozen in time. These natural features, known as "horsetail" inclusions, are not flaws but signatures of authenticity. The overall design hints at quiet luxury, its charm lying in subtlety rather than spectacle.<br><br>Spiritually, the demantoid is said to be associated with prosperity, protection and perhaps even adventure. Paired with the ginkgo, an ancient tree known for endurance, memory, and peace - this ring becomes more than adornment; it is a talisman of vitality and growth. A gentle reminder that strength can be soft, and that even the smallest things can carry great depth.
+        `,
+        artistComments:`
+        I bought this one from China. I knew nothing about demantoids so when it arrived it was basically dust in a bag (most demantoids are under 1 carat). After sifting through it, I found about 3-4 pieces that were big enough to grasp between 2 fingers.
+        <br><br>
+        After some polishing, I noticed they actually looked very nice. I would've faceted it if I had the equipment, since they are supposed to generate more fire than diamonds but then again the ones I have are really small. 
         `,
         media: [
           {
@@ -1561,6 +1658,9 @@
         description: `
         This captivating necklace showcases the mesmerizing beauty of charoite, with its rich purple colour and swirling patterns reminiscent of ink mixing around in a bottle. The stone boasts three to four distinct shades of purple, ranging from deep amethyst to lighter lavender hues, beautifully framed by a delicate silver-coloured setting shaped like a teardrop, and adorned with a profusion of surrounding flowers and three graceful leaves at the bottom. <br><br>
         Charoite, a rare mildy-radioactive gemstone found only in Siberia, is known for transformation and emotional reinforcement. Transformation is strangely apt, since the pendant was found discarded with its gemstone missing in Thailand.
+        `,
+        artistComments:`
+        
         `,
         media: [
           {
@@ -1594,6 +1694,23 @@
       
       let currentItemId = null;
       let currentMediaIndex = 0;
+
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetTab = this.getAttribute('data-tab');
+          
+          // Remove active class from all buttons and panes
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabPanes.forEach(pane => pane.classList.remove('active'));
+          
+          // Add active class to clicked button and corresponding pane
+          this.classList.add('active');
+          document.getElementById(`tab-${targetTab}`).classList.add('active');
+        });
+      });
       
       // Add click event to all "View Details" buttons
       const detailButtons = document.querySelectorAll('.collection-btn');
@@ -1647,6 +1764,16 @@
         dimensionsValue.textContent = item.dimensions;
         locationValue.textContent = item.location;
         location2Value.textContent = item.location2;
+
+        const modalComments = document.getElementById('modalComments');
+        modalComments.innerHTML = item.artistComments || 'No artist comments available for this piece.';
+
+        // Also make sure to reset tab state when opening modal:
+        // Reset tabs to default state
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        document.querySelector('.tab-button[data-tab="description"]').classList.add('active');
+        document.getElementById('tab-description').classList.add('active');
         
         // Create thumbnails
         galleryThumbs.innerHTML = '';
@@ -1942,8 +2069,23 @@
         </div>
         <div class="modal-info">
           <h2 class="modal-title" id="modalTitle">Product Title</h2>
-          <div class="modal-description" id="modalDescription">
-            <p>Description will go here...</p>
+          <div class="modal-tabs">
+            <div class="tab-buttons">
+              <button class="tab-button active" data-tab="description">Description</button>
+              <button class="tab-button" data-tab="comments">Artist Comments</button>
+            </div>
+            <div class="tab-content">
+              <div class="tab-pane active" id="tab-description">
+                <div class="modal-description" id="modalDescription">
+                  <p>Description will go here...</p>
+                </div>
+              </div>
+              <div class="tab-pane" id="tab-comments">
+                <div class="modal-comments" id="modalComments">
+                  <p>Artist comments will go here...</p>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="modal-details">
             <div class="detail-item">
