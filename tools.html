@@ -23,6 +23,19 @@
             height: 100vh;
         }
 
+        .drag-handle {
+        cursor: grab;
+        user-select: none;
+        display: inline-block;
+        padding: 4px 8px;
+        font-weight: bold;
+        color: #ccc;
+        }
+
+        .drag-handle:active {
+        cursor: grabbing;
+        }
+
         .toolbar {
             width: 60px;
             background: #1e1e1e;
@@ -130,6 +143,8 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
         .property-group {
@@ -224,86 +239,139 @@
             background: #0078d4;
         }
 
-        .layer-controls-row {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-
-        .layer-controls-row .btn {
-            flex: 1;
-            padding: 5px 8px;
-            font-size: 11px;
-        }
-
         .layer-item {
-            background: #333;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
             border-radius: 4px;
+            margin-bottom: 4px;
             padding: 8px;
-            margin-bottom: 5px;
-            border: 2px solid transparent;
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .layer-item:hover {
+            background: #e8e8e8;
+            border-color: #ccc;
         }
 
         .layer-item.active {
-            border-color: #0078d4;
-            background: #444;
+            background: #d4e6ff;
+            border-color: #007acc;
+        }
+
+        .layer-item[draggable="true"] {
+            cursor: grab;
+        }
+
+        .layer-item[draggable="true"]:active {
+            cursor: grabbing;
         }
 
         .layer-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 5px;
+            gap: 6px;
+            margin-bottom: 4px;
+            flex-wrap: nowrap;
         }
 
         .layer-controls button {
-            background: #2b2b2b;
-            border: none;
-            color: #fff;
             padding: 2px 6px;
-            border-radius: 3px;
             cursor: pointer;
+            border: 1px solid #ccc;
+            background: #fff;
+            border-radius: 3px;
             font-size: 12px;
+            min-width: 24px;
+            flex-shrink: 0;
         }
 
-        .layer-controls button:hover {
-            background: #555;
+        .layer-controls button:hover:not(:disabled) {
+            background: #f0f0f0;
         }
 
-        .layer-controls span {
+        .layer-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .layer-name-input {
             flex: 1;
-            font-size: 12px;
-            cursor: pointer;
-            padding: 2px 4px;
-        }
-
-        .layer-controls span:hover {
-            background: #555;
+            min-width: 0;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
             border-radius: 3px;
+            background: #fff;
+            color: #333;
+            font-size: 13px;
+            cursor: pointer;
         }
 
-        .layer-item input[type="range"] {
-            width: 100%;
-            height: 20px;
+        .layer-name-input:focus {
+            outline: none;
+            border-color: #007acc;
+            background: #fff;
+        }
+
+        .layer-buttons {
+            display: flex;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .drag-handle {
+            color: #999;
+            font-weight: bold;
+            cursor: grab !important;
+            flex-shrink: 0;
+            margin-right: 2px;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing !important;
         }
 
         .layer-opacity {
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 12px;
         }
 
         .layer-opacity input[type="range"] {
             flex: 1;
-            height: 20px;
+            min-width: 0;
         }
 
         .layer-opacity span {
-            font-size: 11px;
-            color: #ccc;
             min-width: 35px;
             text-align: right;
+            font-size: 11px;
+            color: #666;
+        }
+
+        #layerList {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        }
+
+        .layer-entry {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 5px;
+            }
+
+        .layer-entry input {
+        flex: 1;
+        }
+        .layer-entry button {
+            padding: 2px 6px;
+            cursor: pointer;
+            display: inline-block; /* Ensure they're not hidden */
+            min-width: 30px; /* Give them a minimum width */
         }
 
         .menubar {
@@ -351,6 +419,64 @@
             background: #0078d4;
             color: #fff;
             }
+
+        .modal {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999;
+            }
+
+        .modal-content {
+            background: #2b2b2b; padding: 20px; border-radius: 8px;
+            width: 300px; display: flex; flex-direction: column; gap: 10px;
+            }
+
+        .modal-buttons {
+            display: flex; justify-content: space-between;
+            }
+
+        .tool-properties {
+        display: none;         /* hide by default */
+        flex-direction: column;
+        width: 100%;
+        }
+        .tool-properties.active {
+          display: block;
+        }
+
+        #textEditor {
+        position: absolute;
+        display: none;
+        z-index: 999;
+        font: 32px Arial;
+        background: transparent;
+        color: white;
+        border: none;
+        outline: none;
+        resize: none;
+        overflow: hidden;
+        pointer-events: auto;
+        }
+
+        .slider-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+        }
     </style>
 </head>
 <div id="filterControls" style="
@@ -370,11 +496,12 @@
   <button class="btn" onclick="cancelFilterPreview()">Cancel</button>
 </div>
 <body>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Courier+Prime&family=Montserrat&display=swap" rel="stylesheet">
     <div class="menubar">
         <div class="menu-item">File
             <div class="dropdown">
             <div onclick="importImage()">Open</div>
-            <div onclick="exportImage()">Export</div>
+            <div onclick="openExportDialog()">Export ▸</div>
             <div onclick="clearCanvas()">New</div>
             </div>
         </div>
@@ -408,6 +535,7 @@
             <button class="tool-btn" id="eraserTool" title="Eraser">🧽</button>
             <button class="tool-btn" id="bgEraserTool" title="Background Eraser">🎯</button>
             <button class="tool-btn" id="moveTool" title="Move">↔️</button>
+            <button class="tool-btn" id="textTool" title="Text Tool">T</button>
             <div style="height: 10px;"></div>
             <button class="tool-btn" id="zoomInTool" title="Zoom In">🔍</button>
             <button class="tool-btn" id="zoomOutTool" title="Zoom Out">🔎</button>
@@ -432,71 +560,122 @@
         </div>
 
         <div class="properties-panel">
-            <div class="property-group">
-                <h3>Brush Settings</h3>
-                <div class="property-row">
-                    <label>Size:</label>
-                    <input type="range" id="brushSize" min="1" max="100" value="10">
-                    <span id="brushSizeValue">10</span>
-                </div>
-                <div class="property-row">
-                    <label>Opacity:</label>
-                    <input type="range" id="brushOpacity" min="0" max="100" value="100">
-                    <span id="brushOpacityValue">100%</span>
-                </div>
-                <div class="property-row">
-                    <label>Color:</label>
-                    <input type="color" id="brushColor" class="color-picker" value="#000000">
-                </div>
-                <div class="property-row">
-                    <label>Blend Mode:</label>
-                    <select id="blendMode">
-                        <option value="source-over">Normal</option>
-                        <option value="multiply">Multiply</option>
-                        <option value="screen">Screen</option>
-                        <option value="overlay">Overlay</option>
-                        <option value="darken">Darken</option>
-                        <option value="lighten">Lighten</option>
-                    </select>
+            <div class="tool-properties" data-tool="brush eraser">
+                <div class="property-group">
+                    <h3>Brush Settings</h3>
+                    <div class="property-row">
+                        <label>Size:</label>
+                        <div class="slider-container">
+                            <span id="brushSizeValue" class="slider-value">10</span>
+                            <input type="range" id="brushSize" min="1" max="100" value="10">
+                        </div>
+                    </div>
+                    <div class="property-row">
+                        <label>Opacity:</label>
+                        <div class="slider-container">
+                            <span id="brushOpacityValue" class="slider-value">100%</span>
+                            <input type="range" id="brushOpacity" min="0" max="100" value="100">
+                        </div>
+                    </div>
+                    <div class="property-row">
+                        <label>Color:</label>
+                        <input type="color" id="brushColor" class="color-picker" value="#000000">
+                    </div>
+                    <div class="property-row">
+                        <label>Blend Mode:</label>
+                        <select id="blendMode">
+                            <option value="source-over">Normal</option>
+                            <option value="multiply">Multiply</option>
+                            <option value="screen">Screen</option>
+                            <option value="overlay">Overlay</option>
+                            <option value="darken">Darken</option>
+                            <option value="lighten">Lighten</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div class="property-group">
-            <h3>Filter Settings</h3>
-            <div class="property-row">
-                <label>Strength:</label>
+        <div class="property-group">
+        <h3>Filter Settings</h3>
+        <div class="property-row">
+            <label>Strength:</label>
+            <div class="slider-container">
+                <span id="filterStrengthValue" class="slider-value">100%</span>
                 <input type="range" id="filterStrength" min="0" max="200" value="100">
-                <span id="filterStrengthValue">100%</span>
             </div>
+        </div>
+    </div>
+
+        <div class="tool-properties" data-tool="text">
+            <div class="property-group">
+                <h3>Text Settings</h3>
+                <select id="textFont">
+                <option value="Arial">Arial</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Courier Prime">Courier Prime</option>
+                <option value="Montserrat">Montserrat</option>
+                </select>
+                <input type="number" id="textSize" value="32" min="8">
+                <input type="color" id="textColor" value="#ffffff">
+            </div>
+        </div>
+
+    <div class="property-group">
+        <h3>Canvas</h3>
+        <div class="property-row">
+            <label>Width:</label>
+            <input type="number" id="canvasWidth" value="800" min="1" max="4000">
+        </div>
+        <div class="property-row">
+            <label>Height:</label>
+            <input type="number" id="canvasHeight" value="600" min="1" max="4000">
+        </div>
+        <div class="property-row">
+            <button class="btn" onclick="resizeCanvas()">Resize</button>
+        </div>
+    </div>
+
+    <div class="property-group">
+        <h3>Layers</h3>
+        <div class="layer-controls-row">
+            <button class="btn" onclick="createLayer('New Layer'); updateLayerUI();">New Layer</button>
+            <button class="btn" onclick="duplicateLayer(activeLayerIndex); updateLayerUI();">Duplicate</button>
+        </div>
+        <ul id="layerList" style="list-style: none; padding: 0;"></ul>
+    </div>
+
+        <div class="property-group">
+            <h3>History</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+    </div>
+
+    <div id="exportDialog" style="display: none;" class="modal">
+        <div class="modal-content">
+            <h3>Export Image</h3>
+
+            <label>File name:</label>
+            <input type="text" id="exportFileName" value="image">
+
+            <label>Format:</label>
+            <select id="exportFormat">
+            <option value="png">PNG</option>
+            <option value="jpeg">JPEG</option>
+            <option value="webp">WebP</option>
+            </select>
+
+            <div id="qualityGroup" style="display: none;">
+            <label>Quality:</label>
+            <input type="range" id="jpegQuality" min="0.1" max="1" step="0.1" value="0.92">
+            <span id="jpegQualityValue">92%</span>
             </div>
 
-            <div class="property-group">
-                <h3>Canvas</h3>
-                <div class="property-row">
-                    <label>Width:</label>
-                    <input type="number" id="canvasWidth" value="800" min="1" max="4000">
-                </div>
-                <div class="property-row">
-                    <label>Height:</label>
-                    <input type="number" id="canvasHeight" value="600" min="1" max="4000">
-                </div>
-                <div class="property-row">
-                    <button class="btn" onclick="resizeCanvas()">Resize</button>
-                </div>
-                <div class="property-group">
-                <div class="property-group">
-                <h3>Layers</h3>
-                <div class="layer-controls-row">
-                    <button class="btn" onclick="createLayer('New Layer'); updateLayerUI();">New Layer</button>
-                    <button class="btn" onclick="duplicateLayer(activeLayerIndex); updateLayerUI();">Duplicate</button>
-                </div>
-                <div id="layerList"></div>
-                </div>
-            </div>
-
-            <div class="property-group">
-                <h3>History</h3>
-                <div id="historyList"></div>
+            <div class="modal-buttons">
+            <button class="btn" onclick="confirmExport()">Export</button>
+            <button class="btn" onclick="closeExportDialog()">Cancel</button>
             </div>
         </div>
     </div>
@@ -789,7 +968,6 @@
         function updateLayerUI() {
             const layerList = document.getElementById('layerList');
             if (!layerList) {
-
                 setTimeout(updateLayerUI, 10);
                 return;
             }
@@ -800,21 +978,139 @@
                 const layer = layers[i];
                 const layerItem = document.createElement('div');
                 layerItem.className = `layer-item ${i === activeLayerIndex ? 'active' : ''}`;
+                layerItem.draggable = true;
+                layerItem.dataset.layerIndex = i;
+
+                // Add drag event listeners
+                layerItem.addEventListener('dragstart', handleDragStart);
+                layerItem.addEventListener('dragover', handleDragOver);
+                layerItem.addEventListener('drop', handleDrop);
+                layerItem.addEventListener('dragend', handleDragEnd);
 
                 layerItem.innerHTML = `
-                    <div class="layer-controls">
-                        <button onclick="toggleLayerVisibility(${i}); updateLayerUI();">${layer.visible ? '👁️' : '🚫'}</button>
-                        <span onclick="setActiveLayer(${i}); updateLayerUI();">${layer.name}</span>
-                        <button onclick="if(layers.length > 1) { deleteLayer(${i}); updateLayerUI(); }" ${layers.length <= 1 ? 'disabled' : ''}>🗑️</button>
+                    <div class="layer-name-row">
+                        <span class="drag-handle">⋮⋮</span>
+                        <input type="text" class="layer-name-input" value="${layer.name}" 
+                            onchange="renameLayer(${i}, this.value); updateLayerUI();"
+                            onclick="setActiveLayer(${i}); updateLayerUI();">
                     </div>
-                    <div class="layer-opacity">
-                        <input type="range" min="0" max="100" value="${Math.round(layer.opacity * 100)}" 
-                            onchange="setLayerOpacity(${i}, this.value); updateLayerUI();">
-                        <span>${Math.round(layer.opacity * 100)}%</span>
+                    <div class="layer-controls-row">
+                        <button onclick="toggleLayerVisibility(${i}); updateLayerUI();">${layer.visible ? '👁️' : '🚫'}</button>
+                        <button onclick="moveLayerUp(${i}); updateLayerUI();" ${i === layers.length - 1 ? 'disabled' : ''}>⬆️</button>
+                        <button onclick="moveLayerDown(${i}); updateLayerUI();" ${i === 0 ? 'disabled' : ''}>⬇️</button>
+                        <button onclick="if(layers.length > 1) { deleteLayer(${i}); updateLayerUI(); }" ${layers.length <= 1 ? 'disabled' : ''}>🗑️</button>
+                        <div class="layer-opacity">
+                            <input type="range" min="0" max="100" value="${Math.round(layer.opacity * 100)}" 
+                                onchange="setLayerOpacity(${i}, this.value); updateLayerUI();">
+                            <span>${Math.round(layer.opacity * 100)}%</span>
+                        </div>
                     </div>
                 `;
 
                 layerList.appendChild(layerItem);
+            }
+        }
+
+        // Drag and drop variables
+        let draggedElement = null;
+        let draggedIndex = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            draggedIndex = parseInt(e.target.dataset.layerIndex);
+            e.target.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            // Add visual feedback
+            const targetElement = e.target.closest('.layer-item');
+            if (targetElement && targetElement !== draggedElement) {
+                targetElement.style.borderTop = '2px solid #007acc';
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            const targetElement = e.target.closest('.layer-item');
+            if (targetElement && targetElement !== draggedElement) {
+                const targetIndex = parseInt(targetElement.dataset.layerIndex);
+                
+                // Reorder the layers array
+                const draggedLayer = layers[draggedIndex];
+                layers.splice(draggedIndex, 1);
+                layers.splice(targetIndex, 0, draggedLayer);
+                
+                // Update active layer index if needed
+                if (activeLayerIndex === draggedIndex) {
+                    activeLayerIndex = targetIndex;
+                } else if (activeLayerIndex > draggedIndex && activeLayerIndex <= targetIndex) {
+                    activeLayerIndex--;
+                } else if (activeLayerIndex < draggedIndex && activeLayerIndex >= targetIndex) {
+                    activeLayerIndex++;
+                }
+                
+                // Refresh the UI
+                updateLayerUI();
+                renderLayers(); // Call your render function
+            }
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '';
+            
+            // Remove all visual feedback
+            document.querySelectorAll('.layer-item').forEach(item => {
+                item.style.borderTop = '';
+            });
+            
+            draggedElement = null;
+            draggedIndex = null;
+        }
+
+        // Button-based reorder functions
+        function moveLayerUp(index) {
+            if (index < layers.length - 1) {
+                const temp = layers[index];
+                layers[index] = layers[index + 1];
+                layers[index + 1] = temp;
+                
+                // Update active layer index
+                if (activeLayerIndex === index) {
+                    activeLayerIndex = index + 1;
+                } else if (activeLayerIndex === index + 1) {
+                    activeLayerIndex = index;
+                }
+                
+                renderLayers();
+            }
+        }
+
+        function moveLayerDown(index) {
+            if (index > 0) {
+                const temp = layers[index];
+                layers[index] = layers[index - 1];
+                layers[index - 1] = temp;
+                
+                // Update active layer index
+                if (activeLayerIndex === index) {
+                    activeLayerIndex = index - 1;
+                } else if (activeLayerIndex === index - 1) {
+                    activeLayerIndex = index;
+                }
+                
+                renderLayers();
+            }
+        }
+
+        // Layer rename function
+        function renameLayer(index, newName) {
+            if (layers[index]) {
+                layers[index].name = newName || `Layer ${index + 1}`;
             }
         }
 
@@ -928,10 +1224,25 @@
                     currentTool = 'bucket';
                     canvas.style.cursor = 'cell';
                     break;
+                case 'textTool':
+                    currentTool = 'text';
+                    canvas.style.cursor = 'text';
+                    break;
             }
+            const toolName = toolId.replace('Tool', '');
+            document.querySelectorAll('.tool-properties').forEach(group => {
+            const tools = group.dataset.tool.split(' ');
+            group.style.display = tools.includes(toolName) ? 'block' : 'none';
+            if (group.dataset.tool === toolName) {
+                group.classList.add('active');
+                } else {
+                group.classList.remove('active');
+                }
+            });
         }
 
         function startDrawing(e) {
+            const scale = 1;
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left) / zoom;
             const y = (e.clientY - rect.top) / zoom;
@@ -962,6 +1273,34 @@
                 lastY = e.clientY;
                 return;
             }
+
+            if (currentTool === 'text') {
+                const textEditor = document.getElementById('textEditor');
+                if (!textEditor) return;
+
+                textEditor.style.left = `${e.clientX}px`;
+                textEditor.style.top = `${e.clientY}px`;
+                textEditor.style.font = '32px Arial'; // you can make this dynamic
+                textEditor.style.display = 'block';
+                textEditor.value = '';
+                textEditor.focus();
+
+                textEditor.addEventListener('blur', function apply() {
+                    const ctx = getActiveLayerContext().ctx;
+                    ctx.font = '32px Arial';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillText(textEditor.value, e.clientX, e.clientY);
+                    renderLayers();
+                    saveState();
+
+                    textEditor.style.display = 'none';
+                    textEditor.removeEventListener('blur', apply);
+                    console.log('Text editor visible at:', textEditor.style.left, textEditor.style.top);
+
+                });
+                return;
+                }
+
 
             if (currentTool === 'bucket') {
                 const activeLayer = getActiveLayerContext();
@@ -2044,7 +2383,70 @@
         }
     }
 
-        init();
+    function openExportDialog() {
+        document.getElementById('exportDialog').style.display = 'flex';
+        }
+
+    function closeExportDialog() {
+        document.getElementById('exportDialog').style.display = 'none';
+        }
+
+    function confirmExport() {
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = canvas.width;
+        exportCanvas.height = canvas.height;
+        const exportCtx = exportCanvas.getContext('2d');
+
+        layers.forEach(layer => {
+            if (layer.visible) {
+                exportCtx.save();
+                exportCtx.globalAlpha = layer.opacity;
+                exportCtx.drawImage(layer.canvas, layer.x, layer.y);
+                exportCtx.restore();
+            }
+        });
+
+        const format = document.getElementById('exportFormat').value;
+        const filename = document.getElementById('exportFileName').value || 'artwork';
+        const quality = parseFloat(document.getElementById('jpegQuality')?.value) || 0.92;
+
+        const mimeType = {
+            png: 'image/png',
+            jpeg: 'image/jpeg',
+            webp: 'image/webp'
+        }[format] || 'image/png';
+
+        const link = document.createElement('a');
+        link.download = `${filename}.${format === 'jpeg' ? 'jpg' : format}`;
+        link.href = exportCanvas.toDataURL(mimeType, format === 'png' ? undefined : quality);
+        link.click();
+
+        closeExportDialog();
+    }
+
+    document.getElementById('exportFormat').addEventListener('change', () => {
+    const format = document.getElementById('exportFormat').value;
+    document.getElementById('qualityGroup').style.display =
+        (format === 'jpeg' || format === 'webp') ? 'block' : 'none';
+    });
+
+
+    init();
     </script>
+<textarea id="textEditor" style="
+  position: absolute;
+  z-index: 999;
+  font: 32px Arial;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed #aaa;
+  outline: none;
+  resize: none;
+  display: none;
+  padding: 4px;
+  min-width: 200px;
+  min-height: 32px;
+"></textarea>
+
 </body>
 </html>
