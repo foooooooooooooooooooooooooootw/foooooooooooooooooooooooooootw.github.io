@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browser Photoshop</title>
+    <title>Tools</title>
     <style>
         * {
             margin: 0;
@@ -305,12 +305,106 @@
             min-width: 35px;
             text-align: right;
         }
+
+        .menubar {
+            height: 32px;
+            background: #1d1d1d;
+            color: #ccc;
+            display: flex;
+            padding: 0 10px;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid #444;
+            font-size: 13px;
+            }
+
+        .menu-item {
+            position: relative;
+            cursor: default;
+            padding: 5px 10px;
+            }
+
+        .menu-item:hover .dropdown {
+            display: block;
+            }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #2b2b2b;
+            display: none;
+            flex-direction: column;
+            border: 1px solid #444;
+            min-width: 120px;
+            z-index: 10;
+            }
+
+        .dropdown div {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            border-bottom: 1px solid #3a3a3a;
+            }
+
+        .dropdown div:hover {
+            background: #0078d4;
+            color: #fff;
+            }
     </style>
 </head>
+<div id="filterControls" style="
+  display: none;
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  gap: 10px;
+  z-index: 1000;
+">
+  <button class="btn" onclick="commitFilter()">Apply</button>
+  <button class="btn" onclick="cancelFilterPreview()">Cancel</button>
+</div>
 <body>
+    <div class="menubar">
+        <div class="menu-item">File
+            <div class="dropdown">
+            <div onclick="importImage()">Open</div>
+            <div onclick="exportImage()">Export</div>
+            <div onclick="clearCanvas()">New</div>
+            </div>
+        </div>
+        <div class="menu-item">Edit
+            <div class="dropdown">
+            <div onclick="undo()">Undo</div>
+            <div onclick="redo()">Redo</div>
+            </div>
+        </div>
+
+        <div class="menu-item">Filter
+            <div class="dropdown">
+                <div onclick="startFilterPreview('brightness')">Brightness</div>
+                <div onclick="startFilterPreview('contrast')">Contrast</div>
+                <div onclick="startFilterPreview('blur')">Blur</div>
+                <div onclick="startFilterPreview('sharpen')">Sharpen</div>
+                <div onclick="startFilterPreview('gaussian')">Gaussian Blur</div>
+                <div onclick="startFilterPreview('emboss')">Emboss</div>
+                <div onclick="startFilterPreview('edge')">Edge Detect</div>
+                <div onclick="startFilterPreview('posterize')">Posterize</div>
+                <div onclick="startFilterPreview('grayscale')">Grayscale</div>
+                <div onclick="startFilterPreview('sepia')">Sepia</div>
+                <div onclick="startFilterPreview('invert')">Invert</div>
+            </div>
+        </div>
+    </div>
     <div class="app-container">
         <div class="toolbar">
             <button class="tool-btn active" id="brushTool" title="Brush">🖌️</button>
+            <button class="tool-btn" id="bucketTool" title="Paint Bucket">🌊</button>
             <button class="tool-btn" id="eraserTool" title="Eraser">🧽</button>
             <button class="tool-btn" id="bgEraserTool" title="Background Eraser">🎯</button>
             <button class="tool-btn" id="moveTool" title="Move">↔️</button>
@@ -320,21 +414,14 @@
         </div>
 
         <div class="main-area">
-            <div class="top-bar">
-                <button class="btn" onclick="importImage()">Import</button>
-                <button class="btn" onclick="exportImage()">Export</button>
-                <button class="btn" onclick="undo()">Undo</button>
-                <button class="btn" onclick="redo()">Redo</button>
-                <button class="btn" onclick="clearCanvas()">Clear</button>
-                
-                <div class="zoom-controls">
-                    <button class="btn" onclick="zoomIn()">+</button>
-                    <span class="zoom-level" id="zoomLevel">100%</span>
-                    <button class="btn" onclick="zoomOut()">-</button>
-                </div>
-            </div>
-
             <div class="canvas-container" id="canvasContainer">
+                <canvas id="previewCanvas" style="
+                    position: absolute;
+                    top: 0; left: 0;
+                    z-index: 500;
+                    display: none;
+                    pointer-events: none;
+                "></canvas>
                 <div class="canvas-wrapper" id="canvasWrapper">
                     <canvas id="canvas" width="800" height="600"></canvas>
                 </div>
@@ -375,6 +462,15 @@
             </div>
 
             <div class="property-group">
+            <h3>Filter Settings</h3>
+            <div class="property-row">
+                <label>Strength:</label>
+                <input type="range" id="filterStrength" min="0" max="200" value="100">
+                <span id="filterStrengthValue">100%</span>
+            </div>
+            </div>
+
+            <div class="property-group">
                 <h3>Canvas</h3>
                 <div class="property-row">
                     <label>Width:</label>
@@ -408,7 +504,7 @@
     <input type="file" id="fileInput" accept="image/*" multiple>
 
     <script>
-        // Global variables
+
         let canvas, ctx;
         let currentTool = 'brush';
         let isDrawing = false;
@@ -416,29 +512,28 @@
         let zoom = 1;
         let panX = 0, panY = 0;
         let isPanning = false;
-        //undo-redo
         let history = [];
         let historyStep = -1;
         let backgroundImage = null;
-        //layers
         let layers = [];
         let activeLayerIndex = 0;
         let layerIdCounter = 0;
-        //bounding box 
         let transformMode = false;
         let selectedLayer = null;
         let transformHandles = [];
         let dragHandle = null;
         let originalTransform = null;
 
-        // Initialize the application
         function init() {
             canvas = document.getElementById('canvas');
             ctx = canvas.getContext('2d');
-            
-            // Create initial background layer
+
+            const previewCanvas = document.getElementById('previewCanvas');
+            previewCanvas.width = canvas.width;
+            previewCanvas.height = canvas.height;
+
             createLayer('Background', canvas.width, canvas.height);
-            
+
             setupEventListeners();
             saveState();
             updateUI();
@@ -446,13 +541,11 @@
         }
 
         function setupEventListeners() {
-            // Canvas events
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', stopDrawing);
             canvas.addEventListener('mouseout', stopDrawing);
-            
-            // Tool buttons
+
             document.querySelectorAll('.tool-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if (e.target.id === 'zoomInTool') {
@@ -465,37 +558,33 @@
                 });
             });
 
-            // Property controls
             document.getElementById('brushSize').addEventListener('input', updateBrushSize);
             document.getElementById('brushOpacity').addEventListener('input', updateBrushOpacity);
             document.getElementById('brushColor').addEventListener('change', updateBrushColor);
             document.getElementById('blendMode').addEventListener('change', updateBlendMode);
 
-            // File input
             document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 
-            // Drag and drop
             const container = document.getElementById('canvasContainer');
             const overlay = document.getElementById('dragOverlay');
-            
+
             container.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 overlay.style.display = 'flex';
             });
-            
+
             container.addEventListener('dragleave', (e) => {
                 if (!container.contains(e.relatedTarget)) {
                     overlay.style.display = 'none';
                 }
             });
-            
+
             container.addEventListener('drop', (e) => {
                 e.preventDefault();
                 overlay.style.display = 'none';
                 handleDroppedFiles(e.dataTransfer.files);
             });
 
-            // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey || e.metaKey) {
                     switch(e.key) {
@@ -529,8 +618,7 @@
                         exitTransformMode();
                     }
                 }
-                
-                // Tool shortcuts
+
                 switch(e.key) {
                     case 'b': selectTool('brushTool'); break;
                     case 'e': selectTool('eraserTool'); break;
@@ -541,12 +629,11 @@
             });
         }
 
-        //<---Layers--->
         function createLayer(name, width = canvas.width, height = canvas.height) {
             const layerCanvas = document.createElement('canvas');
             layerCanvas.width = width;
             layerCanvas.height = height;
-            
+
             const layer = {
                 id: layerIdCounter++,
                 name: name,
@@ -558,17 +645,17 @@
                 y: 0,
                 selected: false
             };
-            
+
             layers.push(layer);
             activeLayerIndex = layers.length - 1;
             renderLayers();
-            updateLayerUI(); // Add this line to immediately update the UI
+            updateLayerUI(); 
             return layer;
         }
 
         function deleteLayer(index) {
-            if (layers.length <= 1) return; // Keep at least one layer
-            
+            if (layers.length <= 1) return; 
+
             layers.splice(index, 1);
             if (activeLayerIndex >= layers.length) {
                 activeLayerIndex = layers.length - 1;
@@ -582,13 +669,12 @@
         function duplicateLayer(index) {
             const originalLayer = layers[index];
             const newLayer = createLayer(originalLayer.name + ' Copy');
-            
-            // Copy the canvas content
+
             newLayer.ctx.drawImage(originalLayer.canvas, 0, 0);
             newLayer.x = originalLayer.x;
             newLayer.y = originalLayer.y;
             newLayer.opacity = originalLayer.opacity;
-            
+
             renderLayers();
             updateLayerUI(); 
         }
@@ -632,7 +718,7 @@
 
         function renderLayers() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             layers.forEach(layer => {
                 if (layer.visible) {
                     ctx.save();
@@ -641,8 +727,7 @@
                     ctx.restore();
                 }
             });
-            
-            // Draw transform handles on top
+
             if (transformMode) {
                 drawTransformHandles();
             }
@@ -652,7 +737,7 @@
             const layerCanvas = document.createElement('canvas');
             layerCanvas.width = canvas.width;
             layerCanvas.height = canvas.height;
-            
+
             const layer = {
                 id: layerIdCounter++,
                 name: name,
@@ -663,7 +748,7 @@
                 x: 0,
                 y: 0,
                 selected: false,
-                // Transform properties
+
                 isImageLayer: true,
                 originalImage: image,
                 transform: {
@@ -676,26 +761,23 @@
                     scaleY: scale
                 }
             };
-            
+
             layers.push(layer);
             activeLayerIndex = layers.length - 1;
-            
-            // Draw the image with the initial transform
+
             redrawImageLayer(layer);
-            
+
             return layer;
         }
 
         function redrawImageLayer(layer) {
             if (!layer.isImageLayer || !layer.originalImage) return;
-            
+
             const ctx = layer.ctx;
             const t = layer.transform;
-            
-            // Clear the layer
+
             ctx.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
-            
-            // Apply transform and draw image
+
             ctx.save();
             ctx.translate(t.x + t.width/2, t.y + t.height/2);
             ctx.rotate(t.rotation);
@@ -707,19 +789,18 @@
         function updateLayerUI() {
             const layerList = document.getElementById('layerList');
             if (!layerList) {
-                // If the layer list doesn't exist yet, try again after a short delay
+
                 setTimeout(updateLayerUI, 10);
                 return;
             }
-            
+
             layerList.innerHTML = '';
-            
-            // Render layers in reverse order (top to bottom)
+
             for (let i = layers.length - 1; i >= 0; i--) {
                 const layer = layers[i];
                 const layerItem = document.createElement('div');
                 layerItem.className = `layer-item ${i === activeLayerIndex ? 'active' : ''}`;
-                
+
                 layerItem.innerHTML = `
                     <div class="layer-controls">
                         <button onclick="toggleLayerVisibility(${i}); updateLayerUI();">${layer.visible ? '👁️' : '🚫'}</button>
@@ -732,7 +813,7 @@
                         <span>${Math.round(layer.opacity * 100)}%</span>
                     </div>
                 `;
-                
+
                 layerList.appendChild(layerItem);
             }
         }
@@ -743,22 +824,22 @@
 
         function toggleTransformMode() {
             if (transformMode) {
-                // If already in transform mode, exit it
+
                 exitTransformMode();
             } else {
-                // Try to enter transform mode with the active layer
+
                 const activeLayer = layers[activeLayerIndex];
                 if (activeLayer && activeLayer.isImageLayer) {
                     enterTransformMode(activeLayer);
                 } else {
-                    // If active layer is not an image layer, find the first image layer
+
                     const imageLayer = layers.find(layer => layer.isImageLayer && layer.visible);
                     if (imageLayer) {
                         const layerIndex = layers.indexOf(imageLayer);
                         setActiveLayer(layerIndex);
                         enterTransformMode(imageLayer);
                     } else {
-                        // No image layers available - could show a message or do nothing
+
                         console.log('No image layers available for transform mode');
                     }
                 }
@@ -767,19 +848,16 @@
 
         function enterTransformMode(layer) {
             if (!layer.isImageLayer) return;
-            
+
             transformMode = true;
             selectedLayer = layer;
             canvas.style.cursor = 'default';
-            
-            // Create transform handles
+
             createTransformHandles(layer);
-            
-            // Switch to move tool for transform
+
             selectTool('moveTool');
         }
 
-        // Exit transform mode
         function exitTransformMode() {
             if (transformMode) {
                 transformMode = false;
@@ -788,36 +866,34 @@
                 dragHandle = null;
                 originalTransform = null;
                 renderLayers();
-                // Save state when exiting transform mode
+
                 saveState();
             }
         }
 
-        // Create transform handles around the image
         function createTransformHandles(layer) {
             const t = layer.transform;
-            const handleSize = 8 / zoom; // Adjust handle size based on zoom
-            
+            const handleSize = 8 / zoom; 
+
             transformHandles = [
-                // Corner handles
+
                 { type: 'corner', position: 'tl', x: t.x, y: t.y },
                 { type: 'corner', position: 'tr', x: t.x + t.width, y: t.y },
                 { type: 'corner', position: 'bl', x: t.x, y: t.y + t.height },
                 { type: 'corner', position: 'br', x: t.x + t.width, y: t.y + t.height },
-                // Edge handles
+
                 { type: 'edge', position: 't', x: t.x + t.width/2, y: t.y },
                 { type: 'edge', position: 'b', x: t.x + t.width/2, y: t.y + t.height },
                 { type: 'edge', position: 'l', x: t.x, y: t.y + t.height/2 },
                 { type: 'edge', position: 'r', x: t.x + t.width, y: t.y + t.height/2 },
-                // Center handle for moving
+
                 { type: 'move', position: 'center', x: t.x + t.width/2, y: t.y + t.height/2 }
             ];
         }
 
-        // Check if mouse is over a transform handle
         function getHandleAtPosition(x, y) {
             const handleSize = 8 / zoom;
-            
+
             for (let handle of transformHandles) {
                 if (x >= handle.x - handleSize && x <= handle.x + handleSize &&
                     y >= handle.y - handleSize && y <= handle.y + handleSize) {
@@ -827,11 +903,10 @@
             return null;
         }
 
-
         function selectTool(toolId) {
             document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(toolId).classList.add('active');
-            
+
             switch(toolId) {
                 case 'brushTool':
                     currentTool = 'brush';
@@ -849,6 +924,10 @@
                     currentTool = 'move';
                     canvas.style.cursor = 'move';
                     break;
+                case 'bucketTool':
+                    currentTool = 'bucket';
+                    canvas.style.cursor = 'cell';
+                    break;
             }
         }
 
@@ -856,8 +935,7 @@
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left) / zoom;
             const y = (e.clientY - rect.top) / zoom;
-            
-            // Handle transform mode
+
             if (transformMode && selectedLayer) {
                 const handle = getHandleAtPosition(x, y);
                 if (handle) {
@@ -865,47 +943,60 @@
                     originalTransform = { ...selectedLayer.transform };
                     return;
                 } else {
-                    // Click outside handles - exit transform mode
+
                     exitTransformMode();
                 }
             }
-            
+
             if (currentTool === 'move') {
-                // Check if clicking on an image layer
+
                 const clickedLayer = getLayerAtPosition(x, y);
                 if (clickedLayer && clickedLayer.isImageLayer) {
                     enterTransformMode(clickedLayer);
                     setActiveLayer(layers.indexOf(clickedLayer));
                     return;
                 }
-                
+
                 isPanning = true;
                 lastX = e.clientX;
                 lastY = e.clientY;
                 return;
             }
-            
+
+            if (currentTool === 'bucket') {
+                const activeLayer = getActiveLayerContext();
+                const fillColor = hexToRgb(document.getElementById('brushColor').value);
+                floodFill(activeLayer.ctx, Math.floor(x), Math.floor(y), fillColor);
+                return;
+            }
+
+            if (currentTool === 'bgEraser') {
+                const activeLayer = getActiveLayerContext();
+                eraseBackgroundFloodFill(activeLayer.ctx, Math.floor(x), Math.floor(y));
+                return;
+            }
+
             isDrawing = true;
-            
+
             const activeLayer = getActiveLayerContext();
             const layerCtx = activeLayer.ctx;
-            
+
             const layerX = x - activeLayer.x;
             const layerY = y - activeLayer.y;
-            
+
             lastX = x;
             lastY = y;
-            
+
             layerCtx.beginPath();
             layerCtx.moveTo(layerX, layerY);
         }
 
         function getLayerAtPosition(x, y) {
-            // Check layers from top to bottom
+
             for (let i = layers.length - 1; i >= 0; i--) {
                 const layer = layers[i];
                 if (!layer.visible || !layer.isImageLayer) continue;
-                
+
                 const t = layer.transform;
                 if (x >= t.x && x <= t.x + t.width && y >= t.y && y <= t.y + t.height) {
                     return layer;
@@ -914,26 +1005,39 @@
             return null;
         }
 
-        // Update eraseBackground function to work with layer context
-        function eraseBackground(imageData, targetColor, centerX, centerY, brushSize, layerCtx) {
-            const tolerance = 50;
+        function eraseBackgroundFloodFill(layerCtx, startX, startY, tolerance = 50) {
+            const imageData = layerCtx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imageData.data;
-            const canvas = layerCtx.canvas;
-            
-            for (let x = Math.max(0, centerX - brushSize); x < Math.min(canvas.width, centerX + brushSize); x++) {
-                for (let y = Math.max(0, centerY - brushSize); y < Math.min(canvas.height, centerY + brushSize); y++) {
-                    const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
-                    if (distance <= brushSize) {
-                        const pixelColor = getPixelColor(imageData, x, y);
-                        if (colorDistance(pixelColor, targetColor) < tolerance) {
-                            const index = (y * imageData.width + x) * 4;
-                            data[index + 3] = 0;
-                        }
-                    }
+            const width = imageData.width;
+            const height = imageData.height;
+
+            const startIdx = (startY * width + startX) * 4;
+            const target = data.slice(startIdx, startIdx + 3);
+
+            const visited = new Set();
+            const queue = [[startX, startY]];
+
+            while (queue.length > 0) {
+                const [x, y] = queue.shift();
+                const i = (y * width + x) * 4;
+                const key = y * width + x;
+                if (visited.has(key)) continue;
+                visited.add(key);
+
+                const color = [data[i], data[i + 1], data[i + 2]];
+                if (colorDistance({r: color[0], g: color[1], b: color[2]}, {r: target[0], g: target[1], b: target[2]}) < tolerance) {
+                    data[i + 3] = 0; 
+
+                    if (x > 0) queue.push([x - 1, y]);
+                    if (x < width - 1) queue.push([x + 1, y]);
+                    if (y > 0) queue.push([x, y - 1]);
+                    if (y < height - 1) queue.push([x, y + 1]);
                 }
             }
-            
+
             layerCtx.putImageData(imageData, 0, 0);
+            renderLayers();
+            saveState();
         }
 
         function draw(e) {
@@ -941,13 +1045,11 @@
             let x = (e.clientX - rect.left) / zoom;
             let y = (e.clientY - rect.top) / zoom;
 
-             // Handle transform dragging
             if (transformMode && dragHandle && selectedLayer) {
                 handleTransformDrag(x, y);
                 return;
             }
-            
-            // Handle cursor changes for transform handles
+
             if (transformMode && selectedLayer) {
                 const handle = getHandleAtPosition(x, y);
                 if (handle) {
@@ -957,11 +1059,11 @@
                 }
                 return;
             }
-            
+
             if (isPanning) {
                 const deltaX = e.clientX - lastX;
                 const deltaY = e.clientY - lastY;
-                
+
                 if (currentTool === 'move') {
                     const activeLayer = layers[activeLayerIndex];
                     activeLayer.x += deltaX / zoom;
@@ -972,60 +1074,62 @@
                     panY += deltaY;
                     updateCanvasTransform();
                 }
-                
+
                 lastX = e.clientX;
                 lastY = e.clientY;
                 return;
             }
-            
+
             if (!isDrawing) return;
-            
+
             const activeLayer = getActiveLayerContext();
             const layerCtx = activeLayer.ctx;
-            
-            // Adjust coordinates for layer position
+
+            if (currentTool === 'bucket' || currentTool === 'bgEraser') {
+
+                if (currentTool === 'bucket') {
+                    const fillColor = hexToRgb(document.getElementById('brushColor').value);
+                    floodFill(layerCtx, Math.floor(x), Math.floor(y), fillColor);
+                } else if (currentTool === 'bgEraser') {
+                    eraseBackgroundFloodFill(layerCtx, Math.floor(x), Math.floor(y));
+                }
+                isDrawing = false; 
+                return;
+            }
+
             x -= activeLayer.x;
             y -= activeLayer.y;
-            
+
             const brushSize = parseInt(document.getElementById('brushSize').value);
             const opacity = parseInt(document.getElementById('brushOpacity').value) / 100;
             const color = document.getElementById('brushColor').value;
             const blendMode = document.getElementById('blendMode').value;
-            
+
             layerCtx.globalAlpha = opacity;
             layerCtx.globalCompositeOperation = blendMode;
             layerCtx.lineWidth = brushSize;
             layerCtx.lineCap = 'round';
             layerCtx.lineJoin = 'round';
-            
+
             switch(currentTool) {
                 case 'brush':
                     layerCtx.strokeStyle = color;
                     layerCtx.lineTo(x, y);
                     layerCtx.stroke();
                     break;
-                    
+
                 case 'eraser':
                     layerCtx.globalCompositeOperation = 'destination-out';
                     layerCtx.lineTo(x, y);
                     layerCtx.stroke();
                     break;
-                    
-                case 'bgEraser':
-                    if (lastX === x + activeLayer.x && lastY === y + activeLayer.y) {
-                        const imageData = layerCtx.getImageData(0, 0, activeLayer.canvas.width, activeLayer.canvas.height);
-                        const pixelData = getPixelColor(imageData, Math.floor(x), Math.floor(y));
-                        eraseBackground(imageData, pixelData, x, y, brushSize, layerCtx);
-                    }
-                    break;
             }
-            
+
             layerCtx.beginPath();
             layerCtx.moveTo(x, y);
-            
-            // Re-render all layers
+
             renderLayers();
-            
+
             lastX = x + activeLayer.x;
             lastY = y + activeLayer.y;
         }
@@ -1034,27 +1138,26 @@
             if (isDrawing || isPanning) {
                 isDrawing = false;
                 isPanning = false;
-                
+
                 if (currentTool !== 'move') {
                     saveState();
                 }
             }
-            
+
             if (dragHandle) {
                 dragHandle = null;
                 originalTransform = null;
-                // Save state after transform operation
+
                 saveState();
             }
         }
 
-
         function handleTransformDrag(x, y) {
             if (!dragHandle || !selectedLayer || !originalTransform) return;
-            
+
             const t = selectedLayer.transform;
             const orig = originalTransform;
-            
+
             switch (dragHandle.type) {
                 case 'move':
                     const deltaX = x - (orig.x + orig.width/2);
@@ -1062,30 +1165,28 @@
                     t.x = orig.x + deltaX;
                     t.y = orig.y + deltaY;
                     break;
-                    
+
                 case 'corner':
                     handleCornerDrag(x, y, dragHandle.position);
                     break;
-                    
+
                 case 'edge':
                     handleEdgeDrag(x, y, dragHandle.position);
                     break;
             }
-            
-            // Redraw the image layer and update handles
+
             redrawImageLayer(selectedLayer);
             createTransformHandles(selectedLayer);
             renderLayers();
             drawTransformHandles();
         }
 
-        // Handle corner dragging (proportional scaling)
         function handleCornerDrag(x, y, corner) {
             const t = selectedLayer.transform;
             const orig = originalTransform;
-            
+
             let newWidth, newHeight;
-            
+
             switch (corner) {
                 case 'tl':
                     newWidth = orig.x + orig.width - x;
@@ -1108,22 +1209,20 @@
                     newHeight = y - orig.y;
                     break;
             }
-            
-            // Maintain aspect ratio
+
             const aspectRatio = selectedLayer.originalImage.width / selectedLayer.originalImage.height;
             const scale = Math.min(newWidth / selectedLayer.originalImage.width, newHeight / selectedLayer.originalImage.height);
-            
+
             t.width = selectedLayer.originalImage.width * Math.abs(scale);
             t.height = selectedLayer.originalImage.height * Math.abs(scale);
             t.scaleX = Math.abs(scale);
             t.scaleY = Math.abs(scale);
         }
 
-        // Handle edge dragging (free scaling)
         function handleEdgeDrag(x, y, edge) {
             const t = selectedLayer.transform;
             const orig = originalTransform;
-            
+
             switch (edge) {
                 case 't':
                     t.height = orig.y + orig.height - y;
@@ -1140,12 +1239,11 @@
                     t.width = x - orig.x;
                     break;
             }
-            
+
             t.scaleX = t.width / selectedLayer.originalImage.width;
             t.scaleY = t.height / selectedLayer.originalImage.height;
         }
 
-        // Set cursor based on handle type
         function setCursorForHandle(handle) {
             switch (handle.type) {
                 case 'move':
@@ -1168,27 +1266,24 @@
             }
         }
 
-        // Draw transform handles
         function drawTransformHandles() {
             if (!transformMode || !selectedLayer) return;
-            
+
             const handleSize = 8 / zoom;
-            
+
             ctx.save();
             ctx.strokeStyle = '#0078d4';
             ctx.fillStyle = '#fff';
             ctx.lineWidth = 2 / zoom;
-            
-            // Draw bounding box
+
             const t = selectedLayer.transform;
             ctx.strokeRect(t.x, t.y, t.width, t.height);
-            
-            // Draw handles
+
             transformHandles.forEach(handle => {
                 ctx.fillRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
                 ctx.strokeRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
             });
-            
+
             ctx.restore();
         }
 
@@ -1202,18 +1297,10 @@
             };
         }
 
-        function colorDistance(c1, c2) {
-            return Math.sqrt(
-                Math.pow(c1.r - c2.r, 2) +
-                Math.pow(c1.g - c2.g, 2) +
-                Math.pow(c1.b - c2.b, 2)
-            );
-        }
-
         function eraseBackground(imageData, targetColor, centerX, centerY, brushSize) {
-            const tolerance = 50; // Color tolerance
+            const tolerance = 50; 
             const data = imageData.data;
-            
+
             for (let x = Math.max(0, centerX - brushSize); x < Math.min(canvas.width, centerX + brushSize); x++) {
                 for (let y = Math.max(0, centerY - brushSize); y < Math.min(canvas.height, centerY + brushSize); y++) {
                     const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
@@ -1221,12 +1308,12 @@
                         const pixelColor = getPixelColor(imageData, x, y);
                         if (colorDistance(pixelColor, targetColor) < tolerance) {
                             const index = (y * imageData.width + x) * 4;
-                            data[index + 3] = 0; // Set alpha to 0 (transparent)
+                            data[index + 3] = 0; 
                         }
                     }
                 }
             }
-            
+
             ctx.putImageData(imageData, 0, 0);
         }
 
@@ -1241,11 +1328,11 @@
         }
 
         function updateBrushColor() {
-            // Color is handled in the draw function
+
         }
 
         function updateBlendMode() {
-            // Blend mode is handled in the draw function
+
         }
 
         function changeBrushSize(delta) {
@@ -1292,10 +1379,9 @@
 
         function restoreState() {
             if (historyStep < 0 || historyStep >= history.length) return;
-            
+
             const state = history[historyStep];
-            
-            // Exit current transform mode if active
+
             if (transformMode) {
                 transformMode = false;
                 selectedLayer = null;
@@ -1303,17 +1389,15 @@
                 dragHandle = null;
                 originalTransform = null;
             }
-            
-            // Clear existing layers
+
             layers = [];
-            
-            // Restore layers from state
+
             const layerPromises = state.layersData.map((layerData, index) => {
                 return new Promise((resolve) => {
                     const layerCanvas = document.createElement('canvas');
                     layerCanvas.width = canvas.width;
                     layerCanvas.height = canvas.height;
-                    
+
                     const layer = {
                         id: layerData.id,
                         name: layerData.name,
@@ -1327,13 +1411,11 @@
                         isImageLayer: layerData.isImageLayer,
                         transform: layerData.transform ? { ...layerData.transform } : null
                     };
-                    
-                    // Restore canvas content
+
                     const img = new Image();
                     img.onload = function() {
                         layer.ctx.drawImage(img, 0, 0);
-                        
-                        // Restore original image if it's an image layer
+
                         if (layerData.originalImageData) {
                             const originalImg = new Image();
                             originalImg.onload = function() {
@@ -1348,38 +1430,33 @@
                     img.src = layerData.canvasData;
                 });
             });
-            
-            // Wait for all layers to be restored
+
             Promise.all(layerPromises).then((restoredLayers) => {
                 layers = restoredLayers;
                 activeLayerIndex = state.activeLayerIndex;
-                
-                // Restore transform mode if it was active
+
                 if (state.transformMode && state.selectedLayerId !== null) {
                     const selectedLayer = layers.find(layer => layer.id === state.selectedLayerId);
                     if (selectedLayer && selectedLayer.isImageLayer) {
                         transformMode = true;
-                        this.selectedLayer = selectedLayer;  // Use 'this' to refer to global variable
+                        this.selectedLayer = selectedLayer;  
                         createTransformHandles(selectedLayer);
                         selectTool('moveTool');
                     }
                 }
-                
-                // Re-render everything
+
                 renderLayers();
                 updateLayerUI();
                 updateHistoryUI();
             });
         }
 
-        // Enhanced saveState function to capture transform mode
         function saveState() {
             historyStep++;
             if (historyStep < history.length) {
                 history.length = historyStep;
             }
-            
-            // Create promises for layer data to handle async image operations
+
             const layerPromises = layers.map((layer) => {
                 return new Promise((resolve) => {
                     const layerData = {
@@ -1395,10 +1472,9 @@
                         originalImageData: null,
                         transform: layer.transform ? { ...layer.transform } : null
                     };
-                    
-                    // Save original image data if it's an image layer
+
                     if (layer.originalImage) {
-                        // Create a temporary canvas to get the original image as data URL
+
                         const tempCanvas = document.createElement('canvas');
                         tempCanvas.width = layer.originalImage.width;
                         tempCanvas.height = layer.originalImage.height;
@@ -1406,11 +1482,11 @@
                         tempCtx.drawImage(layer.originalImage, 0, 0);
                         layerData.originalImageData = tempCanvas.toDataURL();
                     }
-                    
+
                     resolve(layerData);
                 });
             });
-            
+
             Promise.all(layerPromises).then((layersData) => {
                 const state = {
                     canvasData: canvas.toDataURL(),
@@ -1419,7 +1495,7 @@
                     transformMode: transformMode,
                     selectedLayerId: selectedLayer ? selectedLayer.id : null
                 };
-                
+
                 history.push(state);
                 updateHistoryUI();
             });
@@ -1428,7 +1504,7 @@
         function updateHistoryUI() {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
-            
+
             for (let i = history.length - 1; i >= 0; i--) {
                 const item = document.createElement('div');
                 item.className = `history-item ${i === historyStep ? 'current' : ''}`;
@@ -1456,11 +1532,33 @@
                     reader.onload = function(e) {
                         const img = new Image();
                         img.onload = function() {
-                            // Calculate scale to fit within canvas while maintaining aspect ratio
-                            const maxWidth = canvas.width * 0.8;
-                            const maxHeight = canvas.height * 0.8;
-                            const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+                            // Set canvas size to match the image
+                            canvas.width = img.width;
+                            canvas.height = img.height;
                             
+                            // Update preview canvas size as well
+                            const previewCanvas = document.getElementById('previewCanvas');
+                            previewCanvas.width = canvas.width;
+                            previewCanvas.height = canvas.height;
+                            
+                            // Resize all existing layers to match new canvas size
+                            layers.forEach(layer => {
+                                const oldCanvas = layer.canvas;
+                                const oldImageData = layer.ctx.getImageData(0, 0, oldCanvas.width, oldCanvas.height);
+                                
+                                layer.canvas.width = canvas.width;
+                                layer.canvas.height = canvas.height;
+                                layer.ctx = layer.canvas.getContext('2d');
+                                
+                                // Restore the layer content
+                                layer.ctx.putImageData(oldImageData, 0, 0);
+                            });
+
+                            // Calculate scale to fit image nicely (you can remove this if you want 1:1 scale)
+                            const maxWidth = canvas.width;
+                            const maxHeight = canvas.height;
+                            const scale = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+
                             const newLayer = createImageLayer('Image Layer', img, scale);
                             setActiveLayer(layers.length - 1);
                             enterTransformMode(newLayer);
@@ -1478,9 +1576,26 @@
         }
 
         function exportImage() {
+            // Create a temporary canvas for export
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = canvas.width;
+            exportCanvas.height = canvas.height;
+            const exportCtx = exportCanvas.getContext('2d');
+            
+            // Render all visible layers to the export canvas (without transform handles)
+            layers.forEach(layer => {
+                if (layer.visible) {
+                    exportCtx.save();
+                    exportCtx.globalAlpha = layer.opacity;
+                    exportCtx.drawImage(layer.canvas, layer.x, layer.y);
+                    exportCtx.restore();
+                }
+            });
+            
+            // Export the clean canvas without any UI elements
             const link = document.createElement('a');
             link.download = 'artwork.png';
-            link.href = canvas.toDataURL();
+            link.href = exportCanvas.toDataURL();
             link.click();
         }
 
@@ -1492,15 +1607,12 @@
         function resizeCanvas() {
             const width = parseInt(document.getElementById('canvasWidth').value);
             const height = parseInt(document.getElementById('canvasHeight').value);
-            
-            // Save current canvas content
+
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            
-            // Resize canvas
+
             canvas.width = width;
             canvas.height = height;
-            
-            // Restore content
+
             ctx.putImageData(imageData, 0, 0);
             saveState();
         }
@@ -1513,9 +1625,425 @@
             updateZoomDisplay();
         }
 
-        
+        function applyFilter(type) {
+            const strengthInput = document.getElementById('filterStrength');
+            const strength = strengthInput ? parseInt(strengthInput.value) / 100 : 1;
 
-        // Initialize the application
+            if (isNaN(strength)) {
+                console.error('Invalid filter strength!');
+                return;
+            }
+
+            const layer = getActiveLayerContext();
+            if (!layer || !layer.ctx) return;
+
+            const imageData = layer.ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            switch (type) {
+                case 'grayscale':
+                    for (let i = 0; i < data.length; i += 4) {
+                        const avg = (data[i] + data[i+1] + data[i+2]) / 3;
+                        data[i] = data[i] * (1 - strength) + avg * strength;
+                        data[i+1] = data[i+1] * (1 - strength) + avg * strength;
+                        data[i+2] = data[i+2] * (1 - strength) + avg * strength;
+                    }
+                    break;
+
+                case 'sepia':
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i], g = data[i+1], b = data[i+2];
+                        const sepiaR = r * .393 + g * .769 + b * .189;
+                        const sepiaG = r * .349 + g * .686 + b * .168;
+                        const sepiaB = r * .272 + g * .534 + b * .131;
+                        data[i] = r * (1 - strength) + sepiaR * strength;
+                        data[i+1] = g * (1 - strength) + sepiaG * strength;
+                        data[i+2] = b * (1 - strength) + sepiaB * strength;
+                    }
+                    break;
+
+                case 'invert':
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = data[i] * (1 - strength) + (255 - data[i]) * strength;
+                        data[i+1] = data[i+1] * (1 - strength) + (255 - data[i+1]) * strength;
+                        data[i+2] = data[i+2] * (1 - strength) + (255 - data[i+2]) * strength;
+                    }
+                    break;
+
+                case 'blur':
+                case 'sharpen':
+                    applyConvolution(layer.ctx, type, strength);
+                    return;
+
+                case 'gaussian':
+                case 'emboss':
+                case 'edge':
+                    applyConvolution(layer.ctx, type, strength);
+                    return;
+
+                case 'posterize':
+                    const levels = Math.max(2, Math.round(8 * strength));
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = Math.floor(data[i] * levels / 255) * (255 / (levels - 1));
+                        data[i+1] = Math.floor(data[i+1] * levels / 255) * (255 / (levels - 1));
+                        data[i+2] = Math.floor(data[i+2] * levels / 255) * (255 / (levels - 1));
+                    }
+                    break;
+
+                case 'brightness':
+                    const bAmount = (strength - 1) * 255;
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = clamp(data[i] + bAmount);
+                        data[i+1] = clamp(data[i+1] + bAmount);
+                        data[i+2] = clamp(data[i+2] + bAmount);
+                    }
+                    break;
+
+                case 'contrast':
+                    const cFactor = (259 * (strength * 255 + 255)) / (255 * (259 - strength * 255));
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = clamp(cFactor * (data[i] - 128) + 128);
+                        data[i+1] = clamp(cFactor * (data[i+1] - 128) + 128);
+                        data[i+2] = clamp(cFactor * (data[i+2] - 128) + 128);
+                    }
+                    break;
+            }
+
+            layer.ctx.putImageData(imageData, 0, 0);
+            renderLayers();
+            saveState();
+        }
+
+        function clamp(val) {
+            return Math.max(0, Math.min(255, val));
+        }
+
+        function applyConvolution(ctx, type, strength = 1) {
+            const baseKernels = {
+                blur: [1/9,1/9,1/9,1/9,1/9,1/9,1/9,1/9,1/9],
+                sharpen: [0,-1,0,-1,5,-1,0,-1,0],
+                gaussian: [1,2,1,2,4,2,1,2,1].map(x => x / 16),
+                emboss: [-2,-1,0,-1,1,1,0,1,2],
+                edge: [-1,-1,-1,-1,8,-1,-1,-1,-1]
+            };
+
+            const kernel = baseKernels[type];
+            if (!kernel) return;
+
+            const adjustedKernel = kernel.map((value, i) => {
+                const identity = i === 4 ? 1 : 0;
+                return identity * (1 - strength) + value * strength;
+            });
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const width = imageData.width;
+            const height = imageData.height;
+
+            const output = new Uint8ClampedArray(data.length); 
+
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    for (let c = 0; c < 3; c++) { 
+                        let sum = 0;
+                        let k = 0;
+
+                        for (let ky = -1; ky <= 1; ky++) {
+                            for (let kx = -1; kx <= 1; kx++) {
+                                const px = x + kx;
+                                const py = y + ky;
+                                const i = (py * width + px) * 4 + c;
+                                sum += data[i] * adjustedKernel[k++];
+                            }
+                        }
+
+                        const idx = (y * width + x) * 4 + c;
+                        output[idx] = Math.min(255, Math.max(0, sum));
+                    }
+
+                    output[(y * width + x) * 4 + 3] = data[(y * width + x) * 4 + 3];
+                }
+            }
+
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    if (x === 0 || x === width - 1 || y === 0 || y === height - 1) {
+                        const idx = (y * width + x) * 4;
+                        output[idx] = data[idx];
+                        output[idx + 1] = data[idx + 1];
+                        output[idx + 2] = data[idx + 2];
+                        output[idx + 3] = data[idx + 3];
+                    }
+                }
+            }
+
+            const outputImageData = new ImageData(output, width, height);
+            ctx.putImageData(outputImageData, 0, 0);
+            renderLayers();
+            saveState();
+        }
+
+        document.getElementById('filterStrength').addEventListener('input', () => {
+            const value = document.getElementById('filterStrength').value;
+            document.getElementById('filterStrengthValue').textContent = value + '%';
+
+            if (window.currentPreview) {
+                updatePreview();
+            }
+        });
+
+        function colorDistance(c1, c2) {
+
+            if (Array.isArray(c1) && Array.isArray(c2)) {
+                return Math.sqrt(
+                    (c1[0] - c2[0]) ** 2 +
+                    (c1[1] - c2[1]) ** 2 +
+                    (c1[2] - c2[2]) ** 2
+                );
+            } else {
+                return Math.sqrt(
+                    Math.pow(c1.r - c2.r, 2) +
+                    Math.pow(c1.g - c2.g, 2) +
+                    Math.pow(c1.b - c2.b, 2)
+                );
+            }
+        }
+
+        function floodFill(ctx, x, y, fillColor, tolerance = 50) {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const width = imageData.width;
+            const height = imageData.height;
+
+            const index = (y * width + x) * 4;
+            const target = [data[index], data[index + 1], data[index + 2]];
+            const visited = new Set();
+            const queue = [[x, y]];
+
+            while (queue.length) {
+                const [cx, cy] = queue.shift();
+                const idx = (cy * width + cx) * 4;
+                const key = `${cx},${cy}`;
+                if (visited.has(key)) continue;
+                visited.add(key);
+
+                const pixel = [data[idx], data[idx + 1], data[idx + 2]];
+                if (colorDistance(pixel, target) < tolerance) {
+                    data[idx] = fillColor.r;
+                    data[idx + 1] = fillColor.g;
+                    data[idx + 2] = fillColor.b;
+                    data[idx + 3] = 255;
+
+                    if (cx > 0) queue.push([cx - 1, cy]);
+                    if (cx < width - 1) queue.push([cx + 1, cy]);
+                    if (cy > 0) queue.push([cx, cy - 1]);
+                    if (cy < height - 1) queue.push([cx, cy + 1]);
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            renderLayers();
+            saveState();
+        }
+
+        function hexToRgb(hex) {
+            const num = parseInt(hex.slice(1), 16);
+            return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+        }
+
+        function showFilterPreview(type) {
+            const layer = getActiveLayerContext();
+            const previewCanvas = document.getElementById('previewCanvas');
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCanvas.style.display = 'block';
+
+            previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            previewCtx.drawImage(layer.canvas, 0, 0);
+
+            const imageData = previewCtx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const strength = parseInt(document.getElementById('filterStrength')?.value || 100) / 100;
+
+            applyPixelFilter(data, type, strength);
+
+            previewCtx.putImageData(imageData, 0, 0);
+
+            showFilterControls(type);
+        }
+
+        function showFilterControls(type) {
+            document.getElementById('filterControls').style.display = 'flex';
+            window.currentPreviewFilter = type;
+        }
+
+    function commitFilter() {
+        saveState(); 
+        document.getElementById('filterControls').style.display = 'none';
+        window.currentPreview = null;
+    }
+
+    function cancelFilterPreview() {
+        const { layer, originalImage } = window.currentPreview || {};
+        if (layer && originalImage) {
+            layer.ctx.putImageData(originalImage, 0, 0); 
+            renderLayers();
+        }
+
+        document.getElementById('filterControls').style.display = 'none';
+        window.currentPreview = null;
+    }
+
+    function startFilterPreview(type) {
+        const layer = getActiveLayerContext();
+        if (!layer) return;
+
+        const ctx = layer.ctx;
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        window.currentPreview = {
+            type,
+            layer,
+            originalImage: imageData
+        };
+
+        document.getElementById('filterControls').style.display = 'flex';
+
+        updatePreview();
+    }
+
+    function updatePreview() {
+        if (!window.currentPreview) return;
+
+        const { type, layer, originalImage } = window.currentPreview;
+        const rawStrength = parseInt(document.getElementById('filterStrength').value); 
+        const strength = rawStrength / 100; 
+
+        const previewData = new ImageData(
+            new Uint8ClampedArray(originalImage.data),
+            originalImage.width,
+            originalImage.height
+        );
+
+        applyPixelFilter(previewData.data, type, strength);
+
+        layer.ctx.putImageData(previewData, 0, 0);
+
+        renderLayers(); 
+    }
+
+        function applyPixelFilterWithConvolution(data, width, height, type, strength = 1) {
+        const baseKernels = {
+            blur: [1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9],
+            sharpen: [0, -1, 0, -1, 5, -1, 0, -1, 0],
+            gaussian: [1, 2, 1, 2, 4, 2, 1, 2, 1].map(x => x / 16),
+            emboss: [-2, -1, 0, -1, 1, 1, 0, 1, 2],
+            edge: [-1, -1, -1, -1, 8, -1, -1, -1, -1]
+        };
+
+        const kernel = baseKernels[type];
+        if (!kernel) return;
+
+        const originalData = new Uint8ClampedArray(data);
+
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                for (let c = 0; c < 3; c++) { 
+                    let sum = 0;
+                    let k = 0;
+
+                    for (let ky = -1; ky <= 1; ky++) {
+                        for (let kx = -1; kx <= 1; kx++) {
+                            const px = x + kx;
+                            const py = y + ky;
+                            const i = (py * width + px) * 4 + c;
+                            sum += originalData[i] * kernel[k++];
+                        }
+                    }
+
+                    const idx = (y * width + x) * 4 + c;
+                    const originalValue = originalData[idx];
+                    const filteredValue = Math.min(255, Math.max(0, sum));
+
+                    data[idx] = originalValue * (1 - strength) + filteredValue * strength;
+                }
+
+            }
+        }
+    }
+
+    function applyPixelFilter(data, type, strength = 1) {
+        const clamp = (v) => Math.max(0, Math.min(255, v));
+
+        if (['blur', 'sharpen', 'gaussian', 'emboss', 'edge'].includes(type)) {
+
+            applyPixelFilterWithConvolution(data, canvas.width, canvas.height, type, strength);
+            return;
+        }
+
+        switch (type) {
+            case 'grayscale':
+                for (let i = 0; i < data.length; i += 4) {
+                    const avg = (data[i] + data[i+1] + data[i+2]) / 3;
+                    data[i] = data[i] * (1 - strength) + avg * strength;
+                    data[i+1] = data[i+1] * (1 - strength) + avg * strength;
+                    data[i+2] = data[i+2] * (1 - strength) + avg * strength;
+                }
+                break;
+
+            case 'sepia':
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i], g = data[i+1], b = data[i+2];
+                    const sr = r * .393 + g * .769 + b * .189;
+                    const sg = r * .349 + g * .686 + b * .168;
+                    const sb = r * .272 + g * .534 + b * .131;
+                    data[i] = r * (1 - strength) + sr * strength;
+                    data[i+1] = g * (1 - strength) + sg * strength;
+                    data[i+2] = b * (1 - strength) + sb * strength;
+                }
+                break;
+
+            case 'invert':
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = data[i] * (1 - strength) + (255 - data[i]) * strength;
+                    data[i+1] = data[i+1] * (1 - strength) + (255 - data[i+1]) * strength;
+                    data[i+2] = data[i+2] * (1 - strength) + (255 - data[i+2]) * strength;
+                }
+                break;
+
+            case 'brightness':
+                const b = (strength - 1) * 255;
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = clamp(data[i] + b);
+                    data[i+1] = clamp(data[i+1] + b);
+                    data[i+2] = clamp(data[i+2] + b);
+                }
+                break;
+
+            case 'contrast':
+                const c = (strength - 1);
+                const factor = (259 * (c * 255 + 255)) / (255 * (259 - c * 255));
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = clamp(factor * (data[i] - 128) + 128);
+                    data[i+1] = clamp(factor * (data[i+1] - 128) + 128);
+                    data[i+2] = clamp(factor * (data[i+2] - 128) + 128);
+                }
+                break;
+
+            case 'posterize':
+                const levels = Math.max(2, Math.round(8 * strength));
+                for (let i = 0; i < data.length; i += 4) {
+                    data[i] = Math.floor(data[i] * levels / 255) * (255 / (levels - 1));
+                    data[i+1] = Math.floor(data[i+1] * levels / 255) * (255 / (levels - 1));
+                    data[i+2] = Math.floor(data[i+2] * levels / 255) * (255 / (levels - 1));
+                }
+                break;
+
+            default:
+                console.warn(`Filter "${type}" not supported in preview.`);
+                break;
+        }
+    }
+
         init();
     </script>
 </body>
