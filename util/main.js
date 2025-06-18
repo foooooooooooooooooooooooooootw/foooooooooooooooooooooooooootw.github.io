@@ -2,87 +2,82 @@ const { createFFmpeg, fetchFile } = FFmpeg;
 
 const ffmpeg = createFFmpeg({
   log: true,
-  progress: ({ ratio }) => {
-    const bar = document.getElementById('bar');
-    bar.style.width = Math.min(Math.floor(ratio * 100), 100) + "%";
-  }
+  corePath: 'dist/ffmpeg-core.js' // adjust if your path differs
 });
 
-const log = (msg) => console.log(msg);
-
+const inputVideo = document.getElementById('inputVideo');
+const convertBtn = document.getElementById('convertBtn');
 const inputPreview = document.getElementById('inputPreview');
 const outputPreview = document.getElementById('outputPreview');
 const inputMeta = document.getElementById('inputMeta');
 const outputMeta = document.getElementById('outputMeta');
+const downloadLink = document.getElementById('downloadLink');
+const progressBar = document.getElementById('bar');
 
-// Remove H.265 if not supported
-const h265Supported = MediaSource.isTypeSupported('video/mp4; codecs="hev1.1.6.L93.B0"');
-if (!h265Supported) {
-  const option = document.querySelector('#codec option[value="libx265"]');
-  if (option) option.remove();
-}
+let inputFileName = '';
 
-document.getElementById('qualityMode').addEventListener('change', () => {
-  const mode = document.getElementById('qualityMode').value;
-  document.getElementById('bitrateInputs').style.display = mode === 'bitrate' ? 'block' : 'none';
-  document.getElementById('cqInputs').style.display = mode === 'cq' ? 'block' : 'none';
-});
-
-document.getElementById('inputVideo').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  inputPreview.src = URL.createObjectURL(file);
-  inputPreview.load();
-
+async function loadFFmpeg() {
   if (!ffmpeg.isLoaded()) {
     await ffmpeg.load();
   }
+}
 
-  const fileName = file.name;
-  ffmpeg.FS('writeFile', fileName, await fetchFile(file));
+inputVideo.addEventListener('change', async () => {
+  if (inputVideo.files.length === 0) {
+    convertBtn.disabled = true;
+    inputPreview.src = '';
+    inputMeta.textContent = '';
+    return;
+  }
+  
+  const file = inputVideo.files[0];
+  inputFileName = file.name;
+  inputPreview.src = URL.createObjectURL(file);
+  inputPreview.load();
+  
+  convertBtn.disabled = true;
+  inputMeta.textContent = 'Loading video metadata...';
+
+  await loadFFmpeg();
+
+  ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
 
   try {
-    await ffmpeg.run('-i', fileName);
-  } catch (err) {
-    // We expect an error here because -i alone doesn't produce output
-    const logText = ffmpeg._ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() ?? '';
-    inputMeta.textContent = extractMetadata(logText);
+    // Probe metadata by running -i (will throw but fills ffmpeg logs)
+    await ffmpeg.run('-i', inputFileName);
+  } catch {
+    // Expected error since no output specified
   }
+
+  const logs = ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() || '';
+  inputMeta.textContent = parseMetadata(logs);
+  
+  convertBtn.disabled = false;
 });
 
-document.getElementById('convertBtn').onclick = async () => {
-  const fileInput = document.getElementById('inputVideo');
+convertBtn.addEventListener('click', async () => {
+  convertBtn.disabled = true;
+  outputPreview.src = '';
+  outputMeta.textContent = '';
+  downloadLink.style.display = 'none';
+  progressBar.style.width = '0%';
+
+  await loadFFmpeg();
+
   const codec = document.getElementById('codec').value;
   const framerate = document.getElementById('framerate').value;
   const audioBitrate = document.getElementById('audioBitrate').value;
   const qualityMode = document.getElementById('qualityMode').value;
-
   const bitrate = document.getElementById('bitrate').value;
   const cq = document.getElementById('cq').value;
 
-  const file = fileInput.files[0];
-  if (!file) {
-    alert("Please upload a video file.");
-    return;
-  }
-
-  document.getElementById('bar').style.width = "0%";
-  outputPreview.src = '';
-  outputMeta.textContent = '';
-
-  if (!ffmpeg.isLoaded()) await ffmpeg.load();
-
-  const inputName = file.name;
-  const ext = codec.includes('libx26') ? 'mp4' : 'webm';
-  const outputName = `output.${ext}`;
-
-  ffmpeg.FS('writeFile', inputName, await fetchFile(file));
+  const ext = codec.includes('264') || codec.includes('265') ? 'mp4' : 'webm';
+  const outputFileName = `output.${ext}`;
 
   const args = [
-    '-i', inputName,
+    '-i', inputFileName,
     '-c:v', codec,
-    '-r', `${framerate}`,
+    '-r', framerate,
     '-c:a', 'aac',
     '-b:a', `${audioBitrate}k`
   ];
@@ -90,58 +85,71 @@ document.getElementById('convertBtn').onclick = async () => {
   if (qualityMode === 'bitrate') {
     args.push('-b:v', `${bitrate}k`);
   } else {
-    args.push('-crf', `${cq}`);
+    args.push('-crf', cq);
   }
 
-  args.push(outputName);
+  args.push(outputFileName);
+
+  ffmpeg.setProgress(({ ratio }) => {
+    progressBar.style.width = `${(ratio * 100).toFixed(2)}%`;
+  });
 
   try {
     await ffmpeg.run(...args);
-  } catch (err) {
-    alert("Encoding failed: " + err.message);
+  } catch (e) {
+    alert('Encoding failed: ' + e.message);
+    convertBtn.disabled = false;
     return;
   }
 
-  const outputData = ffmpeg.FS('readFile', outputName);
-  const outputBlob = new Blob([outputData.buffer], { type: `video/${ext}` });
-  const outputURL = URL.createObjectURL(outputBlob);
+  const data = ffmpeg.FS('readFile', outputFileName);
+  const videoBlob = new Blob([data.buffer], { type: `video/${ext}` });
+  const videoURL = URL.createObjectURL(videoBlob);
 
-  outputPreview.src = outputURL;
+  outputPreview.src = videoURL;
   outputPreview.load();
 
-  const a = document.createElement('a');
-  a.href = outputURL;
-  a.download = outputName;
-  a.textContent = '⬇ Download Converted Video';
-  a.style.display = 'block';
-  document.body.appendChild(a);
+  downloadLink.href = videoURL;
+  downloadLink.style.display = 'block';
+  downloadLink.download = outputFileName;
 
-  // Extract metadata for output
-  ffmpeg.FS('writeFile', outputName, outputData);
   try {
-    await ffmpeg.run('-i', outputName);
-  } catch (err) {
-    const logText = ffmpeg._ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() ?? '';
-    outputMeta.textContent = extractMetadata(logText);
+    await ffmpeg.run('-i', outputFileName);
+  } catch {
+    // expected error from probe
   }
-};
+  const logs = ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() || '';
+  outputMeta.textContent = parseMetadata(logs);
 
-function extractMetadata(logText) {
-  // Try to extract resolution, framerate, duration, bitrate
+  convertBtn.disabled = false;
+});
+
+function parseMetadata(logText) {
   const lines = logText.split('\n');
   const info = [];
 
-  const resolution = lines.find(l => l.includes('Video:'))?.match(/\d{3,5}x\d{3,5}/)?.[0];
-  if (resolution) info.push(`Resolution: ${resolution}`);
+  // Extract duration
+  const durLine = lines.find(line => line.includes('Duration:'));
+  if (durLine) {
+    const m = durLine.match(/Duration: ([\d:.]+)/);
+    if (m) info.push(`Duration: ${m[1]}`);
+  }
 
-  const fps = lines.find(l => l.includes('fps'))?.match(/(\d+(\.\d+)?)(?= fps)/)?.[0];
-  if (fps) info.push(`Framerate: ${fps} fps`);
+  // Extract resolution and fps
+  const videoLine = lines.find(line => line.includes('Video:'));
+  if (videoLine) {
+    // Resolution like 1920x1080
+    const resMatch = videoLine.match(/\b(\d{2,5}x\d{2,5})\b/);
+    if (resMatch) info.push(`Resolution: ${resMatch[1]}`);
 
-  const bitrate = lines.find(l => l.includes('bitrate:'))?.match(/bitrate:\s+(\d+\s+kb\/s)/)?.[1];
-  if (bitrate) info.push(`Bitrate: ${bitrate}`);
+    // FPS (frames per second)
+    const fpsMatch = videoLine.match(/, (\d+(?:\.\d+)?) fps/);
+    if (fpsMatch) info.push(`Framerate: ${fpsMatch[1]} fps`);
 
-  const duration = lines.find(l => l.includes('Duration:'))?.match(/Duration: (\d+:\d+:\d+\.\d+)/)?.[1];
-  if (duration) info.push(`Duration: ${duration}`);
+    // Bitrate
+    const bitrateMatch = videoLine.match(/, (\d+) kb\/s/);
+    if (bitrateMatch) info.push(`Bitrate: ${bitrateMatch[1]} kbps`);
+  }
 
-  return info.join('\n');
+  return info.join('\n') || 'Metadata not found';
 }
