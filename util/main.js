@@ -1,6 +1,6 @@
 window.onload = () => {
-  const { createFFmpeg, fetchFile } = FFmpeg;
-
+  const { createFFmpeg, fetchFile } = window.FFmpegWASM;
+  
   const ffmpeg = createFFmpeg({
     log: true,
     corePath: 'util/ffmpeg-core.js' // adjust if your path differs
