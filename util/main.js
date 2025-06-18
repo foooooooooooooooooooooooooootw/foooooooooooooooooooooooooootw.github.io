@@ -3,7 +3,7 @@ window.onload = () => {
 
   const ffmpeg = createFFmpeg({
     log: true,
-    corePath: 'dist/ffmpeg-core.js' // adjust if your path differs
+    corePath: 'util/ffmpeg-core.js' // adjust if your path differs
   });
 
   const inputVideo = document.getElementById('inputVideo');

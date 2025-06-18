@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -303,14 +304,14 @@
             .container {
                 padding: 1rem;
             }
-            
+
             header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
                 text-align: center;
             }
-            
+
             .stats-container,
             .funds-container {
                 grid-template-columns: 1fr;
@@ -408,14 +409,16 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
             }
+
             70% {
                 box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
             }
         }
-        
+
         .open-ended-indicator {
             height: 4px;
             margin: 0 1.5rem;
@@ -424,7 +427,7 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 9999px;
         }
-        
+
         .pulse-bar {
             position: absolute;
             height: 100%;
@@ -433,16 +436,17 @@
             animation: pulse-slide 2s ease-in-out infinite;
             box-shadow: 0 0 10px rgba(99, 102, 241, 0.7);
         }
-        
+
         @keyframes pulse-slide {
             0% {
                 left: -30%;
             }
+
             100% {
                 left: 100%;
             }
         }
-        
+
         .fund-badge.open-ended {
             background: linear-gradient(to right, var(--primary), var(--primary-light));
             color: white;
@@ -463,9 +467,9 @@
             font-size: 0.9em;
             margin-left: 6px;
         }
-
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -490,22 +494,24 @@
             </div>
         </div>
 
-        <div class="stat-card glow-effect" style="margin-top: 2rem; position: relative; display: flex; align-items: center; justify-content: space-between; padding-right: 100px;">
-        <div>
-            <h3>Fund Manager</h3>
-            <p><strong>Name:</strong> T'suen Wei</p>
-            <p><strong>Transfer Options:</strong></p>
+        <div class="stat-card glow-effect"
+            style="margin-top: 2rem; position: relative; display: flex; align-items: center; justify-content: space-between; padding-right: 100px;">
+            <div>
+                <h3>Fund Manager</h3>
+                <p><strong>Name:</strong> T'suen Wei</p>
+                <p><strong>Transfer Options:</strong></p>
                 <li>Wise: <a href="https://wise.com/pay/me/t-suenf">https://wise.com/pay/me/t-suenf</a></li>
-                <li>PayNow (SG)</li> 
+                <li>PayNow (SG)</li>
                 <li>DuitNow (MY)</li>
                 <li>PromptPay (THB)</li>
-            </ul>
+                </ul>
+            </div>
+            <img src="img/1738827794719_034344~2.png" alt="Fund Manager" class="circle-img">
         </div>
-    <img src="img/1738827794719_034344~2.png" alt="Fund Manager" class="circle-img">
-</div>
         <br>
         <h2 class="section-title">Active Fundraising Campaigns</h2>
-        <h3>Funds are held in SGD$ even if the fund recipients are overseas. This might create differences due to forex.</h3>
+        <h3>Funds are held in SGD$ even if the fund recipients are overseas. This might create differences due to forex.
+        </h3>
         <br>
         <div class="funds-container" id="funds-container">
             <!-- Fund cards will be dynamically generated here -->
@@ -515,7 +521,7 @@
     <div class="currency-converter glow-effect" style="margin: 3rem auto; max-width: 400px; padding: 1.5rem;">
         <h3>Currency Converter</h3>
         <input type="number" id="amount" placeholder="Amount" style="width: 100%; margin-bottom: 0.5rem;" />
-        
+
         <div style="display: flex; gap: 4%; margin-bottom: 0.5rem;">
             <select id="from-currency" style="width: 48%;">
                 <option value="MYR">MYR</option>
@@ -530,9 +536,9 @@
             </select>
         </div>
 
-    <button onclick="convertCurrency()" class="btn pulse" style="width: 100%;">Convert</button>
-    <div id="conversion-result" style="margin-top: 1rem;"></div>
-</div>
+        <button onclick="convertCurrency()" class="btn pulse" style="width: 100%;">Convert</button>
+        <div id="conversion-result" style="margin-top: 1rem;"></div>
+    </div>
 
     <script>
         // Sample data - this would normally come from a backend
@@ -604,8 +610,8 @@
 
         // Colors for donor charts - vibrant palette that matches the dark theme
         const donorColors = [
-            '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', 
-            '#f97316', '#eab308', '#22c55e', '#14b8a6', 
+            '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e',
+            '#f97316', '#eab308', '#22c55e', '#14b8a6',
             '#0ea5e9', '#3b82f6', '#a855f7', '#d946ef'
         ];
 
@@ -613,7 +619,7 @@
         function updateStats() {
             const totalRaised = funds.reduce((sum, fund) => sum + fund.raised, 0);
             const totalDonors = [...new Set(funds.flatMap(fund => fund.donors.map(donor => donor.name)))].length;
-            
+
             // Only count funds with goals (goal > 0)
             const fundsWithGoals = funds.filter(fund => fund.goal > 0);
             const goalsCompleted = fundsWithGoals.filter(fund => fund.raised >= fund.goal).length;
@@ -629,7 +635,7 @@
                 const currencies = ['HKD', 'USD', 'MYR', 'PHP', 'THB', 'AUD', 'TWD'];
                 const response = await fetch(`https://api.frankfurter.app/latest?from=SGD&to=${currencies.join(',')}`);
                 const data = await response.json();
-                
+
                 if (data.rates) {
                     Object.assign(exchangeRates, data.rates);
                 }
@@ -640,63 +646,63 @@
 
         // Function to create fund cards
         // Modified renderFundCards function - replace the fund-details div section with this:
-function renderFundCards() {
-    const fundsContainer = document.getElementById('funds-container');
-    fundsContainer.innerHTML = '';
+        function renderFundCards() {
+            const fundsContainer = document.getElementById('funds-container');
+            fundsContainer.innerHTML = '';
 
-    funds.forEach(fund => {
-        const hasGoal = fund.goal > 0;
-        const progress = hasGoal ? (fund.raised / fund.goal) * 100 : 0;
-        const card = document.createElement('div');
-        card.className = 'fund-card glow-effect';
-        card.dataset.fundId = fund.id;
+            funds.forEach(fund => {
+                const hasGoal = fund.goal > 0;
+                const progress = hasGoal ? (fund.raised / fund.goal) * 100 : 0;
+                const card = document.createElement('div');
+                card.className = 'fund-card glow-effect';
+                card.dataset.fundId = fund.id;
 
-        // Determine color based on progress or use primary for open-ended funds
-        let progressColor;
-        if (!hasGoal) {
-            progressColor = 'var(--primary)';
-        } else if (progress < 33) {
-            progressColor = 'var(--danger)';
-        } else if (progress < 66) {
-            progressColor = 'var(--warning)';
-        } else {
-            progressColor = 'var(--success)';
-        }
+                // Determine color based on progress or use primary for open-ended funds
+                let progressColor;
+                if (!hasGoal) {
+                    progressColor = 'var(--primary)';
+                } else if (progress < 33) {
+                    progressColor = 'var(--danger)';
+                } else if (progress < 66) {
+                    progressColor = 'var(--warning)';
+                } else {
+                    progressColor = 'var(--success)';
+                }
 
-        // Get display currency and conversion
-        const displayCurrency = fund.displayCurrency || 'SGD';
-        const rate = exchangeRates[displayCurrency] || 1;
-        const convertedAmount = fund.raised * rate;
-        
-        // Only show conversion if it's not SGD
-        const currencyDisplay = displayCurrency === 'SGD' ? 
-            `$${fund.raised.toLocaleString()}` : 
-            `$${fund.raised.toLocaleString()}<span class="converted">(${displayCurrency}$${convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })})</span>`;
+                // Get display currency and conversion
+                const displayCurrency = fund.displayCurrency || 'SGD';
+                const rate = exchangeRates[displayCurrency] || 1;
+                const convertedAmount = fund.raised * rate;
 
-        card.innerHTML = `
+                // Only show conversion if it's not SGD
+                const currencyDisplay = displayCurrency === 'SGD' ?
+                    `$${fund.raised.toLocaleString()}` :
+                    `$${fund.raised.toLocaleString()}<span class="converted">(${displayCurrency}$${convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })})</span>`;
+
+                card.innerHTML = `
             <div class="fund-header">
                 <h2>${fund.name}</h2>
-                ${hasGoal ? 
-                    `<span class="fund-badge">${Math.round(progress)}%</span>` : 
-                    `<span class="fund-badge open-ended">Ongoing</span>`
-                }
+                ${hasGoal ?
+                        `<span class="fund-badge">${Math.round(progress)}%</span>` :
+                        `<span class="fund-badge open-ended">Ongoing</span>`
+                    }
             </div>
-            ${hasGoal ? 
-                `<div class="progress">
+            ${hasGoal ?
+                        `<div class="progress">
                     <div class="progress-bar" style="width: ${progress}%; background-color: ${progressColor}"></div>
-                </div>` : 
-                `<div class="open-ended-indicator">
+                </div>` :
+                        `<div class="open-ended-indicator">
                     <div class="pulse-bar" style="background-color: ${progressColor}"></div>
                 </div>`
-            }
+                    }
             <div class="fund-details">
                 <div class="amount">
                     ${currencyDisplay}
                 </div>
-                ${hasGoal ? 
-                    `<div class="goal">of ${fund.goal.toLocaleString()}</div>` : 
-                    `<div class="goal">Ongoing Fund</div>`
-                }
+                ${hasGoal ?
+                        `<div class="goal">of ${fund.goal.toLocaleString()}</div>` :
+                        `<div class="goal">Ongoing Fund</div>`
+                    }
             </div>
             <div class="fund-details-panel">
                 <div class="fund-details-content">
@@ -720,31 +726,31 @@ function renderFundCards() {
             </div>
         `;
 
-        fundsContainer.appendChild(card);
+                fundsContainer.appendChild(card);
 
-        // Add event listeners
-        card.addEventListener('click', (e) => {
-            if (e.target.closest('form') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+                // Add event listeners
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('form') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
 
-            card.classList.toggle('expanded');
-            if (card.classList.contains('expanded')) {
-                renderDonorChart(fund);
-            }
-        });
-    });
-}
+                    card.classList.toggle('expanded');
+                    if (card.classList.contains('expanded')) {
+                        renderDonorChart(fund);
+                    }
+                });
+            });
+        }
 
 
         // Function to render donor chart for a fund
         function renderDonorChart(fund) {
             const ctx = document.getElementById(`chart-${fund.id}`).getContext('2d');
             const legendContainer = document.getElementById(`legend-${fund.id}`);
-            
+
             // Prepare data for the chart
             const donors = fund.donors;
             const labels = donors.map(donor => donor.name);
             const data = donors.map(donor => donor.amount);
-            
+
             // Create legend
             legendContainer.innerHTML = '';
             donors.forEach((donor, index) => {
@@ -756,7 +762,7 @@ function renderFundCards() {
                 `;
                 legendContainer.appendChild(legendItem);
             });
-            
+
             // Create the chart
             new Chart(ctx, {
                 type: 'doughnut',
@@ -785,7 +791,7 @@ function renderFundCards() {
                             padding: 10,
                             displayColors: true,
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     let label = context.label || '';
                                     if (label) {
                                         label += ': ';
@@ -808,19 +814,19 @@ function renderFundCards() {
             if (fund) {
                 const today = new Date();
                 const dateStr = today.toISOString().split('T')[0];
-                
+
                 fund.donors.push({
                     name: donorName,
                     amount: amount,
                     date: dateStr
                 });
-                
+
                 fund.raised += amount;
-                
+
                 // Re-render everything
                 updateStats();
                 renderFundCards();
-                
+
                 // Find and expand the card that was just updated
                 const card = document.querySelector(`.fund-card[data-fund-id="${fundId}"]`);
                 if (card) {
@@ -845,4 +851,5 @@ function renderFundCards() {
         Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
     </script>
 </body>
+
 </html>

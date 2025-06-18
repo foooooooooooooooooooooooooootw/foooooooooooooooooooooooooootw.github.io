@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jewelry Portfolio</title>
   <style>
     :root {
@@ -16,7 +17,7 @@
       --transition-speed: 0.3s;
     }
 
-      /* Add these styles to support video elements */
+    /* Add these styles to support video elements */
     .media-indicator {
       position: absolute;
       bottom: 10px;
@@ -30,15 +31,15 @@
       align-items: center;
       gap: 5px;
     }
-    
+
     .collection-image {
       position: relative;
     }
-    
+
     .video-thumb {
       position: relative;
     }
-    
+
     .video-indicator {
       position: absolute;
       top: 50%;
@@ -53,12 +54,12 @@
       align-items: center;
       color: white;
     }
-    
+
     .main-video {
       width: 100%;
       max-height: 600px;
     }
-    
+
     #mainMediaContainer {
       display: flex;
       justify-content: center;
@@ -66,7 +67,7 @@
       width: 100%;
       max-height: 600px;
     }
-    
+
     #mainImage {
       max-width: 100%;
       max-height: 600px;
@@ -81,7 +82,7 @@
       width: 100%;
       height: 100%;
       z-index: 1000;
-      background-color: rgba(0,0,0,0.8);
+      background-color: rgba(0, 0, 0, 0.8);
       overflow-y: auto;
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -116,20 +117,26 @@
     .main-media-container {
       position: relative;
       width: 100%;
-      height: 400px; /* Fixed height for consistency */
+      height: 400px;
+      /* Fixed height for consistency */
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: rgba(0,0,0,0.03); /* Subtle background to see container bounds */
-      overflow: hidden; /* Prevents content from spilling outside */
+      background-color: rgba(0, 0, 0, 0.03);
+      /* Subtle background to see container bounds */
+      overflow: hidden;
+      /* Prevents content from spilling outside */
     }
 
     /* Fix main image and video sizing for centered cropping */
-    #mainImage, #mainVideo {
+    #mainImage,
+    #mainVideo {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* This will crop to fill the container */
-      object-position: center; /* Centers the content so cropping happens from edges */
+      object-fit: cover;
+      /* This will crop to fill the container */
+      object-position: center;
+      /* Centers the content so cropping happens from edges */
     }
 
     /* Gallery main container improvements */
@@ -140,15 +147,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: rgba(0,0,0,0.03);
-      overflow: hidden; /* Prevent overflow */
+      background-color: rgba(0, 0, 0, 0.03);
+      overflow: hidden;
+      /* Prevent overflow */
     }
 
-    .gallery-main img, .gallery-main video {
+    .gallery-main img,
+    .gallery-main video {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Using cover for consistent appearance */
-      object-position: center; /* Centers the content */
+      object-fit: cover;
+      /* Using cover for consistent appearance */
+      object-position: center;
+      /* Centers the content */
       transition: opacity 0.3s ease;
     }
 
@@ -158,7 +169,8 @@
       overflow-x: auto;
       padding: 10px;
       background-color: var(--primary-color);
-      gap: 10px; /* Even spacing between thumbnails */
+      gap: 10px;
+      /* Even spacing between thumbnails */
     }
 
     .gallery-thumb {
@@ -169,13 +181,16 @@
       opacity: 0.7;
       transition: opacity 0.3s ease;
       border: 2px solid transparent;
-      overflow: hidden; /* Prevent content from spilling out */
+      overflow: hidden;
+      /* Prevent content from spilling out */
     }
 
-    .gallery-thumb img, .gallery-thumb video {
+    .gallery-thumb img,
+    .gallery-thumb video {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* For thumbnails, cover is fine to create uniform appearance */
+      object-fit: cover;
+      /* For thumbnails, cover is fine to create uniform appearance */
     }
 
     /* Responsive adjustments */
@@ -184,11 +199,11 @@
         flex-direction: row;
         max-height: 80vh;
       }
-      
+
       .gallery-main {
         height: 500px;
       }
-      
+
       .main-media-container {
         height: 500px;
       }
@@ -214,7 +229,7 @@
       position: absolute;
       bottom: 15px;
       left: 15px;
-      background-color: rgba(0,0,0,0.6);
+      background-color: rgba(0, 0, 0, 0.6);
       color: white;
       padding: 5px 10px;
       border-radius: 4px;
@@ -244,7 +259,8 @@
       transform: translate(-50%, -50%);
       background-color: rgba(0, 0, 0, 0.6);
       color: white;
-      width: 40px; /* Larger for better visibility */
+      width: 40px;
+      /* Larger for better visibility */
       height: 40px;
       border-radius: 50%;
       display: flex;
@@ -268,7 +284,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background-color: rgba(255,255,255,0.8);
+      background-color: rgba(255, 255, 255, 0.8);
       transition: all var(--transition-speed);
     }
 
@@ -294,7 +310,7 @@
     .modal-gallery {
       flex: 1;
       min-width: 300px;
-      background-color: rgba(0,0,0,0.02);
+      background-color: rgba(0, 0, 0, 0.02);
       position: relative;
     }
 
@@ -436,7 +452,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,0.2);
+      background: rgba(0, 0, 0, 0.2);
       color: white;
       width: 40px;
       height: 40px;
@@ -461,20 +477,20 @@
     .gallery-next {
       right: 15px;
     }
-    
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Cormorant Garamond', 'Playfair Display', serif;
     }
-    
+
     body {
       background-color: var(--background-color);
       color: var(--text-color);
       line-height: 1.6;
     }
-    
+
     header {
       position: relative;
       height: 90vh;
@@ -485,7 +501,7 @@
       background-color: var(--primary-color);
       overflow: hidden;
     }
-    
+
     .header-content {
       position: relative;
       z-index: 2;
@@ -493,7 +509,7 @@
       padding: 2rem;
       max-width: 800px;
     }
-    
+
     .header-background {
       position: absolute;
       top: 0;
@@ -504,7 +520,7 @@
       background-size: cover;
       background-position: center;
     }
-    
+
     .header-text h1 {
       font-size: 4rem;
       margin-bottom: 1.5rem;
@@ -512,21 +528,21 @@
       letter-spacing: 3px;
       text-transform: uppercase;
     }
-    
+
     .header-text h2 {
       font-size: 1.8rem;
       margin-bottom: 1rem;
       font-weight: 300;
       letter-spacing: 2px;
     }
-    
+
     .tagline {
       font-size: 1.1rem;
       margin-bottom: 2.5rem;
       font-style: italic;
       letter-spacing: 1px;
     }
-    
+
     .btn {
       display: inline-block;
       padding: 0.8rem 2rem;
@@ -540,12 +556,12 @@
       transition: all var(--transition-speed);
       margin: 0 0.5rem;
     }
-    
+
     .btn:hover {
       background-color: var(--accent-color);
       color: var(--primary-color);
     }
-    
+
     .navbar {
       position: fixed;
       top: 0;
@@ -557,7 +573,7 @@
       justify-content: center;
       transition: all var(--transition-speed);
     }
-    
+
     nav {
       display: flex;
       justify-content: space-between;
@@ -566,7 +582,7 @@
       width: 100%;
       max-width: 1400px;
     }
-    
+
     .logo {
       color: var(--light-text);
       font-size: 1.5rem;
@@ -574,21 +590,21 @@
       text-decoration: none;
       font-weight: 300;
     }
-    
+
     .logo span {
       color: var(--accent-color);
     }
-    
+
     .menu-list {
       display: flex;
       list-style: none;
     }
-    
+
     .menu-list li {
       position: relative;
       margin-left: 1.5rem;
     }
-    
+
     .menu-list a {
       color: var(--light-text);
       text-decoration: none;
@@ -599,16 +615,16 @@
       text-transform: uppercase;
       font-size: 0.9rem;
     }
-    
+
     .menu-list a:hover {
       color: var(--accent-color);
     }
-    
+
     .dropdown-indicator {
       margin-left: 0.2rem;
       font-size: 0.8rem;
     }
-    
+
     .dropdown-menu {
       position: absolute;
       top: 100%;
@@ -622,31 +638,31 @@
       transition: all var(--transition-speed);
       border-radius: 0;
       overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       border-top: 1px solid var(--accent-color);
     }
-    
+
     .has-dropdown:hover .dropdown-menu {
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
     }
-    
+
     .dropdown-menu li {
       margin: 0;
     }
-    
+
     .dropdown-menu a {
       display: block;
       padding: 0.8rem 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       font-size: 0.8rem;
     }
-    
+
     .dropdown-menu a:hover {
       background-color: rgba(184, 160, 126, 0.1);
     }
-    
+
     .menu-toggle {
       display: none;
       background: none;
@@ -655,17 +671,17 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
-    
+
     .menu-overlay {
       display: none;
     }
-    
+
     .collection-container {
       max-width: 1400px;
       margin: 6rem auto 4rem;
       padding: 0 1.5rem;
     }
-    
+
     .section-title {
       font-size: 2.5rem;
       margin-bottom: 1rem;
@@ -675,7 +691,7 @@
       letter-spacing: 2px;
       text-transform: uppercase;
     }
-    
+
     .section-subtitle {
       font-size: 1.2rem;
       margin-bottom: 3rem;
@@ -685,47 +701,47 @@
       font-style: italic;
       letter-spacing: 1px;
     }
-    
+
     .collection-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 3rem;
     }
-    
+
     .collection-card {
       background-color: var(--card-color);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       overflow: hidden;
     }
-    
+
     .collection-card:hover {
       transform: translateY(-10px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
-    
+
     .collection-image {
       position: relative;
       overflow: hidden;
       height: 350px;
     }
-    
+
     .collection-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.5s ease;
     }
-    
+
     .collection-card:hover .collection-image img {
       transform: scale(1.05);
     }
-    
+
     .collection-info {
       padding: 2rem;
       position: relative;
     }
-    
+
     .collection-info::before {
       content: '';
       position: absolute;
@@ -736,7 +752,7 @@
       height: 1px;
       background-color: var(--accent-color);
     }
-    
+
     .collection-title {
       font-size: 1.8rem;
       margin-bottom: 1rem;
@@ -745,29 +761,29 @@
       text-align: center;
       letter-spacing: 1px;
     }
-    
+
     .collection-description {
       font-size: 1rem;
       line-height: 1.8;
       margin-bottom: 1.5rem;
       text-align: center;
     }
-    
+
     .collection-details {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-top: 1.5rem;
       margin-top: 1.5rem;
-      border-top: 1px solid rgba(0,0,0,0.05);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
     }
-    
+
     .collection-price {
       font-size: 1.2rem;
       color: var(--accent-color);
       font-weight: 500;
     }
-    
+
     .collection-btn {
       background-color: transparent;
       border: 1px solid var(--accent-color);
@@ -779,56 +795,56 @@
       cursor: pointer;
       transition: all var(--transition-speed);
     }
-    
+
     .collection-btn:hover {
       background-color: var(--accent-color);
       color: white;
     }
-    
+
     .jewelry-showcase {
       margin: 6rem 0;
       padding: 4rem 0;
       background-color: rgba(226, 209, 186, 0.2);
     }
-    
+
     .showcase-container {
       max-width: 1400px;
       margin: 0 auto;
       padding: 0 1.5rem;
     }
-    
+
     .showcase-item {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       margin-bottom: 5rem;
     }
-    
+
     .showcase-item:last-child {
       margin-bottom: 0;
     }
-    
+
     .showcase-item:nth-child(even) {
       flex-direction: row-reverse;
     }
-    
+
     .showcase-image {
       flex: 1;
       min-width: 300px;
       padding: 1rem;
     }
-    
+
     .showcase-image img {
       width: 100%;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
-    
+
     .showcase-content {
       flex: 1;
       min-width: 300px;
       padding: 2rem;
     }
-    
+
     .showcase-title {
       font-size: 2.2rem;
       margin-bottom: 1.5rem;
@@ -836,51 +852,51 @@
       color: var(--primary-color);
       letter-spacing: 1px;
     }
-    
+
     .showcase-description {
       font-size: 1.1rem;
       line-height: 1.8;
       margin-bottom: 2rem;
     }
-    
+
     .showcase-features {
       display: flex;
       flex-wrap: wrap;
       margin-bottom: 2rem;
     }
-    
+
     .feature {
       flex: 1;
       min-width: 150px;
       margin-bottom: 1rem;
     }
-    
+
     .feature-title {
       font-weight: 500;
       color: var(--accent-color);
       margin-bottom: 0.3rem;
     }
-    
+
     .showcase-price {
       font-size: 1.5rem;
       color: var(--accent-color);
       margin-bottom: 1.5rem;
       font-weight: 500;
     }
-    
+
     .process-section {
       max-width: 1200px;
       margin: 6rem auto;
       padding: 0 1.5rem;
     }
-    
+
     .process-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       margin-top: 3rem;
     }
-    
+
     .process-step {
       flex: 1;
       min-width: 250px;
@@ -888,7 +904,7 @@
       padding: 2rem;
       position: relative;
     }
-    
+
     .process-step:not(:last-child)::after {
       content: '';
       position: absolute;
@@ -896,9 +912,9 @@
       right: 0;
       height: 50%;
       width: 1px;
-      background-color: rgba(0,0,0,0.1);
+      background-color: rgba(0, 0, 0, 0.1);
     }
-    
+
     .step-number {
       display: flex;
       align-items: center;
@@ -911,65 +927,65 @@
       font-size: 1.5rem;
       margin: 0 auto 1.5rem;
     }
-    
+
     .step-title {
       font-size: 1.5rem;
       margin-bottom: 1rem;
       font-weight: 300;
       color: var(--primary-color);
     }
-    
+
     .step-description {
       font-size: 1rem;
       line-height: 1.7;
     }
-    
+
     .testimonials {
       padding: 6rem 0;
       background-color: var(--primary-color);
       color: var(--light-text);
     }
-    
+
     .testimonial-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 1.5rem;
     }
-    
+
     .testimonial-title {
       color: var(--light-text);
       margin-bottom: 3rem;
     }
-    
+
     .testimonial-subtitle {
       color: var(--light-accent);
     }
-    
+
     .testimonial-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 2rem;
     }
-    
+
     .testimonial-card {
-      background-color: rgba(255,255,255,0.05);
+      background-color: rgba(255, 255, 255, 0.05);
       padding: 2rem;
       border-radius: 5px;
       position: relative;
     }
-    
+
     .testimonial-text {
       font-size: 1.1rem;
       line-height: 1.8;
       margin-bottom: 1.5rem;
       font-style: italic;
     }
-    
+
     .testimonial-author {
       display: flex;
       align-items: center;
     }
-    
+
     .author-image {
       width: 50px;
       height: 50px;
@@ -977,24 +993,24 @@
       overflow: hidden;
       margin-right: 1rem;
     }
-    
+
     .author-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
+
     .author-info h4 {
       font-size: 1.1rem;
       font-weight: 400;
       margin-bottom: 0.2rem;
     }
-    
+
     .author-info p {
       font-size: 0.9rem;
       opacity: 0.7;
     }
-    
+
     .testimonial-quote {
       position: absolute;
       top: 1rem;
@@ -1003,7 +1019,7 @@
       opacity: 0.1;
       font-family: serif;
     }
-    
+
     .contact-section {
       max-width: 1200px;
       margin: 6rem auto;
@@ -1011,45 +1027,45 @@
       display: flex;
       flex-wrap: wrap;
     }
-    
+
     .contact-info {
       flex: 1;
       min-width: 300px;
       padding: 2rem;
     }
-    
+
     .contact-form {
       flex: 2;
       min-width: 300px;
       padding: 2rem;
     }
-    
+
     .contact-info h3 {
       font-size: 1.8rem;
       margin-bottom: 2rem;
       font-weight: 300;
       color: var(--primary-color);
     }
-    
+
     .contact-details {
       margin-bottom: 2rem;
     }
-    
+
     .contact-item {
       display: flex;
       margin-bottom: 1rem;
     }
-    
+
     .contact-icon {
       margin-right: 1rem;
       color: var(--accent-color);
     }
-    
+
     .social-links {
       display: flex;
       margin-top: 2rem;
     }
-    
+
     .social-link {
       display: flex;
       align-items: center;
@@ -1062,16 +1078,16 @@
       margin-right: 1rem;
       transition: all var(--transition-speed);
     }
-    
+
     .social-link:hover {
       background-color: var(--accent-color);
       transform: translateY(-3px);
     }
-    
+
     .form-group {
       margin-bottom: 1.5rem;
     }
-    
+
     .form-label {
       display: block;
       margin-bottom: 0.5rem;
@@ -1080,26 +1096,26 @@
       letter-spacing: 1px;
       color: var(--primary-color);
     }
-    
+
     .form-input {
       width: 100%;
       padding: 0.8rem;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       font-family: inherit;
       font-size: 1rem;
       transition: border var(--transition-speed);
     }
-    
+
     .form-input:focus {
       border-color: var(--accent-color);
       outline: none;
     }
-    
+
     .form-textarea {
       min-height: 150px;
       resize: vertical;
     }
-    
+
     .submit-btn {
       background-color: var(--accent-color);
       color: white;
@@ -1111,17 +1127,17 @@
       cursor: pointer;
       transition: all var(--transition-speed);
     }
-    
+
     .submit-btn:hover {
       background-color: var(--primary-color);
     }
-    
+
     footer {
       background-color: var(--primary-color);
       color: var(--light-text);
       padding: 4rem 0 2rem;
     }
-    
+
     .footer-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -1130,14 +1146,14 @@
       flex-wrap: wrap;
       justify-content: space-between;
     }
-    
+
     .footer-column {
       flex: 1;
       min-width: 250px;
       padding: 0 1rem;
       margin-bottom: 2rem;
     }
-    
+
     .footer-column h3 {
       font-size: 1.3rem;
       margin-bottom: 1.5rem;
@@ -1146,7 +1162,7 @@
       position: relative;
       padding-bottom: 0.5rem;
     }
-    
+
     .footer-column h3::after {
       content: '';
       position: absolute;
@@ -1156,39 +1172,39 @@
       height: 1px;
       background-color: var(--accent-color);
     }
-    
+
     .footer-links {
       list-style: none;
     }
-    
+
     .footer-links li {
       margin-bottom: 0.8rem;
     }
-    
+
     .footer-links a {
       color: var(--light-text);
       text-decoration: none;
       opacity: 0.7;
       transition: opacity var(--transition-speed);
     }
-    
+
     .footer-links a:hover {
       opacity: 1;
       color: var(--accent-color);
     }
-    
+
     .newsletter-form {
       display: flex;
       margin-top: 1.5rem;
     }
-    
+
     .newsletter-input {
       flex: 1;
       padding: 0.8rem;
       border: none;
       font-family: inherit;
     }
-    
+
     .newsletter-btn {
       background-color: var(--accent-color);
       color: white;
@@ -1197,48 +1213,48 @@
       cursor: pointer;
       transition: background-color var(--transition-speed);
     }
-    
+
     .newsletter-btn:hover {
       background-color: var(--light-accent);
       color: var(--primary-color);
     }
-    
+
     .footer-bottom {
       text-align: center;
       padding-top: 2rem;
       margin-top: 2rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     .footer-bottom p {
       opacity: 0.7;
       font-size: 0.9rem;
     }
-    
+
     /* Responsive Styles */
     @media (max-width: 992px) {
       .header-text h1 {
         font-size: 3rem;
       }
-      
+
       .showcase-item {
         margin-bottom: 3rem;
       }
-      
+
       .process-step:not(:last-child)::after {
         display: none;
       }
     }
-    
+
     @media (max-width: 768px) {
       .header-text h1 {
         font-size: 2.5rem;
       }
-      
+
       .header-text h2 {
         font-size: 1.5rem;
       }
-      
+
       .menu-toggle {
         display: block;
         position: absolute;
@@ -1246,7 +1262,7 @@
         right: 1rem;
         z-index: 102;
       }
-      
+
       nav {
         position: fixed;
         top: 0;
@@ -1260,30 +1276,30 @@
         padding: 5rem 0 2rem;
         transition: right var(--transition-speed);
       }
-      
+
       nav.active {
         right: 0;
       }
-      
+
       .menu-list {
         flex-direction: column;
         width: 100%;
       }
-      
+
       .menu-list li {
         margin: 0;
         width: 100%;
       }
-      
+
       .menu-list a {
         padding: 1rem 2rem;
         display: block;
         width: 100%;
       }
-      
+
       .dropdown-menu {
         position: static;
-        background-color: rgba(0,0,0,0.2);
+        background-color: rgba(0, 0, 0, 0.2);
         width: 100%;
         max-height: 0;
         overflow: hidden;
@@ -1293,15 +1309,15 @@
         transition: max-height var(--transition-speed);
         border-top: none;
       }
-      
+
       .has-dropdown.active .dropdown-menu {
         max-height: 500px;
       }
-      
+
       .dropdown-indicator {
         float: right;
       }
-      
+
       .menu-overlay {
         display: block;
         position: fixed;
@@ -1309,75 +1325,77 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.7);
+        background-color: rgba(0, 0, 0, 0.7);
         z-index: 101;
         visibility: hidden;
         opacity: 0;
         transition: opacity var(--transition-speed);
       }
-      
-      nav.active + .menu-overlay {
+
+      nav.active+.menu-overlay {
         visibility: visible;
         opacity: 1;
       }
-      
+
       .collection-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       }
-      
-      .showcase-item, .showcase-item:nth-child(even) {
+
+      .showcase-item,
+      .showcase-item:nth-child(even) {
         flex-direction: column;
       }
-      
+
       .showcase-image {
         margin-bottom: 2rem;
       }
-      
+
       .process-step {
         margin-bottom: 3rem;
       }
     }
-    
+
     @media (max-width: 480px) {
       .header-text h1 {
         font-size: 2rem;
       }
-      
+
       .header-text h2 {
         font-size: 1.2rem;
       }
-      
+
       .section-title {
         font-size: 2rem;
       }
-      
+
       .collection-grid {
         grid-template-columns: 1fr;
       }
-      
+
       .btn {
         padding: 0.7rem 1.5rem;
         font-size: 0.8rem;
         margin-bottom: 0.5rem;
       }
-      
+
       .testimonial-grid {
         grid-template-columns: 1fr;
       }
-      
+
       .newsletter-form {
         flex-direction: column;
       }
-      
+
       .newsletter-input {
         margin-bottom: 1rem;
       }
-      
+
       .newsletter-btn {
         width: 100%;
         padding: 0.8rem;
       }
     }
+
     .modal-tabs {
       margin-bottom: 1.5rem;
     }
@@ -1425,8 +1443,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .modal-description,
@@ -1451,7 +1476,7 @@
         Lapis Lazuli, known as lapis or “sky stone” in Latin, has long been associated with royalty, wisdom, and magic. This ring channels those ancient energies, its timeless setting evoking forgotten kingdoms and starlit rituals.
         <br><br>
         The band itself has its own story. Discovered in the vibrant chaos of Bangkok’s Chatuchak Market, it was missing its centerpiece. I brought it back to Singapore, where it was lovingly restored—now crowned with a stone worthy of its history.`,
-        artistComments:`One of my favourite pieces. The moment I laid eyes on that unset band in chatuchak, I already knew what I had to do. I\'d never seen what Lapis Lazuli looks like before, but I felt it would look perfect. 
+        artistComments: `One of my favourite pieces. The moment I laid eyes on that unset band in chatuchak, I already knew what I had to do. I\'d never seen what Lapis Lazuli looks like before, but I felt it would look perfect. 
         <br><br> 
         It turned out much better than I had hoped. The blue almost looks like it glows when light shines directly on it. The white streaks were like clouds against the sky. The only thing I was slightly disappointed by is that the pyrite flecks were not shiny, but I think it leans nicely into the rustic, antique look. 
         <br><br>
@@ -1482,7 +1507,7 @@
         Graceful, grounding, and subtly luminous—this striking ring features a polished purple fluorite gemstone, delicately cradled in a silver-toned adjustable band for a perfect, comfortable fit. The crystal catches the light beautifully, revealing flecks of inner fire that dance with each movement.
         <br><br>
         Purple fluorite is often associated with clarity, intuition, and calm—a stone favored by healers and creatives alike. Its soft violet hues are layered and ethereal, giving it a mystical quality that enhances both modern and boho styles.`,
-        artistComments:`
+        artistComments: `
         The second piece I ever made, when I had nothing but sandpaper. Fluorite is a stone I knew nothing about, but instantly fell in love with.
         <br><br>
         Unfortunately, I learnt the hard way why people don't typically use fluorite for jewellery. Beautiful, yes. Fragile - moreso. Incredibly soft stone. I looked at it wrong after I had set it and it cracked.
@@ -1518,7 +1543,7 @@
         description: `
         This rectangular sunstone ring captures the essence of sunlight. The polished stone rests beautifully within a silver band, creating a subtle contrast of color and light. Sunstone’s inner fire is revealed as the light dances across its surface and is known for its connection to joy and optimism. This ring invites a sense of grounded energy and radiant spirit. 
         `,
-        artistComments:`
+        artistComments: `
         This one was a bit of a challenge. The shine only appears at certain angles, and the uncut shape of the stone did not agree with me. I needed the base to be rectangular to fit in the ring but I wanted the shine to appear from the front as much as possible. For every bit of the stone I removed, I removed some of the reflective parts, so I decided on a triangular prism for the crown combined with a rectangular base.
         <br><br>
         I think this is the first ring I made that is distinctly masculine. 
@@ -1552,7 +1577,7 @@
         description: `
         This brass-toned ring cradles a luminous moonstone, known for its ethereal glow. Long revered as a stone of clairvoyance and clarity, moonstone is said to channel the moon, guiding the wearer through cycles of change. Set in the warmth of brass, it is a gentle reminder of inner light, no matter the phase.
         `,
-        artistComments:`
+        artistComments: `
         Another ring that gave me a headache since the light effect only appears at certain angles and I have to cut for it. Although the result was pretty good or at least better than I expected. The only drawback is that there seems to be scratches on the surface no matter how much I polish,
         which leads me to believe they are lamellar twinning planes that reach the surface. 
         <br><br>
@@ -1588,7 +1613,7 @@
         Rooted in nature’s beauty, this captivating ring showcases the ethereal beauty of moss agate, with a mesmerizing swirl of greens and milky clear spaces that evoke the feeling of a forest floor. The stone’s rich, layered hues – from deep emerald to pale jade – are beautifully framed by a substantial silver band. Stylized antelope figures, seemingly emerging from a landscape of leaves and blossoms, stand proudly amongst the design, their horns dramatically curled backwards in a gesture of strength and grace. <br><br>
         Moss Agate is considered to be a symbol of prosperity, new beginnings, healing and tranquility. 
         `,
-        artistComments:`
+        artistComments: `
         This pretty little thing took me over a month. A 7 on the mohs scale and it came to me as a fairly large, tumbled stone. I had to cut it down to a third of its size before I could even think about shaping it to fit into the band.
         <br><br>
         The silver band was also another one of those "precognition" events, where the moment I saw it I knew I had to slide in a moss agate, despite not really knowing what they look like outside descriptions of it.
@@ -1624,7 +1649,7 @@
         description: `
         This small demantoid ring evokes both nature’s grace and its enduring strength. The band, slender and organic, flows seamlessly into the fan-shaped leaves - symbols of resilience and ancient beauty. At the center rests a circular cabochon demantoid, its soft, rounded surface glowing with green fire. <br><br>Within the gem, fine thread-like inclusions mimic the delicate structure of branches - each one a tiny world, frozen in time. These natural features, known as "horsetail" inclusions, are not flaws but signatures of authenticity. The overall design hints at quiet luxury, its charm lying in subtlety rather than spectacle.<br><br>Spiritually, the demantoid is said to be associated with prosperity, protection and perhaps even adventure. Paired with the ginkgo, an ancient tree known for endurance, memory, and peace - this ring becomes more than adornment; it is a talisman of vitality and growth. A gentle reminder that strength can be soft, and that even the smallest things can carry great depth.
         `,
-        artistComments:`
+        artistComments: `
         I bought this one from China. I knew nothing about demantoids so when it arrived it was basically dust in a bag (most demantoids are under 1 carat). After sifting through it, I found about 3-4 pieces that were big enough to grasp between 2 fingers.
         <br><br>
         After some polishing, I noticed they actually looked very nice. I would've faceted it if I had the equipment, since they are supposed to generate more fire than diamonds but then again the ones I have are really small. 
@@ -1659,7 +1684,7 @@
         This captivating necklace showcases the mesmerizing beauty of charoite, with its rich purple colour and swirling patterns reminiscent of ink mixing around in a bottle. The stone boasts three to four distinct shades of purple, ranging from deep amethyst to lighter lavender hues, beautifully framed by a delicate silver-coloured setting shaped like a teardrop, and adorned with a profusion of surrounding flowers and three graceful leaves at the bottom. <br><br>
         Charoite, a rare mildy-radioactive gemstone found only in Siberia, is known for transformation and emotional reinforcement. Transformation is strangely apt, since the pendant was found discarded with its gemstone missing in Thailand.
         `,
-        artistComments:`
+        artistComments: `
         
         `,
         media: [
@@ -1676,9 +1701,9 @@
         location2: "Thailand"
       },
     ];
-  
+
     // Modal functionality
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const modal = document.getElementById('jewelryModal');
       const mediaContainer = document.getElementById('mainMediaContainer');
       const modalTitle = document.getElementById('modalTitle');
@@ -1691,7 +1716,7 @@
       const closeButton = document.querySelector('.modal-close');
       const prevButton = document.querySelector('.gallery-prev');
       const nextButton = document.querySelector('.gallery-next');
-      
+
       let currentItemId = null;
       let currentMediaIndex = 0;
 
@@ -1699,63 +1724,63 @@
       const tabPanes = document.querySelectorAll('.tab-pane');
 
       tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
           const targetTab = this.getAttribute('data-tab');
-          
+
           // Remove active class from all buttons and panes
           tabButtons.forEach(btn => btn.classList.remove('active'));
           tabPanes.forEach(pane => pane.classList.remove('active'));
-          
+
           // Add active class to clicked button and corresponding pane
           this.classList.add('active');
           document.getElementById(`tab-${targetTab}`).classList.add('active');
         });
       });
-      
+
       // Add click event to all "View Details" buttons
       const detailButtons = document.querySelectorAll('.collection-btn');
       detailButtons.forEach((button, index) => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
           openModal(jewelryData[index].id);
         });
       });
-      
+
       // Close modal when clicking the close button
-      closeButton.addEventListener('click', function() {
+      closeButton.addEventListener('click', function () {
         closeModal();
       });
-      
+
       // Close modal when clicking outside the content
-      modal.addEventListener('click', function(e) {
+      modal.addEventListener('click', function (e) {
         if (e.target === modal) {
           closeModal();
         }
       });
-      
+
       // Close modal with Escape key
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && modal.classList.contains('show')) {
           closeModal();
         }
       });
-      
+
       // Gallery navigation
-      prevButton.addEventListener('click', function() {
+      prevButton.addEventListener('click', function () {
         navigateGallery(-1);
       });
-      
-      nextButton.addEventListener('click', function() {
+
+      nextButton.addEventListener('click', function () {
         navigateGallery(1);
       });
-      
+
       // Open the modal with item data
       function openModal(itemId) {
         const item = jewelryData.find(item => item.id === itemId);
         if (!item) return;
-        
+
         currentItemId = itemId;
         currentMediaIndex = 0;
-        
+
         // Populate modal with item data
         modalTitle.textContent = item.title;
         modalDescription.innerHTML = item.description;
@@ -1774,35 +1799,35 @@
         document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
         document.querySelector('.tab-button[data-tab="description"]').classList.add('active');
         document.getElementById('tab-description').classList.add('active');
-        
+
         // Create thumbnails
         galleryThumbs.innerHTML = '';
         item.media.forEach((media, index) => {
           const thumb = document.createElement('div');
           thumb.className = index === 0 ? 'gallery-thumb active' : 'gallery-thumb';
-          
+
           // Add video icon indicator for video thumbnails
           if (media.type === 'video') {
             thumb.classList.add('video-thumb');
           }
-          
+
           thumb.innerHTML = `<img src="${media.thumbnail}" alt="${item.title} ${media.type} ${index + 1}">
                            ${media.type === 'video' ? '<span class="video-indicator"><i class="fas fa-play"></i></span>' : ''}`;
-          
-          thumb.addEventListener('click', function() {
+
+          thumb.addEventListener('click', function () {
             updateMainMedia(index);
           });
           galleryThumbs.appendChild(thumb);
         });
-        
+
         // Set main media
         updateMainMedia(0);
-        
+
         // Show modal
         modal.classList.add('show');
         document.body.style.overflow = 'hidden'; // Prevent scrolling
       }
-      
+
       // Close the modal
       function closeModal() {
         // Pause any playing videos
@@ -1810,24 +1835,24 @@
         videoElements.forEach(video => {
           video.pause();
         });
-        
+
         modal.classList.remove('show');
         document.body.style.overflow = ''; // Restore scrolling
       }
-      
+
       // Update main media when thumbnail is clicked
       function updateMainMedia(index) {
         if (!currentItemId) return;
-        
+
         const item = jewelryData.find(item => item.id === currentItemId);
         if (!item || index < 0 || index >= item.media.length) return;
-        
+
         currentMediaIndex = index;
         const media = item.media[index];
-        
+
         // Clear existing content
         mediaContainer.innerHTML = '';
-        
+
         // Add appropriate media element
         if (media.type === 'image') {
           const img = document.createElement('img');
@@ -1848,7 +1873,7 @@
           video.loop = true;
           mediaContainer.appendChild(video);
         }
-        
+
         // Update active thumbnail
         const thumbs = galleryThumbs.querySelectorAll('.gallery-thumb');
         thumbs.forEach((thumb, i) => {
@@ -1859,33 +1884,33 @@
           }
         });
       }
-      
+
       // Navigate through gallery
       function navigateGallery(direction) {
         if (!currentItemId) return;
-        
+
         const item = jewelryData.find(item => item.id === currentItemId);
         if (!item) return;
-        
+
         let newIndex = currentMediaIndex + direction;
-        
+
         // Pause any playing videos before changing
         const videoElements = mediaContainer.querySelectorAll('video');
         videoElements.forEach(video => {
           video.pause();
         });
-        
+
         // Wrap around
         if (newIndex < 0) newIndex = item.media.length - 1;
         if (newIndex >= item.media.length) newIndex = 0;
-        
+
         updateMainMedia(newIndex);
       }
-      
+
       // Keyboard navigation for gallery
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (!modal.classList.contains('show')) return;
-        
+
         if (e.key === 'ArrowLeft') {
           navigateGallery(-1);
         } else if (e.key === 'ArrowRight') {
@@ -1895,9 +1920,12 @@
     });
   </script>
 </head>
+
 <body>
   <header>
-    <div class="header-background" style="background-image: url('https://images.unsplash.com/photo-1614674688981-afa9d1a291ef?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0');"></div>
+    <div class="header-background"
+      style="background-image: url('https://images.unsplash.com/photo-1614674688981-afa9d1a291ef?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0');">
+    </div>
     <div class="header-content">
       <div class="header-text">
         <h1>Foo T'suen Wei</h1>
@@ -1942,8 +1970,8 @@
   <div class="collection-container" id="collection">
     <h2 class="section-title">Latest Works</h2>
     <p class="section-subtitle">Welcome to my gallery.</p>
-    
-        <div class="collection-grid">
+
+    <div class="collection-grid">
       <div class="collection-card">
         <div class="collection-image">
           <img src="img/jewelry/web-optimized/lapis1.webp" alt="Lapis Ring" />
@@ -1956,7 +1984,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="collection-card">
         <div class="collection-image">
           <img src="img/jewelry/web-optimized/fluorite1.webp" alt="Purple Fluorite Ring" />

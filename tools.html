@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,16 +25,16 @@
         }
 
         .drag-handle {
-        cursor: grab;
-        user-select: none;
-        display: inline-block;
-        padding: 4px 8px;
-        font-weight: bold;
-        color: #ccc;
+            cursor: grab;
+            user-select: none;
+            display: inline-block;
+            padding: 4px 8px;
+            font-weight: bold;
+            color: #ccc;
         }
 
         .drag-handle:active {
-        cursor: grabbing;
+            cursor: grabbing;
         }
 
         .toolbar {
@@ -112,7 +113,7 @@
             overflow: visible;
             z-index: 0;
             background: #2b2b2b;
-            background-image: 
+            background-image:
                 linear-gradient(45deg, #333 25%, transparent 25%),
                 linear-gradient(-45deg, #333 25%, transparent 25%),
                 linear-gradient(45deg, transparent 75%, #333 75%),
@@ -172,7 +173,8 @@
             font-size: 12px;
         }
 
-        .property-row input, .property-row select {
+        .property-row input,
+        .property-row select {
             flex: 1;
             padding: 5px;
             background: #333;
@@ -353,9 +355,9 @@
         }
 
         #layerList {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .layer-entry {
@@ -363,16 +365,19 @@
             align-items: center;
             gap: 6px;
             margin-bottom: 5px;
-            }
+        }
 
         .layer-entry input {
-        flex: 1;
+            flex: 1;
         }
+
         .layer-entry button {
             padding: 2px 6px;
             cursor: pointer;
-            display: inline-block; /* Ensure they're not hidden */
-            min-width: 30px; /* Give them a minimum width */
+            display: inline-block;
+            /* Ensure they're not hidden */
+            min-width: 30px;
+            /* Give them a minimum width */
         }
 
         .menubar {
@@ -385,17 +390,17 @@
             gap: 20px;
             border-bottom: 1px solid #444;
             font-size: 13px;
-            }
+        }
 
         .menu-item {
             position: relative;
             cursor: default;
             padding: 5px 10px;
-            }
+        }
 
         .menu-item:hover .dropdown {
             display: block;
-            }
+        }
 
         .dropdown {
             position: absolute;
@@ -407,58 +412,71 @@
             border: 1px solid #444;
             min-width: 120px;
             z-index: 10;
-            }
+        }
 
         .dropdown div {
             padding: 8px 12px;
             cursor: pointer;
             font-size: 12px;
             border-bottom: 1px solid #3a3a3a;
-            }
+        }
 
         .dropdown div:hover {
             background: #0078d4;
             color: #fff;
-            }
+        }
 
         .modal {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 999;
-            }
+        }
 
         .modal-content {
-            background: #2b2b2b; padding: 20px; border-radius: 8px;
-            width: 300px; display: flex; flex-direction: column; gap: 10px;
-            }
+            background: #2b2b2b;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
         .modal-buttons {
-            display: flex; justify-content: space-between;
-            }
+            display: flex;
+            justify-content: space-between;
+        }
 
         .tool-properties {
-        display: none;         /* hide by default */
-        flex-direction: column;
-        width: 100%;
+            display: none;
+            /* hide by default */
+            flex-direction: column;
+            width: 100%;
         }
+
         .tool-properties.active {
-          display: block;
+            display: block;
         }
 
         #textEditor {
-        position: absolute;
-        display: none;
-        z-index: 999;
-        font: 32px Arial;
-        background: transparent;
-        color: white;
-        border: none;
-        outline: none;
-        resize: none;
-        overflow: hidden;
-        pointer-events: auto;
+            position: absolute;
+            display: none;
+            z-index: 999;
+            font: 32px Arial;
+            background: transparent;
+            color: white;
+            border: none;
+            outline: none;
+            resize: none;
+            overflow: hidden;
+            pointer-events: auto;
         }
 
         .slider-container {
@@ -480,49 +498,48 @@
         }
 
         .selection-wrapper {
-        position: relative;
+            position: relative;
         }
 
         .selection-toggle {
-        position: relative;
-        z-index: 1;
+            position: relative;
+            z-index: 1;
         }
 
         .selection-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: #2b2b2b;
-        border: 1px solid #444;
-        border-radius: 5px;
-        z-index: 1000;
-        padding: 5px 0;
-        flex-direction: column;
-        min-width: 120px;
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #2b2b2b;
+            border: 1px solid #444;
+            border-radius: 5px;
+            z-index: 1000;
+            padding: 5px 0;
+            flex-direction: column;
+            min-width: 120px;
         }
 
         .selection-menu div {
-        padding: 6px 12px;
-        cursor: pointer;
-        font-size: 13px;
-        white-space: nowrap;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .selection-menu div:hover {
-        background: #0078d4;
-        color: white;
+            background: #0078d4;
+            color: white;
         }
 
         #previewCanvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 10;
-        pointer-events: none; /* Let mouse pass through */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            pointer-events: none;
+            /* Let mouse pass through */
         }
-
-
     </style>
 </head>
 <div id="filterControls" style="
@@ -538,23 +555,25 @@
   gap: 10px;
   z-index: 1000;
 ">
-  <button class="btn" onclick="commitFilter()">Apply</button>
-  <button class="btn" onclick="cancelFilterPreview()">Cancel</button>
+    <button class="btn" onclick="commitFilter()">Apply</button>
+    <button class="btn" onclick="cancelFilterPreview()">Cancel</button>
 </div>
+
 <body>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Courier+Prime&family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Courier+Prime&family=Montserrat&display=swap"
+        rel="stylesheet">
     <div class="menubar">
         <div class="menu-item">File
             <div class="dropdown">
-            <div onclick="importImage()">Open</div>
-            <div onclick="openExportDialog()">Export ▸</div>
-            <div onclick="clearCanvas()">New</div>
+                <div onclick="importImage()">Open</div>
+                <div onclick="openExportDialog()">Export ▸</div>
+                <div onclick="clearCanvas()">New</div>
             </div>
         </div>
         <div class="menu-item">Edit
             <div class="dropdown">
-            <div onclick="undo()">Undo</div>
-            <div onclick="redo()">Redo</div>
+                <div onclick="undo()">Undo</div>
+                <div onclick="redo()">Redo</div>
             </div>
         </div>
 
@@ -584,13 +603,13 @@
             <button class="tool-btn" id="textTool" title="Text Tool">T</button>
             <div style="height: 10px;"></div>
             <div class="selection-wrapper">
-            <button class="tool-btn selection-toggle" title="Selection Tool">🧰</button>
-            <div class="selection-menu">
-                <div onclick="selectSelectionTool('rect')">🔲 Rect</div>
-                <div onclick="selectSelectionTool('ellipse')">⚪ Ellipse</div>
-                <div onclick="selectSelectionTool('wand')">✨ Wand</div>
-                <div onclick="selectSelectionTool('quick')">🧲 Quick</div>
-            </div>
+                <button class="tool-btn selection-toggle" title="Selection Tool">🧰</button>
+                <div class="selection-menu">
+                    <div onclick="selectSelectionTool('rect')">🔲 Rect</div>
+                    <div onclick="selectSelectionTool('ellipse')">⚪ Ellipse</div>
+                    <div onclick="selectSelectionTool('wand')">✨ Wand</div>
+                    <div onclick="selectSelectionTool('quick')">🧲 Quick</div>
+                </div>
             </div>
 
             <div style="height: 10px;"></div>
@@ -601,14 +620,14 @@
         <div class="main-area">
             <div class="canvas-container" id="canvasContainer">
                 <div class="canvas-wrapper" id="canvasWrapper">
-                <canvas id="previewCanvas" style="
+                    <canvas id="previewCanvas" style="
                     position: absolute;
                     top: 0; left: 0;
                     z-index: 500;
                     display: none;
                     pointer-events: none;
                 "></canvas>
-                <canvas id="canvas" width="800" height="600"></canvas>
+                    <canvas id="canvas" width="800" height="600"></canvas>
                 </div>
                 <div class="drag-overlay" id="dragOverlay">
                     Drop image here
@@ -652,62 +671,62 @@
                 </div>
             </div>
 
-        <div class="property-group">
-        <h3>Filter Settings</h3>
-        <div class="property-row">
-            <label>Strength:</label>
-            <div class="slider-container">
-                <span id="filterStrengthValue" class="slider-value">100%</span>
-                <input type="range" id="filterStrength" min="0" max="200" value="100">
-            </div>
-        </div>
-    </div>
-
-        <div class="tool-properties" data-tool="text">
             <div class="property-group">
-                <h3>Text Settings</h3>
-                <select id="textFont">
-                <option value="Arial">Arial</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Roboto">Roboto</option>
-                <option value="Courier Prime">Courier Prime</option>
-                <option value="Montserrat">Montserrat</option>
-                </select>
-                <input type="number" id="textSize" value="32" min="8">
-                <input type="color" id="textColor" value="#ffffff">
+                <h3>Filter Settings</h3>
+                <div class="property-row">
+                    <label>Strength:</label>
+                    <div class="slider-container">
+                        <span id="filterStrengthValue" class="slider-value">100%</span>
+                        <input type="range" id="filterStrength" min="0" max="200" value="100">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-properties" data-tool="text">
+                <div class="property-group">
+                    <h3>Text Settings</h3>
+                    <select id="textFont">
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Courier Prime">Courier Prime</option>
+                        <option value="Montserrat">Montserrat</option>
+                    </select>
+                    <input type="number" id="textSize" value="32" min="8">
+                    <input type="color" id="textColor" value="#ffffff">
+                </div>
+            </div>
+
+            <div class="property-group">
+                <h3>Canvas</h3>
+                <div class="property-row">
+                    <label>Width:</label>
+                    <input type="number" id="canvasWidth" value="800" min="1" max="4000">
+                </div>
+                <div class="property-row">
+                    <label>Height:</label>
+                    <input type="number" id="canvasHeight" value="600" min="1" max="4000">
+                </div>
+                <div class="property-row">
+                    <button class="btn" onclick="resizeCanvas()">Resize</button>
+                </div>
+            </div>
+
+            <div class="property-group">
+                <h3>Layers</h3>
+                <div class="layer-controls-row">
+                    <button class="btn" onclick="createLayer('New Layer'); updateLayerUI();">New Layer</button>
+                    <button class="btn" onclick="duplicateLayer(activeLayerIndex); updateLayerUI();">Duplicate</button>
+                </div>
+                <ul id="layerList" style="list-style: none; padding: 0;"></ul>
+            </div>
+
+            <div class="property-group">
+                <h3>History</h3>
+                <div id="historyList"></div>
             </div>
         </div>
-
-    <div class="property-group">
-        <h3>Canvas</h3>
-        <div class="property-row">
-            <label>Width:</label>
-            <input type="number" id="canvasWidth" value="800" min="1" max="4000">
-        </div>
-        <div class="property-row">
-            <label>Height:</label>
-            <input type="number" id="canvasHeight" value="600" min="1" max="4000">
-        </div>
-        <div class="property-row">
-            <button class="btn" onclick="resizeCanvas()">Resize</button>
-        </div>
-    </div>
-
-    <div class="property-group">
-        <h3>Layers</h3>
-        <div class="layer-controls-row">
-            <button class="btn" onclick="createLayer('New Layer'); updateLayerUI();">New Layer</button>
-            <button class="btn" onclick="duplicateLayer(activeLayerIndex); updateLayerUI();">Duplicate</button>
-        </div>
-        <ul id="layerList" style="list-style: none; padding: 0;"></ul>
-    </div>
-
-        <div class="property-group">
-            <h3>History</h3>
-            <div id="historyList"></div>
-        </div>
-    </div>
     </div>
 
     <div id="exportDialog" style="display: none;" class="modal">
@@ -719,20 +738,20 @@
 
             <label>Format:</label>
             <select id="exportFormat">
-            <option value="png">PNG</option>
-            <option value="jpeg">JPEG</option>
-            <option value="webp">WebP</option>
+                <option value="png">PNG</option>
+                <option value="jpeg">JPEG</option>
+                <option value="webp">WebP</option>
             </select>
 
             <div id="qualityGroup" style="display: none;">
-            <label>Quality:</label>
-            <input type="range" id="jpegQuality" min="0.1" max="1" step="0.1" value="0.92">
-            <span id="jpegQualityValue">92%</span>
+                <label>Quality:</label>
+                <input type="range" id="jpegQuality" min="0.1" max="1" step="0.1" value="0.92">
+                <span id="jpegQualityValue">92%</span>
             </div>
 
             <div class="modal-buttons">
-            <button class="btn" onclick="confirmExport()">Export</button>
-            <button class="btn" onclick="closeExportDialog()">Cancel</button>
+                <button class="btn" onclick="confirmExport()">Export</button>
+                <button class="btn" onclick="closeExportDialog()">Cancel</button>
             </div>
         </div>
     </div>
@@ -828,7 +847,7 @@
 
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey || e.metaKey) {
-                    switch(e.key) {
+                    switch (e.key) {
                         case 'z':
                             e.preventDefault();
                             if (e.shiftKey) {
@@ -862,13 +881,13 @@
                         clearSelection();
                     }
                     if ((e.key === 'Delete' || e.key === 'Backspace') && window.currentSelectionMask) {
-                    deleteSelectedArea();
+                        deleteSelectedArea();
                     }
 
 
                 }
 
-                switch(e.key) {
+                switch (e.key) {
                     case 'b': selectTool('brushTool'); break;
                     case 'e': selectTool('eraserTool'); break;
                     case 'm': selectTool('moveTool'); break;
@@ -890,10 +909,10 @@
 
             for (let i = 0; i < mask.length; i++) {
                 if (mask[i]) {
-                data[i * 4 + 0] = 0; // R
-                data[i * 4 + 1] = 0; // G
-                data[i * 4 + 2] = 0; // B
-                data[i * 4 + 3] = 0; // A = fully transparent
+                    data[i * 4 + 0] = 0; // R
+                    data[i * 4 + 1] = 0; // G
+                    data[i * 4 + 2] = 0; // B
+                    data[i * 4 + 3] = 0; // A = fully transparent
                 }
             }
 
@@ -901,7 +920,7 @@
             renderLayers();
             saveState();
             clearSelection();
-            }
+        }
 
 
 
@@ -925,12 +944,12 @@
             layers.push(layer);
             activeLayerIndex = layers.length - 1;
             renderLayers();
-            updateLayerUI(); 
+            updateLayerUI();
             return layer;
         }
 
         function deleteLayer(index) {
-            if (layers.length <= 1) return; 
+            if (layers.length <= 1) return;
 
             layers.splice(index, 1);
             if (activeLayerIndex >= layers.length) {
@@ -952,7 +971,7 @@
             newLayer.opacity = originalLayer.opacity;
 
             renderLayers();
-            updateLayerUI(); 
+            updateLayerUI();
         }
 
         function moveLayerUp(index) {
@@ -1055,10 +1074,10 @@
             ctx.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
 
             ctx.save();
-            ctx.translate(t.x + t.width/2, t.y + t.height/2);
+            ctx.translate(t.x + t.width / 2, t.y + t.height / 2);
             ctx.rotate(t.rotation);
             ctx.scale(t.scaleX, t.scaleY);
-            ctx.drawImage(layer.originalImage, -layer.originalImage.width/2, -layer.originalImage.height/2);
+            ctx.drawImage(layer.originalImage, -layer.originalImage.width / 2, -layer.originalImage.height / 2);
             ctx.restore();
         }
 
@@ -1122,7 +1141,7 @@
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            
+
             // Add visual feedback
             const targetElement = e.target.closest('.layer-item');
             if (targetElement && targetElement !== draggedElement) {
@@ -1132,16 +1151,16 @@
 
         function handleDrop(e) {
             e.preventDefault();
-            
+
             const targetElement = e.target.closest('.layer-item');
             if (targetElement && targetElement !== draggedElement) {
                 const targetIndex = parseInt(targetElement.dataset.layerIndex);
-                
+
                 // Reorder the layers array
                 const draggedLayer = layers[draggedIndex];
                 layers.splice(draggedIndex, 1);
                 layers.splice(targetIndex, 0, draggedLayer);
-                
+
                 // Update active layer index if needed
                 if (activeLayerIndex === draggedIndex) {
                     activeLayerIndex = targetIndex;
@@ -1150,7 +1169,7 @@
                 } else if (activeLayerIndex < draggedIndex && activeLayerIndex >= targetIndex) {
                     activeLayerIndex++;
                 }
-                
+
                 // Refresh the UI
                 updateLayerUI();
                 renderLayers(); // Call your render function
@@ -1159,12 +1178,12 @@
 
         function handleDragEnd(e) {
             e.target.style.opacity = '';
-            
+
             // Remove all visual feedback
             document.querySelectorAll('.layer-item').forEach(item => {
                 item.style.borderTop = '';
             });
-            
+
             draggedElement = null;
             draggedIndex = null;
         }
@@ -1175,14 +1194,14 @@
                 const temp = layers[index];
                 layers[index] = layers[index + 1];
                 layers[index + 1] = temp;
-                
+
                 // Update active layer index
                 if (activeLayerIndex === index) {
                     activeLayerIndex = index + 1;
                 } else if (activeLayerIndex === index + 1) {
                     activeLayerIndex = index;
                 }
-                
+
                 renderLayers();
             }
         }
@@ -1192,14 +1211,14 @@
                 const temp = layers[index];
                 layers[index] = layers[index - 1];
                 layers[index - 1] = temp;
-                
+
                 // Update active layer index
                 if (activeLayerIndex === index) {
                     activeLayerIndex = index - 1;
                 } else if (activeLayerIndex === index - 1) {
                     activeLayerIndex = index;
                 }
-                
+
                 renderLayers();
             }
         }
@@ -1266,7 +1285,7 @@
 
         function createTransformHandles(layer) {
             const t = layer.transform;
-            const handleSize = 8 / zoom; 
+            const handleSize = 8 / zoom;
 
             transformHandles = [
 
@@ -1275,12 +1294,12 @@
                 { type: 'corner', position: 'bl', x: t.x, y: t.y + t.height },
                 { type: 'corner', position: 'br', x: t.x + t.width, y: t.y + t.height },
 
-                { type: 'edge', position: 't', x: t.x + t.width/2, y: t.y },
-                { type: 'edge', position: 'b', x: t.x + t.width/2, y: t.y + t.height },
-                { type: 'edge', position: 'l', x: t.x, y: t.y + t.height/2 },
-                { type: 'edge', position: 'r', x: t.x + t.width, y: t.y + t.height/2 },
+                { type: 'edge', position: 't', x: t.x + t.width / 2, y: t.y },
+                { type: 'edge', position: 'b', x: t.x + t.width / 2, y: t.y + t.height },
+                { type: 'edge', position: 'l', x: t.x, y: t.y + t.height / 2 },
+                { type: 'edge', position: 'r', x: t.x + t.width, y: t.y + t.height / 2 },
 
-                { type: 'move', position: 'center', x: t.x + t.width/2, y: t.y + t.height/2 }
+                { type: 'move', position: 'center', x: t.x + t.width / 2, y: t.y + t.height / 2 }
             ];
         }
 
@@ -1293,7 +1312,7 @@
             if (e.key === 'Escape') {
                 clearSelection();
             }
-            });
+        });
 
         function getHandleAtPosition(x, y) {
             const handleSize = 8 / zoom;
@@ -1311,7 +1330,7 @@
             document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(toolId).classList.add('active');
 
-            switch(toolId) {
+            switch (toolId) {
                 case 'brushTool':
                     currentTool = 'brush';
                     canvas.style.cursor = 'crosshair';
@@ -1339,12 +1358,12 @@
             }
             const toolName = toolId.replace('Tool', '');
             document.querySelectorAll('.tool-properties').forEach(group => {
-            const tools = group.dataset.tool.split(' ');
-            group.style.display = tools.includes(toolName) ? 'block' : 'none';
-            if (group.dataset.tool === toolName) {
-                group.classList.add('active');
+                const tools = group.dataset.tool.split(' ');
+                group.style.display = tools.includes(toolName) ? 'block' : 'none';
+                if (group.dataset.tool === toolName) {
+                    group.classList.add('active');
                 } else {
-                group.classList.remove('active');
+                    group.classList.remove('active');
                 }
             });
         }
@@ -1407,7 +1426,7 @@
 
                 });
                 return;
-                }
+            }
 
 
             if (currentTool === 'bucket') {
@@ -1430,7 +1449,7 @@
                     // implement rect/ellipse later
                 }
                 return;
-                }
+            }
 
 
             isDrawing = true;
@@ -1482,8 +1501,8 @@
                 visited.add(key);
 
                 const color = [data[i], data[i + 1], data[i + 2]];
-                if (colorDistance({r: color[0], g: color[1], b: color[2]}, {r: target[0], g: target[1], b: target[2]}) < tolerance) {
-                    data[i + 3] = 0; 
+                if (colorDistance({ r: color[0], g: color[1], b: color[2] }, { r: target[0], g: target[1], b: target[2] }) < tolerance) {
+                    data[i + 3] = 0;
 
                     if (x > 0) queue.push([x - 1, y]);
                     if (x < width - 1) queue.push([x + 1, y]);
@@ -1550,7 +1569,7 @@
                 } else if (currentTool === 'bgEraser') {
                     eraseBackgroundFloodFill(layerCtx, Math.floor(x), Math.floor(y));
                 }
-                isDrawing = false; 
+                isDrawing = false;
                 return;
             }
 
@@ -1568,7 +1587,7 @@
             layerCtx.lineCap = 'round';
             layerCtx.lineJoin = 'round';
 
-            switch(currentTool) {
+            switch (currentTool) {
                 case 'brush':
                     layerCtx.strokeStyle = color;
                     layerCtx.lineTo(x, y);
@@ -1617,8 +1636,8 @@
 
             switch (dragHandle.type) {
                 case 'move':
-                    const deltaX = x - (orig.x + orig.width/2);
-                    const deltaY = y - (orig.y + orig.height/2);
+                    const deltaX = x - (orig.x + orig.width / 2);
+                    const deltaY = y - (orig.y + orig.height / 2);
                     t.x = orig.x + deltaX;
                     t.y = orig.y + deltaY;
                     break;
@@ -1737,8 +1756,8 @@
             ctx.strokeRect(t.x, t.y, t.width, t.height);
 
             transformHandles.forEach(handle => {
-                ctx.fillRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
-                ctx.strokeRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
+                ctx.fillRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize);
+                ctx.strokeRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize);
             });
 
             ctx.restore();
@@ -1755,7 +1774,7 @@
         }
 
         function eraseBackground(imageData, targetColor, centerX, centerY, brushSize) {
-            const tolerance = 50; 
+            const tolerance = 50;
             const data = imageData.data;
 
             for (let x = Math.max(0, centerX - brushSize); x < Math.min(canvas.width, centerX + brushSize); x++) {
@@ -1765,7 +1784,7 @@
                         const pixelColor = getPixelColor(imageData, x, y);
                         if (colorDistance(pixelColor, targetColor) < tolerance) {
                             const index = (y * imageData.width + x) * 4;
-                            data[index + 3] = 0; 
+                            data[index + 3] = 0;
                         }
                     }
                 }
@@ -1815,7 +1834,7 @@
             const wrapper = document.getElementById('canvasWrapper');
             wrapper.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${zoom})`;
             syncPreviewTransform();
-        
+
         }
 
         function updateZoomDisplay() {
@@ -1872,12 +1891,12 @@
                     };
 
                     const img = new Image();
-                    img.onload = function() {
+                    img.onload = function () {
                         layer.ctx.drawImage(img, 0, 0);
 
                         if (layerData.originalImageData) {
                             const originalImg = new Image();
-                            originalImg.onload = function() {
+                            originalImg.onload = function () {
                                 layer.originalImage = originalImg;
                                 resolve(layer);
                             };
@@ -1898,7 +1917,7 @@
                     const selectedLayer = layers.find(layer => layer.id === state.selectedLayerId);
                     if (selectedLayer && selectedLayer.isImageLayer) {
                         transformMode = true;
-                        this.selectedLayer = selectedLayer;  
+                        this.selectedLayer = selectedLayer;
                         createTransformHandles(selectedLayer);
                         selectTool('moveTool');
                     }
@@ -1988,27 +2007,27 @@
             for (let file of files) {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         const img = new Image();
-                        img.onload = function() {
+                        img.onload = function () {
                             // Set canvas size to match the image
                             canvas.width = img.width;
                             canvas.height = img.height;
-                            
+
                             // Update preview canvas size as well
                             const previewCanvas = document.getElementById('previewCanvas');
                             previewCanvas.width = canvas.width;
                             previewCanvas.height = canvas.height;
-                            
+
                             // Resize all existing layers to match new canvas size
                             layers.forEach(layer => {
                                 const oldCanvas = layer.canvas;
                                 const oldImageData = layer.ctx.getImageData(0, 0, oldCanvas.width, oldCanvas.height);
-                                
+
                                 layer.canvas.width = canvas.width;
                                 layer.canvas.height = canvas.height;
                                 layer.ctx = layer.canvas.getContext('2d');
-                                
+
                                 // Restore the layer content
                                 layer.ctx.putImageData(oldImageData, 0, 0);
                             });
@@ -2040,7 +2059,7 @@
             exportCanvas.width = canvas.width;
             exportCanvas.height = canvas.height;
             const exportCtx = exportCanvas.getContext('2d');
-            
+
             // Render all visible layers to the export canvas (without transform handles)
             layers.forEach(layer => {
                 if (layer.visible) {
@@ -2050,7 +2069,7 @@
                     exportCtx.restore();
                 }
             });
-            
+
             // Export the clean canvas without any UI elements
             const link = document.createElement('a');
             link.download = 'artwork.png';
@@ -2102,30 +2121,30 @@
             switch (type) {
                 case 'grayscale':
                     for (let i = 0; i < data.length; i += 4) {
-                        const avg = (data[i] + data[i+1] + data[i+2]) / 3;
+                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
                         data[i] = data[i] * (1 - strength) + avg * strength;
-                        data[i+1] = data[i+1] * (1 - strength) + avg * strength;
-                        data[i+2] = data[i+2] * (1 - strength) + avg * strength;
+                        data[i + 1] = data[i + 1] * (1 - strength) + avg * strength;
+                        data[i + 2] = data[i + 2] * (1 - strength) + avg * strength;
                     }
                     break;
 
                 case 'sepia':
                     for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i], g = data[i+1], b = data[i+2];
+                        const r = data[i], g = data[i + 1], b = data[i + 2];
                         const sepiaR = r * .393 + g * .769 + b * .189;
                         const sepiaG = r * .349 + g * .686 + b * .168;
                         const sepiaB = r * .272 + g * .534 + b * .131;
                         data[i] = r * (1 - strength) + sepiaR * strength;
-                        data[i+1] = g * (1 - strength) + sepiaG * strength;
-                        data[i+2] = b * (1 - strength) + sepiaB * strength;
+                        data[i + 1] = g * (1 - strength) + sepiaG * strength;
+                        data[i + 2] = b * (1 - strength) + sepiaB * strength;
                     }
                     break;
 
                 case 'invert':
                     for (let i = 0; i < data.length; i += 4) {
                         data[i] = data[i] * (1 - strength) + (255 - data[i]) * strength;
-                        data[i+1] = data[i+1] * (1 - strength) + (255 - data[i+1]) * strength;
-                        data[i+2] = data[i+2] * (1 - strength) + (255 - data[i+2]) * strength;
+                        data[i + 1] = data[i + 1] * (1 - strength) + (255 - data[i + 1]) * strength;
+                        data[i + 2] = data[i + 2] * (1 - strength) + (255 - data[i + 2]) * strength;
                     }
                     break;
 
@@ -2144,8 +2163,8 @@
                     const levels = Math.max(2, Math.round(8 * strength));
                     for (let i = 0; i < data.length; i += 4) {
                         data[i] = Math.floor(data[i] * levels / 255) * (255 / (levels - 1));
-                        data[i+1] = Math.floor(data[i+1] * levels / 255) * (255 / (levels - 1));
-                        data[i+2] = Math.floor(data[i+2] * levels / 255) * (255 / (levels - 1));
+                        data[i + 1] = Math.floor(data[i + 1] * levels / 255) * (255 / (levels - 1));
+                        data[i + 2] = Math.floor(data[i + 2] * levels / 255) * (255 / (levels - 1));
                     }
                     break;
 
@@ -2153,8 +2172,8 @@
                     const bAmount = (strength - 1) * 255;
                     for (let i = 0; i < data.length; i += 4) {
                         data[i] = clamp(data[i] + bAmount);
-                        data[i+1] = clamp(data[i+1] + bAmount);
-                        data[i+2] = clamp(data[i+2] + bAmount);
+                        data[i + 1] = clamp(data[i + 1] + bAmount);
+                        data[i + 2] = clamp(data[i + 2] + bAmount);
                     }
                     break;
 
@@ -2162,8 +2181,8 @@
                     const cFactor = (259 * (strength * 255 + 255)) / (255 * (259 - strength * 255));
                     for (let i = 0; i < data.length; i += 4) {
                         data[i] = clamp(cFactor * (data[i] - 128) + 128);
-                        data[i+1] = clamp(cFactor * (data[i+1] - 128) + 128);
-                        data[i+2] = clamp(cFactor * (data[i+2] - 128) + 128);
+                        data[i + 1] = clamp(cFactor * (data[i + 1] - 128) + 128);
+                        data[i + 2] = clamp(cFactor * (data[i + 2] - 128) + 128);
                     }
                     break;
             }
@@ -2179,11 +2198,11 @@
 
         function applyConvolution(ctx, type, strength = 1) {
             const baseKernels = {
-                blur: [1/9,1/9,1/9,1/9,1/9,1/9,1/9,1/9,1/9],
-                sharpen: [0,-1,0,-1,5,-1,0,-1,0],
-                gaussian: [1,2,1,2,4,2,1,2,1].map(x => x / 16),
-                emboss: [-2,-1,0,-1,1,1,0,1,2],
-                edge: [-1,-1,-1,-1,8,-1,-1,-1,-1]
+                blur: [1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9],
+                sharpen: [0, -1, 0, -1, 5, -1, 0, -1, 0],
+                gaussian: [1, 2, 1, 2, 4, 2, 1, 2, 1].map(x => x / 16),
+                emboss: [-2, -1, 0, -1, 1, 1, 0, 1, 2],
+                edge: [-1, -1, -1, -1, 8, -1, -1, -1, -1]
             };
 
             const kernel = baseKernels[type];
@@ -2199,11 +2218,11 @@
             const width = imageData.width;
             const height = imageData.height;
 
-            const output = new Uint8ClampedArray(data.length); 
+            const output = new Uint8ClampedArray(data.length);
 
             for (let y = 1; y < height - 1; y++) {
                 for (let x = 1; x < width - 1; x++) {
-                    for (let c = 0; c < 3; c++) { 
+                    for (let c = 0; c < 3; c++) {
                         let sum = 0;
                         let k = 0;
 
@@ -2335,384 +2354,377 @@
             window.currentPreviewFilter = type;
         }
 
-    function commitFilter() {
-        saveState(); 
-        document.getElementById('filterControls').style.display = 'none';
-        window.currentPreview = null;
-    }
+        function commitFilter() {
+            saveState();
+            document.getElementById('filterControls').style.display = 'none';
+            window.currentPreview = null;
+        }
 
-    function cancelFilterPreview() {
-        const { layer, originalImage } = window.currentPreview || {};
-        if (layer && originalImage) {
-            layer.ctx.putImageData(originalImage, 0, 0); 
+        function cancelFilterPreview() {
+            const { layer, originalImage } = window.currentPreview || {};
+            if (layer && originalImage) {
+                layer.ctx.putImageData(originalImage, 0, 0);
+                renderLayers();
+            }
+
+            document.getElementById('filterControls').style.display = 'none';
+            window.currentPreview = null;
+        }
+
+        function startFilterPreview(type) {
+            const layer = getActiveLayerContext();
+            if (!layer) return;
+
+            const ctx = layer.ctx;
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            window.currentPreview = {
+                type,
+                layer,
+                originalImage: imageData
+            };
+
+            document.getElementById('filterControls').style.display = 'flex';
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            if (!window.currentPreview) return;
+
+            const { type, layer, originalImage } = window.currentPreview;
+            const rawStrength = parseInt(document.getElementById('filterStrength').value);
+            const strength = rawStrength / 100;
+
+            const previewData = new ImageData(
+                new Uint8ClampedArray(originalImage.data),
+                originalImage.width,
+                originalImage.height
+            );
+
+            applyPixelFilter(previewData.data, type, strength);
+
+            layer.ctx.putImageData(previewData, 0, 0);
+
             renderLayers();
         }
 
-        document.getElementById('filterControls').style.display = 'none';
-        window.currentPreview = null;
-    }
-
-    function startFilterPreview(type) {
-        const layer = getActiveLayerContext();
-        if (!layer) return;
-
-        const ctx = layer.ctx;
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        window.currentPreview = {
-            type,
-            layer,
-            originalImage: imageData
-        };
-
-        document.getElementById('filterControls').style.display = 'flex';
-
-        updatePreview();
-    }
-
-    function updatePreview() {
-        if (!window.currentPreview) return;
-
-        const { type, layer, originalImage } = window.currentPreview;
-        const rawStrength = parseInt(document.getElementById('filterStrength').value); 
-        const strength = rawStrength / 100; 
-
-        const previewData = new ImageData(
-            new Uint8ClampedArray(originalImage.data),
-            originalImage.width,
-            originalImage.height
-        );
-
-        applyPixelFilter(previewData.data, type, strength);
-
-        layer.ctx.putImageData(previewData, 0, 0);
-
-        renderLayers(); 
-    }
-
         function applyPixelFilterWithConvolution(data, width, height, type, strength = 1) {
-        const baseKernels = {
-            blur: [1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9],
-            sharpen: [0, -1, 0, -1, 5, -1, 0, -1, 0],
-            gaussian: [1, 2, 1, 2, 4, 2, 1, 2, 1].map(x => x / 16),
-            emboss: [-2, -1, 0, -1, 1, 1, 0, 1, 2],
-            edge: [-1, -1, -1, -1, 8, -1, -1, -1, -1]
-        };
+            const baseKernels = {
+                blur: [1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9],
+                sharpen: [0, -1, 0, -1, 5, -1, 0, -1, 0],
+                gaussian: [1, 2, 1, 2, 4, 2, 1, 2, 1].map(x => x / 16),
+                emboss: [-2, -1, 0, -1, 1, 1, 0, 1, 2],
+                edge: [-1, -1, -1, -1, 8, -1, -1, -1, -1]
+            };
 
-        const kernel = baseKernels[type];
-        if (!kernel) return;
+            const kernel = baseKernels[type];
+            if (!kernel) return;
 
-        const originalData = new Uint8ClampedArray(data);
+            const originalData = new Uint8ClampedArray(data);
 
-        for (let y = 1; y < height - 1; y++) {
-            for (let x = 1; x < width - 1; x++) {
-                for (let c = 0; c < 3; c++) { 
-                    let sum = 0;
-                    let k = 0;
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    for (let c = 0; c < 3; c++) {
+                        let sum = 0;
+                        let k = 0;
 
-                    for (let ky = -1; ky <= 1; ky++) {
-                        for (let kx = -1; kx <= 1; kx++) {
-                            const px = x + kx;
-                            const py = y + ky;
-                            const i = (py * width + px) * 4 + c;
-                            sum += originalData[i] * kernel[k++];
+                        for (let ky = -1; ky <= 1; ky++) {
+                            for (let kx = -1; kx <= 1; kx++) {
+                                const px = x + kx;
+                                const py = y + ky;
+                                const i = (py * width + px) * 4 + c;
+                                sum += originalData[i] * kernel[k++];
+                            }
                         }
+
+                        const idx = (y * width + x) * 4 + c;
+                        const originalValue = originalData[idx];
+                        const filteredValue = Math.min(255, Math.max(0, sum));
+
+                        data[idx] = originalValue * (1 - strength) + filteredValue * strength;
                     }
 
-                    const idx = (y * width + x) * 4 + c;
-                    const originalValue = originalData[idx];
-                    const filteredValue = Math.min(255, Math.max(0, sum));
-
-                    data[idx] = originalValue * (1 - strength) + filteredValue * strength;
                 }
-
             }
         }
-    }
 
-    function applyPixelFilter(data, type, strength = 1) {
-        const clamp = (v) => Math.max(0, Math.min(255, v));
+        function applyPixelFilter(data, type, strength = 1) {
+            const clamp = (v) => Math.max(0, Math.min(255, v));
 
-        if (['blur', 'sharpen', 'gaussian', 'emboss', 'edge'].includes(type)) {
+            if (['blur', 'sharpen', 'gaussian', 'emboss', 'edge'].includes(type)) {
 
-            applyPixelFilterWithConvolution(data, canvas.width, canvas.height, type, strength);
-            return;
-        }
-
-        switch (type) {
-            case 'grayscale':
-                for (let i = 0; i < data.length; i += 4) {
-                    const avg = (data[i] + data[i+1] + data[i+2]) / 3;
-                    data[i] = data[i] * (1 - strength) + avg * strength;
-                    data[i+1] = data[i+1] * (1 - strength) + avg * strength;
-                    data[i+2] = data[i+2] * (1 - strength) + avg * strength;
-                }
-                break;
-
-            case 'sepia':
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i], g = data[i+1], b = data[i+2];
-                    const sr = r * .393 + g * .769 + b * .189;
-                    const sg = r * .349 + g * .686 + b * .168;
-                    const sb = r * .272 + g * .534 + b * .131;
-                    data[i] = r * (1 - strength) + sr * strength;
-                    data[i+1] = g * (1 - strength) + sg * strength;
-                    data[i+2] = b * (1 - strength) + sb * strength;
-                }
-                break;
-
-            case 'invert':
-                for (let i = 0; i < data.length; i += 4) {
-                    data[i] = data[i] * (1 - strength) + (255 - data[i]) * strength;
-                    data[i+1] = data[i+1] * (1 - strength) + (255 - data[i+1]) * strength;
-                    data[i+2] = data[i+2] * (1 - strength) + (255 - data[i+2]) * strength;
-                }
-                break;
-
-            case 'brightness':
-                const b = (strength - 1) * 255;
-                for (let i = 0; i < data.length; i += 4) {
-                    data[i] = clamp(data[i] + b);
-                    data[i+1] = clamp(data[i+1] + b);
-                    data[i+2] = clamp(data[i+2] + b);
-                }
-                break;
-
-            case 'contrast':
-                const c = (strength - 1);
-                const factor = (259 * (c * 255 + 255)) / (255 * (259 - c * 255));
-                for (let i = 0; i < data.length; i += 4) {
-                    data[i] = clamp(factor * (data[i] - 128) + 128);
-                    data[i+1] = clamp(factor * (data[i+1] - 128) + 128);
-                    data[i+2] = clamp(factor * (data[i+2] - 128) + 128);
-                }
-                break;
-
-            case 'posterize':
-                const levels = Math.max(2, Math.round(8 * strength));
-                for (let i = 0; i < data.length; i += 4) {
-                    data[i] = Math.floor(data[i] * levels / 255) * (255 / (levels - 1));
-                    data[i+1] = Math.floor(data[i+1] * levels / 255) * (255 / (levels - 1));
-                    data[i+2] = Math.floor(data[i+2] * levels / 255) * (255 / (levels - 1));
-                }
-                break;
-
-            default:
-                console.warn(`Filter "${type}" not supported in preview.`);
-                break;
-        }
-    }
-
-    function openExportDialog() {
-        document.getElementById('exportDialog').style.display = 'flex';
-        }
-
-    function closeExportDialog() {
-        document.getElementById('exportDialog').style.display = 'none';
-        }
-
-    function confirmExport() {
-        const exportCanvas = document.createElement('canvas');
-        exportCanvas.width = canvas.width;
-        exportCanvas.height = canvas.height;
-        const exportCtx = exportCanvas.getContext('2d');
-
-        layers.forEach(layer => {
-            if (layer.visible) {
-                exportCtx.save();
-                exportCtx.globalAlpha = layer.opacity;
-                exportCtx.drawImage(layer.canvas, layer.x, layer.y);
-                exportCtx.restore();
+                applyPixelFilterWithConvolution(data, canvas.width, canvas.height, type, strength);
+                return;
             }
+
+            switch (type) {
+                case 'grayscale':
+                    for (let i = 0; i < data.length; i += 4) {
+                        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                        data[i] = data[i] * (1 - strength) + avg * strength;
+                        data[i + 1] = data[i + 1] * (1 - strength) + avg * strength;
+                        data[i + 2] = data[i + 2] * (1 - strength) + avg * strength;
+                    }
+                    break;
+
+                case 'sepia':
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i], g = data[i + 1], b = data[i + 2];
+                        const sr = r * .393 + g * .769 + b * .189;
+                        const sg = r * .349 + g * .686 + b * .168;
+                        const sb = r * .272 + g * .534 + b * .131;
+                        data[i] = r * (1 - strength) + sr * strength;
+                        data[i + 1] = g * (1 - strength) + sg * strength;
+                        data[i + 2] = b * (1 - strength) + sb * strength;
+                    }
+                    break;
+
+                case 'invert':
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = data[i] * (1 - strength) + (255 - data[i]) * strength;
+                        data[i + 1] = data[i + 1] * (1 - strength) + (255 - data[i + 1]) * strength;
+                        data[i + 2] = data[i + 2] * (1 - strength) + (255 - data[i + 2]) * strength;
+                    }
+                    break;
+
+                case 'brightness':
+                    const b = (strength - 1) * 255;
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = clamp(data[i] + b);
+                        data[i + 1] = clamp(data[i + 1] + b);
+                        data[i + 2] = clamp(data[i + 2] + b);
+                    }
+                    break;
+
+                case 'contrast':
+                    const c = (strength - 1);
+                    const factor = (259 * (c * 255 + 255)) / (255 * (259 - c * 255));
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = clamp(factor * (data[i] - 128) + 128);
+                        data[i + 1] = clamp(factor * (data[i + 1] - 128) + 128);
+                        data[i + 2] = clamp(factor * (data[i + 2] - 128) + 128);
+                    }
+                    break;
+
+                case 'posterize':
+                    const levels = Math.max(2, Math.round(8 * strength));
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = Math.floor(data[i] * levels / 255) * (255 / (levels - 1));
+                        data[i + 1] = Math.floor(data[i + 1] * levels / 255) * (255 / (levels - 1));
+                        data[i + 2] = Math.floor(data[i + 2] * levels / 255) * (255 / (levels - 1));
+                    }
+                    break;
+
+                default:
+                    console.warn(`Filter "${type}" not supported in preview.`);
+                    break;
+            }
+        }
+
+        function openExportDialog() {
+            document.getElementById('exportDialog').style.display = 'flex';
+        }
+
+        function closeExportDialog() {
+            document.getElementById('exportDialog').style.display = 'none';
+        }
+
+        function confirmExport() {
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = canvas.width;
+            exportCanvas.height = canvas.height;
+            const exportCtx = exportCanvas.getContext('2d');
+
+            layers.forEach(layer => {
+                if (layer.visible) {
+                    exportCtx.save();
+                    exportCtx.globalAlpha = layer.opacity;
+                    exportCtx.drawImage(layer.canvas, layer.x, layer.y);
+                    exportCtx.restore();
+                }
+            });
+
+            const format = document.getElementById('exportFormat').value;
+            const filename = document.getElementById('exportFileName').value || 'artwork';
+            const quality = parseFloat(document.getElementById('jpegQuality')?.value) || 0.92;
+
+            const mimeType = {
+                png: 'image/png',
+                jpeg: 'image/jpeg',
+                webp: 'image/webp'
+            }[format] || 'image/png';
+
+            const link = document.createElement('a');
+            link.download = `${filename}.${format === 'jpeg' ? 'jpg' : format}`;
+            link.href = exportCanvas.toDataURL(mimeType, format === 'png' ? undefined : quality);
+            link.click();
+
+            closeExportDialog();
+        }
+
+        document.getElementById('exportFormat').addEventListener('change', () => {
+            const format = document.getElementById('exportFormat').value;
+            document.getElementById('qualityGroup').style.display =
+                (format === 'jpeg' || format === 'webp') ? 'block' : 'none';
         });
 
-        const format = document.getElementById('exportFormat').value;
-        const filename = document.getElementById('exportFileName').value || 'artwork';
-        const quality = parseFloat(document.getElementById('jpegQuality')?.value) || 0.92;
+        let selectionMode = null; // 'rect', 'ellipse', 'wand', 'quick'
 
-        const mimeType = {
-            png: 'image/png',
-            jpeg: 'image/jpeg',
-            webp: 'image/webp'
-        }[format] || 'image/png';
+        function selectSelectionTool(mode) {
+            selectionMode = mode;
+            currentTool = 'selection';
 
-        const link = document.createElement('a');
-        link.download = `${filename}.${format === 'jpeg' ? 'jpg' : format}`;
-        link.href = exportCanvas.toDataURL(mimeType, format === 'png' ? undefined : quality);
-        link.click();
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.selection-toggle').classList.add('active');
 
-        closeExportDialog();
-    }
+            canvas.style.cursor = 'crosshair';
 
-    document.getElementById('exportFormat').addEventListener('change', () => {
-    const format = document.getElementById('exportFormat').value;
-    document.getElementById('qualityGroup').style.display =
-        (format === 'jpeg' || format === 'webp') ? 'block' : 'none';
-    });
+            // Collapse menu
+            document.querySelector('.selection-menu').style.display = 'none';
 
-    let selectionMode = null; // 'rect', 'ellipse', 'wand', 'quick'
-
-    function selectSelectionTool(mode) {
-    selectionMode = mode;
-    currentTool = 'selection';
-
-    document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('.selection-toggle').classList.add('active');
-
-    canvas.style.cursor = 'crosshair';
-
-    // Collapse menu
-    document.querySelector('.selection-menu').style.display = 'none';
-
-    console.log('Selection mode:', selectionMode);
-    }
-
-
-    function performQuickSelect(x, y) {
-        const rect = canvas.getBoundingClientRect();
-        const canvasX = (x - rect.left) / zoom;
-        const canvasY = (y - rect.top) / zoom;
-
-        const layer = getActiveLayerContext();
-        const ctx = layer.ctx;
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        const targetColor = getPixelColor(imageData, Math.floor(canvasX), Math.floor(canvasY));
-        const tolerance = 40;
-        const visited = new Set();
-        const selectionMask = new Uint8ClampedArray(canvas.width * canvas.height);
-        const queue = [[Math.floor(canvasX), Math.floor(canvasY)]];
-
-        while (queue.length) {
-            const [cx, cy] = queue.shift();
-            const idx = cy * canvas.width + cx;
-            const key = `${cx},${cy}`;
-
-            if (visited.has(key)) continue;
-            visited.add(key);
-
-            const currentColor = getPixelColor(imageData, cx, cy);
-            if (colorDistance(targetColor, currentColor) < tolerance) {
-            selectionMask[idx] = 1;
-
-            if (cx > 0) queue.push([cx - 1, cy]);
-            if (cx < canvas.width - 1) queue.push([cx + 1, cy]);
-            if (cy > 0) queue.push([cx, cy - 1]);
-            if (cy < canvas.height - 1) queue.push([cx, cy + 1]);
-            }
+            console.log('Selection mode:', selectionMode);
         }
-        window.currentSelectionMask = selectionMask;
-        drawSelectionOutline(selectionMask);
-    }
 
-    function drawSelectionOutline(mask) {
-        const previewCanvas = document.getElementById('previewCanvas');
-        const previewCtx = previewCanvas.getContext('2d');
-        previewCanvas.style.display = 'block';
 
-        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+        function performQuickSelect(x, y) {
+            const rect = canvas.getBoundingClientRect();
+            const canvasX = (x - rect.left) / zoom;
+            const canvasY = (y - rect.top) / zoom;
 
-        const dashOffset = window.selectionDashOffset || 0;
-        previewCtx.strokeStyle = '#00ffff';
-        previewCtx.lineWidth = 1;
-        previewCtx.setLineDash([6, 4]);
-        previewCtx.lineDashOffset = -window.selectionDashOffset;
+            const layer = getActiveLayerContext();
+            const ctx = layer.ctx;
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        for (let y = 1; y < canvas.height - 1; y++) {
-            for (let x = 1; x < canvas.width - 1; x++) {
-            const i = y * canvas.width + x;
-            if (mask[i]) {
-                if (
-                !mask[i - 1] || !mask[i + 1] ||
-                !mask[i - canvas.width] || !mask[i + canvas.width]
-                ) {
-                previewCtx.strokeRect(x, y, 1, 1);
+            const targetColor = getPixelColor(imageData, Math.floor(canvasX), Math.floor(canvasY));
+            const tolerance = 40;
+            const visited = new Set();
+            const selectionMask = new Uint8ClampedArray(canvas.width * canvas.height);
+            const queue = [[Math.floor(canvasX), Math.floor(canvasY)]];
+
+            while (queue.length) {
+                const [cx, cy] = queue.shift();
+                const idx = cy * canvas.width + cx;
+                const key = `${cx},${cy}`;
+
+                if (visited.has(key)) continue;
+                visited.add(key);
+
+                const currentColor = getPixelColor(imageData, cx, cy);
+                if (colorDistance(targetColor, currentColor) < tolerance) {
+                    selectionMask[idx] = 1;
+
+                    if (cx > 0) queue.push([cx - 1, cy]);
+                    if (cx < canvas.width - 1) queue.push([cx + 1, cy]);
+                    if (cy > 0) queue.push([cx, cy - 1]);
+                    if (cy < canvas.height - 1) queue.push([cx, cy + 1]);
                 }
             }
+            window.currentSelectionMask = selectionMask;
+            drawSelectionOutline(selectionMask);
+        }
+
+        function drawSelectionOutline(mask) {
+            const previewCanvas = document.getElementById('previewCanvas');
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCanvas.style.display = 'block';
+
+            previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+            const dashOffset = window.selectionDashOffset || 0;
+            previewCtx.strokeStyle = '#00ffff';
+            previewCtx.lineWidth = 1;
+            previewCtx.setLineDash([6, 4]);
+            previewCtx.lineDashOffset = -window.selectionDashOffset;
+
+            for (let y = 1; y < canvas.height - 1; y++) {
+                for (let x = 1; x < canvas.width - 1; x++) {
+                    const i = y * canvas.width + x;
+                    if (mask[i]) {
+                        if (
+                            !mask[i - 1] || !mask[i + 1] ||
+                            !mask[i - canvas.width] || !mask[i + canvas.width]
+                        ) {
+                            previewCtx.strokeRect(x, y, 1, 1);
+                        }
+                    }
+                }
             }
         }
+
+        function syncPreviewTransform() {
+            const wrapper = document.getElementById('canvasWrapper');
+            const previewCanvas = document.getElementById('previewCanvas');
+            previewCanvas.style.transform = wrapper.style.transform;
         }
 
+        function syncPreviewCanvas() {
+            const mainCanvas = document.getElementById('canvas');
+            const previewCanvas = document.getElementById('previewCanvas');
 
+            previewCanvas.width = mainCanvas.width;
+            previewCanvas.height = mainCanvas.height;
 
+            previewCanvas.style.width = mainCanvas.style.width;
+            previewCanvas.style.height = mainCanvas.style.height;
 
-    function syncPreviewTransform() {
-    const wrapper = document.getElementById('canvasWrapper');
-    const previewCanvas = document.getElementById('previewCanvas');
-    previewCanvas.style.transform = wrapper.style.transform;
-    }
-
-    function syncPreviewCanvas() {
-    const mainCanvas = document.getElementById('canvas');
-    const previewCanvas = document.getElementById('previewCanvas');
-
-    previewCanvas.width = mainCanvas.width;
-    previewCanvas.height = mainCanvas.height;
-
-    previewCanvas.style.width = mainCanvas.style.width;
-    previewCanvas.style.height = mainCanvas.style.height;
-
-    previewCanvas.style.transform = mainCanvas.style.transform; // Sync zoom & pan visually
-    }
-
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.querySelector('.selection-toggle');
-    const menu = document.querySelector('.selection-menu');
-
-    toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isVisible = menu.style.display === 'flex';
-        document.querySelectorAll('.selection-menu').forEach(m => m.style.display = 'none');
-        if (!isVisible) menu.style.display = 'flex';
-    });
-
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.selection-menu').forEach(m => m.style.display = 'none');
-    });
-
-    menu.addEventListener('click', e => e.stopPropagation());
-    });
-
-    function clearSelection() {
-        window.currentSelectionMask = null;
-
-        const previewCanvas = document.getElementById('previewCanvas');
-        const previewCtx = previewCanvas.getContext('2d');
-        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-        previewCanvas.style.display = 'none';
+            previewCanvas.style.transform = mainCanvas.style.transform; // Sync zoom & pan visually
         }
-    
-    function animateSelection() {
-    if (window.currentSelectionMask) {
-        window.selectionDashOffset = (window.selectionDashOffset || 0) + 0.5;
-        drawSelectionOutline(window.currentSelectionMask);
-    }
-    requestAnimationFrame(animateSelection);
-    }
 
-    animateSelection();
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggle = document.querySelector('.selection-toggle');
+            const menu = document.querySelector('.selection-menu');
+
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isVisible = menu.style.display === 'flex';
+                document.querySelectorAll('.selection-menu').forEach(m => m.style.display = 'none');
+                if (!isVisible) menu.style.display = 'flex';
+            });
+
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.selection-menu').forEach(m => m.style.display = 'none');
+            });
+
+            menu.addEventListener('click', e => e.stopPropagation());
+        });
+
+        function clearSelection() {
+            window.currentSelectionMask = null;
+
+            const previewCanvas = document.getElementById('previewCanvas');
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            previewCanvas.style.display = 'none';
+        }
+
+        function animateSelection() {
+            if (window.currentSelectionMask) {
+                window.selectionDashOffset = (window.selectionDashOffset || 0) + 0.5;
+                drawSelectionOutline(window.currentSelectionMask);
+            }
+            requestAnimationFrame(animateSelection);
+        }
+        animateSelection();
 
 
-
-
-    init();
+        init();
     </script>
-<textarea id="textEditor" style="
-  position: absolute;
-  z-index: 999;
-  font: 32px Arial;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px dashed #aaa;
-  outline: none;
-  resize: none;
-  display: none;
-  padding: 4px;
-  min-width: 200px;
-  min-height: 32px;
-"></textarea>
+    <textarea id="textEditor" style="
+    position: absolute;
+    z-index: 999;
+    font: 32px Arial;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed #aaa;
+    outline: none;
+    resize: none;
+    display: none;
+    padding: 4px;
+    min-width: 200px;
+    min-height: 32px;
+    "></textarea>
 
 </body>
+
 </html>

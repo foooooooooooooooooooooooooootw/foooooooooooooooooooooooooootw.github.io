@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -195,7 +196,8 @@
             height: 100vh;
             position: relative;
             overflow: hidden;
-            margin-top: 70px; /* Account for fixed navbar */
+            margin-top: 70px;
+            /* Account for fixed navbar */
         }
 
         .background-layer {
@@ -233,7 +235,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(ellipse 800px 200px at 50% 0%, transparent 40%, #000 41%, #000 42%, transparent 43%),
                 radial-gradient(ellipse 800px 200px at 50% 25%, transparent 40%, #000 41%, #000 42%, transparent 43%),
                 radial-gradient(ellipse 800px 200px at 50% 50%, transparent 40%, #000 41%, #000 42%, transparent 43%),
@@ -243,7 +245,7 @@
         }
 
         .psychedelic-bg::after {
-            background: 
+            background:
                 radial-gradient(ellipse 600px 150px at 30% 10%, transparent 40%, #000 41%, #000 42%, transparent 43%),
                 radial-gradient(ellipse 600px 150px at 70% 35%, transparent 40%, #000 41%, #000 42%, transparent 43%),
                 radial-gradient(ellipse 600px 150px at 20% 60%, transparent 40%, #000 41%, #000 42%, transparent 43%),
@@ -253,10 +255,23 @@
         }
 
         @keyframes wave-flow {
-            0%, 100% { transform: translateY(0px) scaleY(1); }
-            25% { transform: translateY(-20px) scaleY(1.1); }
-            50% { transform: translateY(-40px) scaleY(0.9); }
-            75% { transform: translateY(-20px) scaleY(1.1); }
+
+            0%,
+            100% {
+                transform: translateY(0px) scaleY(1);
+            }
+
+            25% {
+                transform: translateY(-20px) scaleY(1.1);
+            }
+
+            50% {
+                transform: translateY(-40px) scaleY(0.9);
+            }
+
+            75% {
+                transform: translateY(-20px) scaleY(1.1);
+            }
         }
 
         .illusion-bg {
@@ -265,36 +280,51 @@
             left: 0;
             width: 300%;
             height: 300%;
-            background-image: repeating-radial-gradient(
-                circle at center,
-                black 0px,
-                white 6px,
-                black 12px,
-                white 18px,
-                black 24px
-            );
+            background-image: repeating-radial-gradient(circle at center,
+                    black 0px,
+                    white 6px,
+                    black 12px,
+                    white 18px,
+                    black 24px);
             animation: illusionFlow 30s linear infinite, waveSkew 12s ease-in-out infinite;
-            opacity: 0; /* Changed from 0.2 to 0 - will be controlled by .active class */
+            opacity: 0;
+            /* Changed from 0.2 to 0 - will be controlled by .active class */
             z-index: 0;
             filter: contrast(1.4) brightness(1.6);
             transform-origin: center;
         }
 
         @keyframes waveSkew {
-            0%   { transform: scale(1) skew(0deg, 0deg); }
-            25%  { transform: scale(1.02) skew(1deg, -1deg); }
-            50%  { transform: scale(1.03) skew(-1.5deg, 1.5deg); }
-            75%  { transform: scale(1.01) skew(0.5deg, -0.5deg); }
-            100% { transform: scale(1) skew(0deg, 0deg); }
+            0% {
+                transform: scale(1) skew(0deg, 0deg);
+            }
+
+            25% {
+                transform: scale(1.02) skew(1deg, -1deg);
+            }
+
+            50% {
+                transform: scale(1.03) skew(-1.5deg, 1.5deg);
+            }
+
+            75% {
+                transform: scale(1.01) skew(0.5deg, -0.5deg);
+            }
+
+            100% {
+                transform: scale(1) skew(0deg, 0deg);
+            }
         }
-        
+
         @keyframes illusionFlow {
             0% {
                 transform: scale(1) translate(0%, 0%);
             }
+
             50% {
                 transform: scale(1.03) translate(-1%, -1%);
             }
+
             100% {
                 transform: scale(1) translate(0%, 0%);
             }
@@ -304,13 +334,21 @@
 
         .punk-bg {
             background: linear-gradient(135deg, #000 0%, #333 25%, #666 50%, #000 75%),
-                        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,0,0,0.1) 10px, rgba(255,0,0,0.1) 20px);
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 0, 0, 0.1) 10px, rgba(255, 0, 0, 0.1) 20px);
             animation: punk-flicker 2s ease-in-out infinite alternate;
         }
 
         @keyframes punk-flicker {
-            0%, 80% { filter: contrast(1) brightness(1); }
-            85%, 95% { filter: contrast(1.2) brightness(1.1); }
+
+            0%,
+            80% {
+                filter: contrast(1) brightness(1);
+            }
+
+            85%,
+            95% {
+                filter: contrast(1.2) brightness(1.1);
+            }
         }
 
         .jazz-bg {
@@ -330,8 +368,13 @@
         }
 
         @keyframes jazz-sparkle {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-100px); }
+            0% {
+                transform: translateY(0px);
+            }
+
+            100% {
+                transform: translateY(-100px);
+            }
         }
 
         .content-overlay {
@@ -340,7 +383,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1001; /* Higher than navbar */
+            z-index: 1001;
+            /* Higher than navbar */
             display: flex;
             flex-direction: column;
             backdrop-filter: blur(1px);
@@ -349,7 +393,7 @@
         .header {
             padding: 2rem;
             text-align: center;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .header h1 {
@@ -366,22 +410,23 @@
             opacity: 0.9;
         }
 
-        
+
         /* Update the genre-navigation z-index */
         .genre-navigation {
             display: flex;
             justify-content: center;
             gap: 1rem;
             padding: 1rem;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             position: relative;
-            z-index: 1001; /* Higher than navbar's z-index: 1000 */
+            z-index: 1001;
+            /* Higher than navbar's z-index: 1000 */
         }
 
         .genre-btn {
             padding: 0.8rem 1.5rem;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             color: white;
             cursor: pointer;
             border-radius: 25px;
@@ -390,11 +435,12 @@
             font-weight: bold;
         }
 
-        .genre-btn:hover, .genre-btn.active {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.5);
+        .genre-btn:hover,
+        .genre-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
 
         .cards-container {
@@ -410,7 +456,8 @@
         .card {
             line-height: 1.7;
             letter-spacing: 0.2px;
-            background: rgba(50, 50, 50, 0.95); /* New: dark gray translucent background */
+            background: rgba(50, 50, 50, 0.95);
+            /* New: dark gray translucent background */
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
@@ -423,11 +470,25 @@
         }
 
 
-        .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.2s; }
-        .card:nth-child(4) { animation-delay: 0.3s; }
-        .card:nth-child(5) { animation-delay: 0.4s; }
-        .card:nth-child(6) { animation-delay: 0.5s; }
+        .card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .card:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .card:nth-child(6) {
+            animation-delay: 0.5s;
+        }
 
         @keyframes cardFadeIn {
             to {
@@ -448,12 +509,13 @@
         }
 
         .favourites li::marker {
-            color: #4ecdc4; /* accent color */
+            color: #4ecdc4;
+            /* accent color */
         }
 
         .card:hover {
             transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .card h3 {
@@ -479,11 +541,11 @@
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             padding: 1rem;
             border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 20;
         }
 
@@ -498,13 +560,23 @@
         }
 
         @media (max-width: 768px) {
-            .header h1 { font-size: 2rem; }
-            .genre-navigation { flex-wrap: wrap; }
-            .cards-container { grid-template-columns: 1fr; padding: 1rem; }
-            .instruments-section { 
-                position: static; 
-                margin: 1rem; 
-                text-align: center; 
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .genre-navigation {
+                flex-wrap: wrap;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .instruments-section {
+                position: static;
+                margin: 1rem;
+                text-align: center;
             }
 
             .background-layer {
@@ -516,7 +588,7 @@
 
         #embersCanvas {
             position: fixed;
-            top: 0; 
+            top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
@@ -532,6 +604,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="navbar">
         <button class="menu-toggle" aria-label="Menu">☰</button>
@@ -630,7 +703,7 @@
                     type: "Lo-fi Garage Punk",
                     description: "My most listened to band for 2 years running now.",
                     fav: ["<a href=https://youtu.be/3oukrCiMNq8>I Wanna Be Forgotten</a>", "<a href=https://youtu.be/1-sT-fUnxiI>Get Found</a>", "<a href=https://youtu.be/qsQ1846zhbY>Nerve Jamming</a>", "<a href=https://youtu.be/UPt3CYGBIjc>Too Cold to Hold</a>", "<a href=https://youtu.be/Rdbt3y2Sg-U>Just Business</a>", "<a href=https://youtu.be/YUTx89ouZFA>Smell The Night</a>", "<a href=https://youtu.be/uHL0-QpAYi0>Way Out</a>", "<a href=https://youtu.be/_vjmJUm_74w>Burns My Eye</a>", "<a href=https://youtu.be/a3ZmcXGMwg8>I'm On The Run</a>",
-                    "<a href=https://youtu.be/268fNYC_Bzs>No Soul</a>", "<a href=https://youtu.be/OF5nt0kq1S4>Find It</a>", "<a href=https://youtu.be/JvyZs9lyf90>Swerving</a>", "<a href=https://youtu.be/pmhbF3EPLs0>Head Change</a>"
+                        "<a href=https://youtu.be/268fNYC_Bzs>No Soul</a>", "<a href=https://youtu.be/OF5nt0kq1S4>Find It</a>", "<a href=https://youtu.be/JvyZs9lyf90>Swerving</a>", "<a href=https://youtu.be/pmhbF3EPLs0>Head Change</a>"
                     ]
                 },
                 {
@@ -736,7 +809,7 @@
             // Update cards
             const container = document.getElementById('cardsContainer');
             container.innerHTML = '';
-            
+
             setTimeout(() => {
                 musicData[genre].forEach(item => {
                     const card = document.createElement('div');
@@ -771,7 +844,7 @@
             // Mobile menu toggle
             const menuToggle = document.querySelector('.menu-toggle');
             const menuList = document.querySelector('.menu-list');
-            
+
             menuToggle.addEventListener('click', () => {
                 menuList.classList.toggle('active');
             });
@@ -798,66 +871,67 @@
             });
         });
 
-    const canvas = document.getElementById('embersCanvas');
-    const ctx = canvas.getContext('2d');
+        const canvas = document.getElementById('embersCanvas');
+        const ctx = canvas.getContext('2d');
 
-    let width, height;
-    function resizeCanvas() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // Ember particle object
-    class Ember {
-        constructor() {
-            this.reset();
+        let width, height;
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        reset() {
-            this.x = Math.random() * width;
-            this.y = height + Math.random() * 100;
-            this.radius = Math.random() * 2 + 1;
-            this.speedY = Math.random() * 0.5 + 0.5;
-            this.speedX = Math.random() * 0.4 - 0.2;
-            this.alpha = Math.random() * 0.6 + 0.2;
-            this.color = `rgba(${200 + Math.random()*55}, ${30 + Math.random()*50}, 0, ${this.alpha})`;
-        }
-
-        update() {
-            this.y -= this.speedY;
-            this.x += this.speedX;
-            if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+        // Ember particle object
+        class Ember {
+            constructor() {
                 this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * 100;
+                this.radius = Math.random() * 2 + 1;
+                this.speedY = Math.random() * 0.5 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.alpha = Math.random() * 0.6 + 0.2;
+                this.color = `rgba(${200 + Math.random() * 55}, ${30 + Math.random() * 50}, 0, ${this.alpha})`;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+                    this.reset();
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
-        draw(ctx) {
-            ctx.beginPath();
-            ctx.fillStyle = this.color;
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fill();
+        // Create embers
+        const embers = [];
+        const EMBER_COUNT = 150;
+        for (let i = 0; i < EMBER_COUNT; i++) {
+            embers.push(new Ember());
         }
-    }
 
-    // Create embers
-    const embers = [];
-    const EMBER_COUNT = 150;
-    for (let i = 0; i < EMBER_COUNT; i++) {
-        embers.push(new Ember());
-    }
-
-    // Animate
-    function animate() {
-        ctx.clearRect(0, 0, width, height);
-        embers.forEach(e => {
-            e.update();
-            e.draw(ctx);
-        });
-        requestAnimationFrame(animate);
-    }
-    animate();
+        // Animate
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            embers.forEach(e => {
+                e.update();
+                e.draw(ctx);
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
     </script>
 </body>
+
 </html>
