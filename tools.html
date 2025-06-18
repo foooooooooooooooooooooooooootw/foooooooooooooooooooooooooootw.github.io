@@ -109,7 +109,8 @@
         .canvas-container {
             flex: 1;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            z-index: 0;
             background: #2b2b2b;
             background-image: 
                 linear-gradient(45deg, #333 25%, transparent 25%),
@@ -477,6 +478,51 @@
         .slider-container input[type="range"] {
             width: 100%;
         }
+
+        .selection-wrapper {
+        position: relative;
+        }
+
+        .selection-toggle {
+        position: relative;
+        z-index: 1;
+        }
+
+        .selection-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #2b2b2b;
+        border: 1px solid #444;
+        border-radius: 5px;
+        z-index: 1000;
+        padding: 5px 0;
+        flex-direction: column;
+        min-width: 120px;
+        }
+
+        .selection-menu div {
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 13px;
+        white-space: nowrap;
+        }
+
+        .selection-menu div:hover {
+        background: #0078d4;
+        color: white;
+        }
+
+        #previewCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        pointer-events: none; /* Let mouse pass through */
+        }
+
+
     </style>
 </head>
 <div id="filterControls" style="
@@ -537,12 +583,24 @@
             <button class="tool-btn" id="moveTool" title="Move">↔️</button>
             <button class="tool-btn" id="textTool" title="Text Tool">T</button>
             <div style="height: 10px;"></div>
+            <div class="selection-wrapper">
+            <button class="tool-btn selection-toggle" title="Selection Tool">🧰</button>
+            <div class="selection-menu">
+                <div onclick="selectSelectionTool('rect')">🔲 Rect</div>
+                <div onclick="selectSelectionTool('ellipse')">⚪ Ellipse</div>
+                <div onclick="selectSelectionTool('wand')">✨ Wand</div>
+                <div onclick="selectSelectionTool('quick')">🧲 Quick</div>
+            </div>
+            </div>
+
+            <div style="height: 10px;"></div>
             <button class="tool-btn" id="zoomInTool" title="Zoom In">🔍</button>
             <button class="tool-btn" id="zoomOutTool" title="Zoom Out">🔎</button>
         </div>
 
         <div class="main-area">
             <div class="canvas-container" id="canvasContainer">
+                <div class="canvas-wrapper" id="canvasWrapper">
                 <canvas id="previewCanvas" style="
                     position: absolute;
                     top: 0; left: 0;
@@ -550,8 +608,7 @@
                     display: none;
                     pointer-events: none;
                 "></canvas>
-                <div class="canvas-wrapper" id="canvasWrapper">
-                    <canvas id="canvas" width="800" height="600"></canvas>
+                <canvas id="canvas" width="800" height="600"></canvas>
                 </div>
                 <div class="drag-overlay" id="dragOverlay">
                     Drop image here
@@ -702,6 +759,11 @@
         let transformHandles = [];
         let dragHandle = null;
         let originalTransform = null;
+        window.currentSelectionMask = null;
+        let isDraggingSelection = false;
+        let dragStart = null;
+        let originalImageData = null;
+
 
         function init() {
             canvas = document.getElementById('canvas');
@@ -796,6 +858,14 @@
                         e.preventDefault();
                         exitTransformMode();
                     }
+                    if (e.key === 'Escape') {
+                        clearSelection();
+                    }
+                    if ((e.key === 'Delete' || e.key === 'Backspace') && window.currentSelectionMask) {
+                    deleteSelectedArea();
+                    }
+
+
                 }
 
                 switch(e.key) {
@@ -807,6 +877,33 @@
                 }
             });
         }
+
+        function deleteSelectedArea() {
+            const layer = getActiveLayerContext();
+            const ctx = layer.ctx;
+
+            if (!window.currentSelectionMask) return;
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const mask = window.currentSelectionMask;
+
+            for (let i = 0; i < mask.length; i++) {
+                if (mask[i]) {
+                data[i * 4 + 0] = 0; // R
+                data[i * 4 + 1] = 0; // G
+                data[i * 4 + 2] = 0; // B
+                data[i * 4 + 3] = 0; // A = fully transparent
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            renderLayers();
+            saveState();
+            clearSelection();
+            }
+
+
 
         function createLayer(name, width = canvas.width, height = canvas.height) {
             const layerCanvas = document.createElement('canvas');
@@ -1187,6 +1284,17 @@
             ];
         }
 
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'Delete' || e.key === 'Backspace') && window.currentSelectionMask) {
+                deleteSelectedArea();
+            }
+
+            if (e.key === 'Escape') {
+                clearSelection();
+            }
+            });
+
         function getHandleAtPosition(x, y) {
             const handleSize = 8 / zoom;
 
@@ -1314,6 +1422,16 @@
                 eraseBackgroundFloodFill(activeLayer.ctx, Math.floor(x), Math.floor(y));
                 return;
             }
+
+            if (currentTool === 'selection') {
+                if (selectionMode === 'quick') {
+                    performQuickSelect(x, y);
+                } else {
+                    // implement rect/ellipse later
+                }
+                return;
+                }
+
 
             isDrawing = true;
 
@@ -1696,6 +1814,8 @@
         function updateCanvasTransform() {
             const wrapper = document.getElementById('canvasWrapper');
             wrapper.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${zoom})`;
+            syncPreviewTransform();
+        
         }
 
         function updateZoomDisplay() {
@@ -2429,6 +2549,152 @@
     document.getElementById('qualityGroup').style.display =
         (format === 'jpeg' || format === 'webp') ? 'block' : 'none';
     });
+
+    let selectionMode = null; // 'rect', 'ellipse', 'wand', 'quick'
+
+    function selectSelectionTool(mode) {
+    selectionMode = mode;
+    currentTool = 'selection';
+
+    document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.selection-toggle').classList.add('active');
+
+    canvas.style.cursor = 'crosshair';
+
+    // Collapse menu
+    document.querySelector('.selection-menu').style.display = 'none';
+
+    console.log('Selection mode:', selectionMode);
+    }
+
+
+    function performQuickSelect(x, y) {
+        const rect = canvas.getBoundingClientRect();
+        const canvasX = (x - rect.left) / zoom;
+        const canvasY = (y - rect.top) / zoom;
+
+        const layer = getActiveLayerContext();
+        const ctx = layer.ctx;
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        const targetColor = getPixelColor(imageData, Math.floor(canvasX), Math.floor(canvasY));
+        const tolerance = 40;
+        const visited = new Set();
+        const selectionMask = new Uint8ClampedArray(canvas.width * canvas.height);
+        const queue = [[Math.floor(canvasX), Math.floor(canvasY)]];
+
+        while (queue.length) {
+            const [cx, cy] = queue.shift();
+            const idx = cy * canvas.width + cx;
+            const key = `${cx},${cy}`;
+
+            if (visited.has(key)) continue;
+            visited.add(key);
+
+            const currentColor = getPixelColor(imageData, cx, cy);
+            if (colorDistance(targetColor, currentColor) < tolerance) {
+            selectionMask[idx] = 1;
+
+            if (cx > 0) queue.push([cx - 1, cy]);
+            if (cx < canvas.width - 1) queue.push([cx + 1, cy]);
+            if (cy > 0) queue.push([cx, cy - 1]);
+            if (cy < canvas.height - 1) queue.push([cx, cy + 1]);
+            }
+        }
+        window.currentSelectionMask = selectionMask;
+        drawSelectionOutline(selectionMask);
+    }
+
+    function drawSelectionOutline(mask) {
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCtx = previewCanvas.getContext('2d');
+        previewCanvas.style.display = 'block';
+
+        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+        const dashOffset = window.selectionDashOffset || 0;
+        previewCtx.strokeStyle = '#00ffff';
+        previewCtx.lineWidth = 1;
+        previewCtx.setLineDash([6, 4]);
+        previewCtx.lineDashOffset = -window.selectionDashOffset;
+
+        for (let y = 1; y < canvas.height - 1; y++) {
+            for (let x = 1; x < canvas.width - 1; x++) {
+            const i = y * canvas.width + x;
+            if (mask[i]) {
+                if (
+                !mask[i - 1] || !mask[i + 1] ||
+                !mask[i - canvas.width] || !mask[i + canvas.width]
+                ) {
+                previewCtx.strokeRect(x, y, 1, 1);
+                }
+            }
+            }
+        }
+        }
+
+
+
+
+    function syncPreviewTransform() {
+    const wrapper = document.getElementById('canvasWrapper');
+    const previewCanvas = document.getElementById('previewCanvas');
+    previewCanvas.style.transform = wrapper.style.transform;
+    }
+
+    function syncPreviewCanvas() {
+    const mainCanvas = document.getElementById('canvas');
+    const previewCanvas = document.getElementById('previewCanvas');
+
+    previewCanvas.width = mainCanvas.width;
+    previewCanvas.height = mainCanvas.height;
+
+    previewCanvas.style.width = mainCanvas.style.width;
+    previewCanvas.style.height = mainCanvas.style.height;
+
+    previewCanvas.style.transform = mainCanvas.style.transform; // Sync zoom & pan visually
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.querySelector('.selection-toggle');
+    const menu = document.querySelector('.selection-menu');
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = menu.style.display === 'flex';
+        document.querySelectorAll('.selection-menu').forEach(m => m.style.display = 'none');
+        if (!isVisible) menu.style.display = 'flex';
+    });
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.selection-menu').forEach(m => m.style.display = 'none');
+    });
+
+    menu.addEventListener('click', e => e.stopPropagation());
+    });
+
+    function clearSelection() {
+        window.currentSelectionMask = null;
+
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewCtx = previewCanvas.getContext('2d');
+        previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+        previewCanvas.style.display = 'none';
+        }
+    
+    function animateSelection() {
+    if (window.currentSelectionMask) {
+        window.selectionDashOffset = (window.selectionDashOffset || 0) + 0.5;
+        drawSelectionOutline(window.currentSelectionMask);
+    }
+    requestAnimationFrame(animateSelection);
+    }
+
+    animateSelection();
+
+
 
 
     init();
