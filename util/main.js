@@ -1,9 +1,9 @@
 window.onload = () => {
-  const { createFFmpeg, fetchFile } = window.FFmpegWASM;
-  
-  const ffmpeg = createFFmpeg({
+  const FFmpeg = window.FFmpegWASM.FFmpeg; // access the FFmpeg class
+
+  const ffmpeg = new FFmpeg({
     log: true,
-    corePath: 'util/ffmpeg-core.js' // adjust if your path differs
+    corePath: 'util/ffmpeg-core.js'
   });
 
   const inputVideo = document.getElementById('inputVideo');
