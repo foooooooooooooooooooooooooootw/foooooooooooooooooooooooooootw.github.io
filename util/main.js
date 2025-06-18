@@ -18,7 +18,7 @@ window.onload = () => {
   let inputFileName = '';
 
   async function loadFFmpeg() {
-    if (!ffmpeg.isLoaded()) {
+    if (!ffmpeg.loaded) {
       await ffmpeg.load();
     }
   }
