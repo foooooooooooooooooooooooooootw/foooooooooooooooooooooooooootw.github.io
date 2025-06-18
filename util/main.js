@@ -1,5 +1,5 @@
 window.onload = () => {
-  const FFmpeg = window.FFmpegWASM.FFmpeg; // access the FFmpeg class
+  const FFmpeg = window.FFmpegWASM.FFmpeg;
 
   const ffmpeg = new FFmpeg({
     log: true,
@@ -14,12 +14,20 @@ window.onload = () => {
   const outputMeta = document.getElementById('outputMeta');
   const downloadLink = document.getElementById('downloadLink');
   const progressBar = document.getElementById('bar');
+  const logBox = document.getElementById('log');
 
   let inputFileName = '';
 
+  ffmpeg.on('log', ({ message }) => {
+    logBox.textContent += message + '\n';
+    logBox.scrollTop = logBox.scrollHeight;
+  });
+
   async function loadFFmpeg() {
     if (!ffmpeg.loaded) {
+      logBox.textContent += 'Loading FFmpeg core...\n';
       await ffmpeg.load();
+      logBox.textContent += 'FFmpeg core loaded successfully.\n';
     }
   }
 
@@ -38,16 +46,16 @@ window.onload = () => {
 
     convertBtn.disabled = true;
     inputMeta.textContent = 'Loading video metadata...';
+    logBox.textContent = 'Loading video metadata...\n';
 
     await loadFFmpeg();
 
     ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
 
     try {
-      // Probe metadata by running -i (will throw but fills ffmpeg logs)
       await ffmpeg.run('-i', inputFileName);
     } catch {
-      // Expected error since no output specified
+      // Expected error since no output file is specified
     }
 
     const logs = ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() || '';
@@ -62,6 +70,7 @@ window.onload = () => {
     outputMeta.textContent = '';
     downloadLink.style.display = 'none';
     progressBar.style.width = '0%';
+    logBox.textContent = 'Encoding started...\n';
 
     await loadFFmpeg();
 
@@ -117,8 +126,9 @@ window.onload = () => {
     try {
       await ffmpeg.run('-i', outputFileName);
     } catch {
-      // expected error from probe
+      // Expected error from probe
     }
+
     const logs = ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() || '';
     outputMeta.textContent = parseMetadata(logs);
 
@@ -129,25 +139,20 @@ window.onload = () => {
     const lines = logText.split('\n');
     const info = [];
 
-    // Extract duration
     const durLine = lines.find(line => line.includes('Duration:'));
     if (durLine) {
       const m = durLine.match(/Duration: ([\d:.]+)/);
       if (m) info.push(`Duration: ${m[1]}`);
     }
 
-    // Extract resolution and fps
     const videoLine = lines.find(line => line.includes('Video:'));
     if (videoLine) {
-      // Resolution like 1920x1080
       const resMatch = videoLine.match(/\b(\d{2,5}x\d{2,5})\b/);
       if (resMatch) info.push(`Resolution: ${resMatch[1]}`);
 
-      // FPS (frames per second)
       const fpsMatch = videoLine.match(/, (\d+(?:\.\d+)?) fps/);
       if (fpsMatch) info.push(`Framerate: ${fpsMatch[1]} fps`);
 
-      // Bitrate
       const bitrateMatch = videoLine.match(/, (\d+) kb\/s/);
       if (bitrateMatch) info.push(`Bitrate: ${bitrateMatch[1]} kbps`);
     }
