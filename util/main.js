@@ -26,8 +26,13 @@ window.onload = () => {
   async function loadFFmpeg() {
     if (!ffmpeg.loaded) {
       logBox.textContent += 'Loading FFmpeg core...\n';
-      await ffmpeg.load();
+      await ffmpeg.load({
+        coreURL: 'util/ffmpeg-core.js',       
+        wasmURL: 'util/ffmpeg-core.wasm',     
+        workerURL: 'util/814.ffmpeg.js'  
+      });
       logBox.textContent += 'FFmpeg core loaded successfully.\n';
+      
     }
   }
 
