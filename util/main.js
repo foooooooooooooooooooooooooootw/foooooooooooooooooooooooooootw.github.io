@@ -59,7 +59,7 @@ window.onload = () => {
 
     await loadFFmpeg();
 
-    ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
+    await ffmpeg.writeFile(inputFileName, await fetchFile(file));
 
     try {
       await ffmpeg.run('-i', inputFileName);
@@ -67,7 +67,7 @@ window.onload = () => {
       // Expected error since no output file is specified
     }
 
-    const logs = ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() || '';
+    const logs = ffmpeg.readFile('ffmpeg.log')?.toString() || '';
     inputMeta.textContent = parseMetadata(logs);
 
     convertBtn.disabled = false;
@@ -121,7 +121,7 @@ window.onload = () => {
       return;
     }
 
-    const data = ffmpeg.FS('readFile', outputFileName);
+    const data = ffmpeg.readFile(outputFileName);
     const videoBlob = new Blob([data.buffer], { type: `video/${ext}` });
     const videoURL = URL.createObjectURL(videoBlob);
 
@@ -138,7 +138,7 @@ window.onload = () => {
       // Expected error from probe
     }
 
-    const logs = ffmpeg.FS('readFile', 'ffmpeg.log')?.toString() || '';
+    const logs = ffmpeg.readFile('ffmpeg.log')?.toString() || '';
     outputMeta.textContent = parseMetadata(logs);
 
     convertBtn.disabled = false;
