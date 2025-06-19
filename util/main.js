@@ -2,9 +2,8 @@ window.onload = () => {
   async function fetchFile(file) {
     return new Uint8Array(await file.arrayBuffer());
   }
-  
-  const FFmpeg = window.FFmpegWASM.FFmpeg;
 
+  const FFmpeg = window.FFmpegWASM.FFmpeg;
   const ffmpeg = new FFmpeg({
     log: true,
     corePath: 'util/ffmpeg-core.js'
@@ -23,20 +22,25 @@ window.onload = () => {
   let inputFileName = '';
 
   ffmpeg.on('log', ({ message }) => {
-    logBox.textContent += message + '\n';
-    logBox.scrollTop = logBox.scrollHeight;
+    if (logBox) {
+      logBox.textContent += message + '\n';
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+  });
+
+  ffmpeg.on('progress', ({ ratio }) => {
+    progressBar.style.width = `${(ratio * 100).toFixed(2)}%`;
   });
 
   async function loadFFmpeg() {
     if (!ffmpeg.loaded) {
-      logBox.textContent += 'Loading FFmpeg core...\n';
+      if (logBox) logBox.textContent += 'Loading FFmpeg core...\n';
       await ffmpeg.load({
-        coreURL: 'ffmpeg-core.js',       
-        wasmURL: 'ffmpeg-core.wasm',     
-        workerURL: '814.ffmpeg.js'  
+        coreURL: 'ffmpeg-core.js',
+        wasmURL: 'ffmpeg-core.wasm',
+        workerURL: '814.ffmpeg.js'
       });
-      logBox.textContent += 'FFmpeg core loaded successfully.\n';
-      
+      if (logBox) logBox.textContent += 'FFmpeg core loaded successfully.\n';
     }
   }
 
@@ -55,20 +59,19 @@ window.onload = () => {
 
     convertBtn.disabled = true;
     inputMeta.textContent = 'Loading video metadata...';
-    logBox.textContent = 'Loading video metadata...\n';
+    if (logBox) logBox.textContent = 'Loading video metadata...\n';
 
     await loadFFmpeg();
-
     await ffmpeg.writeFile(inputFileName, await fetchFile(file));
 
     try {
       await ffmpeg.run('-i', inputFileName);
     } catch {
-      // Expected error since no output file is specified
+      // Expected: -i without output throws
     }
 
-    const logs = ffmpeg.readFile('ffmpeg.log')?.toString() || '';
-    inputMeta.textContent = parseMetadata(logs);
+    const logData = await ffmpeg.readFile('ffmpeg.log');
+    inputMeta.textContent = parseMetadata(new TextDecoder().decode(logData));
 
     convertBtn.disabled = false;
   });
@@ -79,9 +82,7 @@ window.onload = () => {
     outputMeta.textContent = '';
     downloadLink.style.display = 'none';
     progressBar.style.width = '0%';
-    logBox.textContent = 'Encoding started...\n';
-
-    await loadFFmpeg();
+    if (logBox) logBox.textContent = 'Encoding started...\n';
 
     const codec = document.getElementById('codec').value;
     const framerate = document.getElementById('framerate').value;
@@ -109,10 +110,6 @@ window.onload = () => {
 
     args.push(outputFileName);
 
-    ffmpeg.setProgress(({ ratio }) => {
-      progressBar.style.width = `${(ratio * 100).toFixed(2)}%`;
-    });
-
     try {
       await ffmpeg.run(...args);
     } catch (e) {
@@ -121,7 +118,7 @@ window.onload = () => {
       return;
     }
 
-    const data = ffmpeg.readFile(outputFileName);
+    const data = await ffmpeg.readFile(outputFileName);
     const videoBlob = new Blob([data.buffer], { type: `video/${ext}` });
     const videoURL = URL.createObjectURL(videoBlob);
 
@@ -134,12 +131,12 @@ window.onload = () => {
 
     try {
       await ffmpeg.run('-i', outputFileName);
-    } catch {
-      // Expected error from probe
+    } catch (e) {
+      // Expected
     }
 
-    const logs = ffmpeg.readFile('ffmpeg.log')?.toString() || '';
-    outputMeta.textContent = parseMetadata(logs);
+    const logData = await ffmpeg.readFile('ffmpeg.log');
+    outputMeta.textContent = parseMetadata(new TextDecoder().decode(logData));
 
     convertBtn.disabled = false;
   });
