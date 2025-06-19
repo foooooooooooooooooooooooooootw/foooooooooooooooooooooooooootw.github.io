@@ -1,4 +1,8 @@
 window.onload = () => {
+  async function fetchFile(file) {
+    return new Uint8Array(await file.arrayBuffer());
+  }
+  
   const FFmpeg = window.FFmpegWASM.FFmpeg;
 
   const ffmpeg = new FFmpeg({
