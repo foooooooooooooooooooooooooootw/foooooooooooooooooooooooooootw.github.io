@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webtools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #f8f9fa;
+        }
+
+        .tab.active {
+            background: #007bff;
+            color: white;
+            border-bottom-color: #0056b3;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+        }
+
+        .tool-section {
+            display: none;
+        }
+
+        .tool-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .color-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .qr-output {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .inline-group {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .inline-group .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* Drag and drop styles */
+        .drop-zone {
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #0056b3;
+            background: #e3f2fd;
+        }
+
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        .file-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .file-item .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .file-item .file-hash {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+        }
+
+        .file-item .file-size {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .remove-file {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            float: right;
+            font-size: 12px;
+        }
+
+        .remove-file:hover {
+            background: #c82333;
+        }
+
+        /* Password generator styles */
+        .password-length-input {
+            width: 80px;
+            display: inline-block;
+        }
+
+        .password-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .password-options label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+
+        .password-options input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        /* Color palette styles */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .palette-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .palette-color:hover {
+            transform: scale(1.1);
+            border-color: #007bff;
+        }
+
+        .palette-color.active {
+            border-color: #007bff;
+            border-width: 3px;
+        }
+
+        .color-tools {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .color-picker-section {
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .color-preview-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .custom-colors {
+            margin-top: 20px;
+        }
+
+        .custom-colors h4 {
+            margin-bottom: 10px;
+        }
+
+        .custom-color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+        }
+
+        .custom-color-slot {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        .custom-color-slot:hover {
+            border-color: #007bff;
+        }
+
+        .add-custom-color {
+            background: #28a745;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-custom-color:hover {
+            background: #218838;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            height: 400px; /* taller now */
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .palette-color {
+            flex: 1;
+            height: 100%; 
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+        }
+
+        .palette-color:hover {
+            transform: scale(1.01);
+        }
+
+        .palette-color.active {
+            outline: 4px solid #007bff;
+            z-index: 1;
+        }
+
+        .palette-color {
+            cursor: grab;
+        }
+        .palette-color:active {
+            cursor: grabbing;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('hash')">Hash Compare</div>
+            <div class="tab" onclick="showTab('json')">JSON Tools</div>
+            <div class="tab" onclick="showTab('password')">Password Gen</div>
+            <div class="tab" onclick="showTab('qr')">QR Code</div>
+            <div class="tab" onclick="showTab('color')">Color Picker</div>
+        </div>
+
+        <div class="content">
+            <!-- Hash Comparison Tool -->
+            <div id="hash" class="tool-section active">
+                <h2>File Hash Comparison</h2>
+
+                <div class="drop-zone" id="dropZone">
+                    <p>Drop files here or click to select</p>
+                    <input type="file" id="fileInput" multiple accept="*/*">
+                    <button onclick="document.getElementById('fileInput').click()">Select Files</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Or enter file URL:</label>
+                    <div class="inline-group">
+                        <div class="form-group">
+                            <input type="url" id="fileUrl" placeholder="https://example.com/file.zip">
+                        </div>
+                        <button onclick="loadFileFromUrl()">Load from URL</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Hash Type:</label>
+                    <select id="hashType">
+                        <option value="sha256">SHA-256</option>
+                        <option value="sha1">SHA-1</option>
+                        <option value="md5">MD5</option>
+                    </select>
+                </div>
+
+                <div id="fileList"></div>
+
+                <div id="hashComparison" class="result" style="display:none;"></div>
+            </div>
+
+            <!-- JSON Tools -->
+            <div id="json" class="tool-section">
+                <h2>JSON Tools</h2>
+                <div class="form-group">
+                    <textarea id="jsonInput" placeholder="Enter JSON here..." style="min-height: 150px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button onclick="formatJSON()">Format</button>
+                    <button onclick="minifyJSON()">Minify</button>
+                    <button onclick="validateJSON()">Validate</button>
+                </div>
+                <div id="jsonResult" class="result" style="display:none;"></div>
+            </div>
+
+            <!-- Password Generator -->
+            <div id="password" class="tool-section">
+                <h2>Password Generator</h2>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Length (1-256):</label>
+                        <input type="number" id="passwordLength" min="1" max="256" value="12"
+                            class="password-length-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Options:</label>
+                        <div class="password-options">
+                            <label><input type="checkbox" id="includeUppercase" checked> Uppercase (A-Z)</label>
+                            <label><input type="checkbox" id="includeLowercase" checked> Lowercase (a-z)</label>
+                            <label><input type="checkbox" id="includeNumbers" checked> Numbers (0-9)</label>
+                            <label><input type="checkbox" id="includeSymbols"> Symbols (!@#$%^&*)</label>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="generatePassword()">Generate Password</button>
+                <div id="passwordResult" class="result" style="display:none;"></div>
+            </div>
+
+            <!-- QR Code Generator -->
+            <div id="qr" class="tool-section">
+                <h2>QR Code Generator</h2>
+                <div class="form-group">
+                    <label>Text or URL:</label>
+                    <textarea id="qrInput" placeholder="Enter text or URL to generate QR code"></textarea>
+                </div>
+                <button onclick="generateQR()">Generate QR Code</button>
+                <div id="qrResult" class="qr-output"></div>
+            </div>
+
+            <!-- Color Picker -->
+            <div id="color" class="tool-section">
+                <h2>Advanced Color Picker</h2>
+
+                <div id="colorPalette" class="color-palette"></div>
+                <div style="margin: 10px 0;">
+                    <button onclick="shuffleColors()">Shuffle</button>
+                    <button onclick="generateHarmony('complementary')">Complementary</button>
+                    <button onclick="generateHarmony('triadic')">Triadic</button>
+                    <button onclick="generateHarmony('analogous')">Analogous</button>
+                </div>
+
+                <div class="color-tools">
+                    <div class="color-picker-section">
+                        <div class="color-preview-large" id="colorPreviewLarge" style="background: #3498db;"></div>
+                        <div class="form-group">
+                            <label>Color Picker:</label>
+                            <input type="color" id="colorPicker" value="#3498db" onchange="updateColor()">
+                        </div>
+                        <div class="form-group">
+                            <label>HEX:</label>
+                            <input type="text" id="hexInput" value="#3498db" onchange="updateFromHex()">
+                        </div>
+                        <div class="form-group">
+                            <label>RGB:</label>
+                            <input type="text" id="rgbInput" value="rgb(52, 152, 219)" onchange="updateFromRgb()">
+                        </div>
+                        <div class="form-group">
+                            <label>HSL:</label>
+                            <input type="text" id="hslInput" value="hsl(204, 70%, 53%)" onchange="updateFromHsl()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let files = [];
+        let downloadedFiles = [];
+
+        // Initialize on page load
+        window.addEventListener('load', function () {
+            initializeColorPalette();
+            initializeCustomColors();
+            setupDragAndDrop();
+        });
+
+        // Clean up downloaded files when page is closed
+        window.addEventListener('beforeunload', function () {
+            downloadedFiles.forEach(file => {
+                if (file.url) {
+                    URL.revokeObjectURL(file.url);
+                }
+            });
+        });
+
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tool-section').forEach(section => section.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Drag and drop setup
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+        }
+
+        // Handle file selection
+        function handleFiles(fileList) {
+            for (let file of fileList) {
+                files.push(file);
+            }
+            displayFiles();
+            generateHashes();
+        }
+
+        // Load file from URL
+        async function loadFileFromUrl() {
+            const url = document.getElementById('fileUrl').value;
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch file');
+
+                const blob = await response.blob();
+                const filename = url.split('/').pop() || 'downloaded-file';
+                const file = new File([blob], filename, { type: blob.type });
+
+                files.push(file);
+                downloadedFiles.push({ file, url: URL.createObjectURL(blob) });
+
+                displayFiles();
+                generateHashes();
+                document.getElementById('fileUrl').value = '';
+            } catch (error) {
+                showResult('hashComparison', 'Error loading file: ' + error.message, 'error');
+            }
+        }
+
+        // Display files
+        function displayFiles() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
+                let previewHTML = '';
+
+                if (isImage) {
+                    const url = URL.createObjectURL(file);
+                    previewHTML = `<img src="${url}" style="max-width: 40px; max-height: 40px; margin-right: 10px; border-radius: 4px;">`;
+                    downloadedFiles.push({ url });
+                } else if (isVideo) {
+                    previewHTML = `<span style="font-size: 30px; margin-right: 10px;">🎞️</span>`;
+                } else {
+                    previewHTML = `<span style="font-size: 30px; margin-right: 10px;">📄</span>`;
+                }
+
+                fileItem.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        ${previewHTML}
+                        <div style="flex: 1;">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatFileSize(file.size)}</div>
+                            <div class="file-hash" id="hash-${index}">Calculating hash...</div>
+                        </div>
+                        <button class="remove-file" onclick="removeFile(${index})">Remove</button>
+                    </div>
+                `;
+
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        // Remove file
+        function removeFile(index) {
+            files.splice(index, 1);
+            displayFiles();
+            generateHashes();
+        }
+
+        // Generate hashes for all files
+        async function generateHashes() {
+            const hashType = document.getElementById('hashType').value;
+            const hashes = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const hash = await hashFile(file, hashType);
+                hashes.push({ file: file.name, hash });
+
+                const hashElement = document.getElementById(`hash-${i}`);
+                if (hashElement) {
+                    hashElement.textContent = hash;
+                }
+            }
+
+            compareHashes(hashes);
+        }
+
+        // Hash file
+        async function hashFile(file, type) {
+            const arrayBuffer = await file.arrayBuffer();
+
+            if (type === 'md5') {
+                // For MD5, we'll use a simple implementation
+                return await md5ArrayBuffer(arrayBuffer);
+            }
+
+            const hashBuffer = await crypto.subtle.digest(type.toUpperCase().replace('SHA', 'SHA-'), arrayBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Simple MD5 for array buffer
+        async function md5ArrayBuffer(arrayBuffer) {
+            try {
+                const CryptoJS = await import('https://cdn.skypack.dev/crypto-js');
+                const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+                return CryptoJS.MD5(wordArray).toString();
+            } catch (error) {
+                return 'MD5 not available';
+            }
+        }
+
+        // Compare hashes
+        function compareHashes(hashes) {
+            if (hashes.length < 2) return;
+
+            const comparison = document.getElementById('hashComparison');
+            let html = '<h3>Hash Comparison Results</h3>';
+
+            // Group files by hash
+            const hashGroups = {};
+            hashes.forEach(item => {
+                if (!hashGroups[item.hash]) {
+                    hashGroups[item.hash] = [];
+                }
+                hashGroups[item.hash].push(item.file);
+            });
+
+            // Display results
+            Object.entries(hashGroups).forEach(([hash, fileNames]) => {
+                if (fileNames.length > 1) {
+                    html += `<div class="success">✓ Identical files: ${fileNames.join(', ')}</div>`;
+                } else {
+                    html += `<div>• ${fileNames[0]}: Unique</div>`;
+                }
+            });
+
+            comparison.innerHTML = html;
+            comparison.style.display = 'block';
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // JSON tools (unchanged)
+        function formatJSON() {
+            try {
+                const input = document.getElementById('jsonInput').value;
+                const parsed = JSON.parse(input);
+                const formatted = JSON.stringify(parsed, null, 2);
+                showResult('jsonResult', formatted, 'success');
+            } catch (e) {
+                showResult('jsonResult', 'Invalid JSON: ' + e.message, 'error');
+            }
+        }
+
+        function minifyJSON() {
+            try {
+                const input = document.getElementById('jsonInput').value;
+                const parsed = JSON.parse(input);
+                const minified = JSON.stringify(parsed);
+                showResult('jsonResult', minified, 'success');
+            } catch (e) {
+                showResult('jsonResult', 'Invalid JSON: ' + e.message, 'error');
+            }
+        }
+
+        function validateJSON() {
+            try {
+                const input = document.getElementById('jsonInput').value;
+                JSON.parse(input);
+                showResult('jsonResult', 'Valid JSON ✓', 'success');
+            } catch (e) {
+                showResult('jsonResult', 'Invalid JSON: ' + e.message, 'error');
+            }
+        }
+
+        // Password generator
+        function generatePassword() {
+            const length = parseInt(document.getElementById('passwordLength').value);
+            if (length < 1 || length > 256) {
+                showResult('passwordResult', 'Password length must be between 1 and 256', 'error');
+                return;
+            }
+
+            const includeUpper = document.getElementById('includeUppercase').checked;
+            const includeLower = document.getElementById('includeLowercase').checked;
+            const includeNumbers = document.getElementById('includeNumbers').checked;
+            const includeSymbols = document.getElementById('includeSymbols').checked;
+
+            let chars = '';
+            if (includeUpper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (includeLower) chars += 'abcdefghijklmnopqrstuvwxyz';
+            if (includeNumbers) chars += '0123456789';
+            if (includeSymbols) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+            if (!chars) {
+                showResult('passwordResult', 'Please select at least one character type', 'error');
+                return;
+            }
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            document.getElementById('passwordResult').innerHTML = `
+                <strong>Generated Password:</strong><br>
+                <input type="text" value="${password}" readonly onclick="this.select()" style="font-family: monospace; background: white; margin-top: 10px;">
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    Length: ${length} characters | Character types: ${[includeUpper && 'Uppercase', includeLower && 'Lowercase', includeNumbers && 'Numbers', includeSymbols && 'Symbols'].filter(Boolean).join(', ')}
+                </div>
+            `;
+            document.getElementById('passwordResult').style.display = 'block';
+        }
+
+        // QR Code generator (unchanged)
+        function generateQR() {
+            const text = document.getElementById('qrInput').value;
+            if (!text) return;
+
+            const qrDiv = document.getElementById('qrResult');
+            qrDiv.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}" alt="QR Code">`;
+        }
+
+        // Color palette and picker functions
+        function initializeColorPalette() {
+            const baseColors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#6C5CE7', '#00CEC9'];
+            renderColorPalette(baseColors);
+        }
+
+        function selectPaletteColor(color, element) {
+            document.querySelectorAll('.palette-color').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('colorPicker').value = color;
+            updateColor();
+        }
+
+        function updateColor() {
+            const hex = document.getElementById('colorPicker').value;
+            updateColorInputs(hex);
+            generateHarmony('complementary');
+        }
+
+        function updateFromHex() {
+            const hex = document.getElementById('hexInput').value;
+            if (isValidHex(hex)) {
+                document.getElementById('colorPicker').value = hex;
+                updateColor();
+            }
+        }
+
+        function updateFromRgb() {
+            const rgb = document.getElementById('rgbInput').value;
+            const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+            if (match) {
+                const hex = rgbToHex(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+                document.getElementById('colorPicker').value = hex;
+                updateColor();
+            }
+        }
+
+        function updateFromHsl() {
+            const hsl = document.getElementById('hslInput').value;
+            const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            if (match) {
+                const rgb = hslToRgb(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+                const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+                document.getElementById('colorPicker').value = hex;
+                updateColor();
+            }
+        }
+
+        function addCustomColor() {
+            const color = document.getElementById('colorPicker').value;
+            const harmony = [color];
+            const hsl = rgbToHsl(...Object.values(hexToRgb(color)));
+
+            harmony.push(hslToHex((hsl.h + 60) % 360, hsl.s, hsl.l));
+            harmony.push(hslToHex((hsl.h + 120) % 360, hsl.s, hsl.l));
+            harmony.push(hslToHex((hsl.h + 180) % 360, hsl.s, hsl.l));
+            harmony.push(hslToHex((hsl.h + 240) % 360, hsl.s, hsl.l));
+
+            renderColorPalette([...new Set(harmony.map(c => c.toLowerCase()))]);
+
+            addCustomColorSlot(color); // still saves it too
+            saveCustomColors();
+        }
+
+        function updateColorInputs(hex) {
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            document.getElementById('colorPicker').value = hex;
+            document.getElementById('hexInput').value = hex;
+            document.getElementById('rgbInput').value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            document.getElementById('hslInput').value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            document.getElementById('colorPreviewLarge').style.background = hex;
+        }
+
+        function selectPaletteColor(color, element) {
+            document.querySelectorAll('.palette-color').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            updateColorInputs(color);
+        }
+
+        function renderColorPalette(colors) {
+            const uniqueColors = [...new Set(colors.map(c => c.toLowerCase()))].slice(0, 5);
+            const palette = document.getElementById('colorPalette');
+            palette.innerHTML = '';
+
+            uniqueColors.forEach(color => {
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'palette-color';
+                colorDiv.style.backgroundColor = color;
+                colorDiv.innerText = color.toUpperCase();
+                colorDiv.onclick = () => {
+                    selectPaletteColor(color, colorDiv);
+                    updateColorInputs(color);
+                };
+                palette.appendChild(colorDiv);
+            });
+
+            // Ensure exactly 5 unique colors
+            while (palette.children.length < 5) {
+                const newColor = randomColorExcluding(Array.from(palette.children).map(el => el.style.backgroundColor));
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'palette-color';
+                colorDiv.style.backgroundColor = newColor;
+                colorDiv.innerText = newColor.toUpperCase();
+                colorDiv.onclick = () => {
+                    selectPaletteColor(newColor, colorDiv);
+                    updateColorInputs(newColor);
+                };
+                palette.appendChild(colorDiv);
+            }
+            makePaletteDraggable()
+        }
+
+        function makePaletteDraggable() {
+            const palette = document.getElementById('colorPalette');
+            const items = palette.children;
+
+            Array.from(items).forEach((item, i) => {
+                item.setAttribute('draggable', 'true');
+                item.ondragstart = e => {
+                    e.dataTransfer.setData('text/plain', i);
+                };
+
+                item.ondragover = e => e.preventDefault();
+
+                item.ondrop = e => {
+                    e.preventDefault();
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    const toIndex = i;
+                    if (fromIndex === toIndex) return;
+
+                    const currentColors = Array.from(palette.children).map(el => el.style.backgroundColor);
+                    const reordered = [...currentColors];
+                    const [moved] = reordered.splice(fromIndex, 1);
+                    reordered.splice(toIndex, 0, moved);
+                    renderColorPalette(reordered);
+                };
+            });
+        }
+
+
+        function randomColorExcluding(excludeList) {
+            let color;
+            do {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                color = rgbToHex(r, g, b);
+            } while (excludeList.includes(color));
+            return color;
+        }
+
+        // Color harmony
+        function generateHarmony(type) {
+            const currentColor = document.getElementById('colorPicker').value;
+            const rgb = hexToRgb(currentColor);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+            const uniqueColors = new Set([currentColor]);
+
+            const addColor = (hueOffset) => {
+                const color = hslToHex((hsl.h + hueOffset + 360) % 360, hsl.s, hsl.l);
+                if (!uniqueColors.has(color)) uniqueColors.add(color);
+            };
+
+            switch (type) {
+                case 'complementary':
+                    addColor(180);
+                    break;
+                case 'triadic':
+                    addColor(120);
+                    addColor(240);
+                    break;
+                case 'analogous':
+                    addColor(-30);
+                    addColor(30);
+                    break;
+            }
+
+            while (uniqueColors.size < 5) {
+                uniqueColors.add(randomColorExcluding([...uniqueColors]));
+            }
+
+            renderColorPalette([...uniqueColors]);
+        }
+
+
+        function hslToHex(h, s, l) {
+            const rgb = hslToRgb(h, s, l);
+            return rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+
+        // Color conversion utilities
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360; s /= 100; l /= 100;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => {
+                const k = (n + h / (1 / 12)) % 12;
+                return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            };
+            return { r: Math.round(f(0) * 255), g: Math.round(f(8) * 255), b: Math.round(f(4) * 255) };
+        }
+
+        function isValidHex(hex) {
+            return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
+        }
+
+        function shuffleColors() {
+            const baseHue = Math.floor(Math.random() * 360);
+            const hslColors = [];
+
+            for (let i = 0; i < 5; i++) {
+                const hue = (baseHue + i * 72) % 360;
+                const sat = 70 + Math.floor(Math.random() * 20); // 70–90%
+                const light = 45 + Math.floor(Math.random() * 10); // 45–55%
+                hslColors.push(hslToHex(hue, sat, light));
+            }
+
+            renderColorPalette(hslColors);
+        }
+
+        // Utility function
+        function showResult(elementId, content, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = content;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

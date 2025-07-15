@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallpaper Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 0 2rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        nav {
+            width: 100%;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .menu-list>li>a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .menu-list>li>a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .has-dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            list-style: none;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+        }
+
+        .has-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu li {
+            padding: 0;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 2rem;
+        }
+
+        .dropdown-indicator {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .has-dropdown:hover .dropdown-indicator {
+            transform: rotate(180deg);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding: 0 2rem;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Gallery Grid */
+        .gallery-container {
+            padding: 0 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .wallpaper-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .wallpaper-item:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0.7;
+        }
+
+        .wallpaper-preview {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(45deg, #2a2a2a, #404040);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .wallpaper-preview.mobile {
+            aspect-ratio: 9/16;
+        }
+
+        .wallpaper-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                    rgba(255, 0, 150, 0.3) 0%,
+                    rgba(0, 204, 255, 0.3) 25%,
+                    rgba(255, 165, 0, 0.3) 50%,
+                    rgba(138, 43, 226, 0.3) 75%,
+                    rgba(50, 205, 50, 0.3) 100%);
+            opacity: 0.4;
+        }
+
+        .preview-text {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .wallpaper-info {
+            padding: 1.5rem;
+        }
+
+        .wallpaper-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .wallpaper-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .device-tag {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .modal-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .modal-meta {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .menu-list {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(15, 15, 15, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 2rem;
+                transition: left 0.3s ease;
+                gap: 1rem;
+            }
+
+            .menu-list.active {
+                left: 0;
+            }
+
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                background: rgba(255, 255, 255, 0.05);
+                margin: 0.5rem 0 0 1rem;
+                border-radius: 8px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .filter-tabs {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .filter-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <button class="menu-toggle" aria-label="Menu">☰</button>
+        <nav>
+            <div class="menu-overlay"></div>
+            <ul class="menu-list">
+                <li><a href="index.html">Home</a></li>
+                <li class="has-dropdown">
+                    <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="bio.html">Bio</a></li>
+                        <li><a href="music.html">Music</a></li>
+                    </ul>
+                </li>
+                <li class="has-dropdown">
+                    <a>Portfolio<span class="dropdown-indicator">▾</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="jewelry.html">Jewelry</a></li>
+                        <li><a href="collections.html">Collections</a></li>
+                        <li><a href="photography.html">Photography</a></li>
+                        <li><a href="wallpapers.html">Wallpapers</a></li>
+                    </ul>
+                </li>
+                <li class="has-dropdown">
+                    <a>WebTools<span class="dropdown-indicator">▾</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="tools.html">Web Editor</a></li>
+                    </ul>
+                </li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="hero-section">
+            <h1 class="hero-title">Wallpaper Collection</h1>
+            <p class="hero-subtitle">Where I put my editing, photography and tastes to the test.</p>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All Wallpapers</button>
+            <button class="filter-tab" data-filter="desktop">Desktop</button>
+            <button class="filter-tab" data-filter="mobile">Mobile</button>
+        </div>
+
+        <div class="gallery-container">
+            <div class="gallery-grid" id="wallpaperGrid">
+                <!-- Desktop Wallpapers -->
+                <div class="wallpaper-item" data-category="desktop" data-title="Twilight Garden"
+                    data-resolution="9248x6944" data-fullres="img/papes/1.jpg">
+                    <div class="wallpaper-preview" style="background-image: url('img/papes/web-optimized/1.webp');">
+                    </div>
+                    <div class="wallpaper-info">
+                        <h3 class="wallpaper-title">Twilight Garden</h3>
+                        <div class="wallpaper-meta">
+                            <span>9248x6944</span>
+                            <span class="device-tag">Desktop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallpaper-item" data-category="desktop" data-title="Ocean Waves" data-resolution="2560x1440"
+                    data-fullres="path/to/ocean-waves-2k.jpg">
+                    <div class="wallpaper-preview" style="background-image: url('path/to/ocean-waves-thumb.jpg');">
+                        <span class="preview-text">Ocean Waves</span>
+                    </div>
+                    <div class="wallpaper-info">
+                        <h3 class="wallpaper-title">Ocean Waves</h3>
+                        <div class="wallpaper-meta">
+                            <span>2560x1440</span>
+                            <span class="device-tag">Desktop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallpaper-item" data-category="desktop" data-title="City Lights" data-resolution="3840x2160"
+                    data-fullres="path/to/city-lights-4k.jpg">
+                    <div class="wallpaper-preview" style="background-image: url('path/to/city-lights-thumb.jpg');">
+                        <span class="preview-text">City Lights</span>
+                    </div>
+                    <div class="wallpaper-info">
+                        <h3 class="wallpaper-title">City Lights</h3>
+                        <div class="wallpaper-meta">
+                            <span>3840x2160</span>
+                            <span class="device-tag">Desktop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Wallpapers -->
+                <div class="wallpaper-item" data-category="mobile" data-title="Forest Path" data-resolution="1080x2400"
+                    data-fullres="path/to/forest-path-mobile.jpg">
+                    <div class="wallpaper-preview mobile"
+                        style="background-image: url('path/to/forest-path-thumb.jpg');">
+                        <span class="preview-text">Forest Path</span>
+                    </div>
+                    <div class="wallpaper-info">
+                        <h3 class="wallpaper-title">Forest Path</h3>
+                        <div class="wallpaper-meta">
+                            <span>1080x2400</span>
+                            <span class="device-tag">Mobile</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallpaper-item" data-category="mobile" data-title="Abstract Art" data-resolution="1125x2436"
+                    data-fullres="path/to/abstract-art-mobile.jpg">
+                    <div class="wallpaper-preview mobile"
+                        style="background-image: url('path/to/abstract-art-thumb.jpg');">
+                        <span class="preview-text">Abstract Art</span>
+                    </div>
+                    <div class="wallpaper-info">
+                        <h3 class="wallpaper-title">Abstract Art</h3>
+                        <div class="wallpaper-meta">
+                            <span>1125x2436</span>
+                            <span class="device-tag">Mobile</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallpaper-item" data-category="mobile" data-title="Starry Night" data-resolution="1080x2340"
+                    data-fullres="path/to/starry-night-mobile.jpg">
+                    <div class="wallpaper-preview mobile"
+                        style="background-image: url('path/to/starry-night-thumb.jpg');">
+                        <span class="preview-text">Starry Night</span>
+                    </div>
+                    <div class="wallpaper-info">
+                        <h3 class="wallpaper-title">Starry Night</h3>
+                        <div class="wallpaper-meta">
+                            <span>1080x2340</span>
+                            <span class="device-tag">Mobile</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="wallpaperModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-info">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <p class="modal-meta" id="modalMeta"></p>
+                <a href="#" class="download-btn" id="modalDownload">Download Full Resolution</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menuList = document.querySelector('.menu-list');
+
+        menuToggle.addEventListener('click', () => {
+            menuList.classList.toggle('active');
+        });
+
+        // Filter functionality
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const wallpaperItems = document.querySelectorAll('.wallpaper-item');
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                filterTabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                const filter = tab.dataset.filter;
+
+                wallpaperItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('wallpaperModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMeta = document.getElementById('modalMeta');
+        const modalDownload = document.getElementById('modalDownload');
+        const modalClose = document.getElementById('modalClose');
+
+        // Open modal when clicking on wallpaper items
+        wallpaperItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const title = item.dataset.title;
+                const resolution = item.dataset.resolution;
+                const fullResPath = item.dataset.fullres;
+                const thumbnailPath = item.querySelector('.wallpaper-preview').style.backgroundImage.slice(5, -2);
+
+                modalTitle.textContent = title;
+                modalMeta.textContent = `Resolution: ${resolution}`;
+                modalImage.src = fullResPath || thumbnailPath; // Use full res if available, otherwise thumbnail
+                modalDownload.href = fullResPath || thumbnailPath;
+                modalDownload.download = `${title.toLowerCase().replace(/\s+/g, '-')}-${resolution}.jpg`;
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close modal
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.menu-list a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuList.classList.remove('active');
+            });
+        });
+
+        // Smooth animations on load
+        window.addEventListener('load', () => {
+            wallpaperItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Initialize wallpaper items with animation styles
+        wallpaperItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.4s ease';
+        });
+    </script>
+</body>
+
+</html>

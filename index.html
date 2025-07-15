@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Personal Website</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
   <header>
     <div class="header-content">
@@ -15,7 +17,7 @@
       </div>
     </div>
   </header>
-        <img src="img/eea99c18-823c-4474-9290-c5b8ecd400ed3-2048x1167.png" alt="Friends" class="responsive-image" />
+  <img src="img/eea99c18-823c-4474-9290-c5b8ecd400ed3-2048x1167.png" alt="Friends" class="responsive-image" />
   <br></br>
 
   <div class="navbar">
@@ -37,6 +39,13 @@
             <li><a href="jewelry.html">Jewelry</a></li>
             <li><a href="collections.html">Collections</a></li>
             <li><a href="photography.html">Photography</a></li>
+            <li><a href="wallpapers.html">Wallpapers</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a>WebTools<span class="dropdown-indicator">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="tools.html">Web Editor</a></li>
           </ul>
         </li>
         <li><a href="projects.html">Projects</a></li>
@@ -46,17 +55,17 @@
   </div>
   <br><br><br><br><br>
 
- <header class="under-construction">
-  <h1>🚧 Website Under Construction 🚧</h1>
-  <p>I'm working hard behind the scenes. Check back soon for something awesome!</p>
-</header>
+  <header class="under-construction">
+    <h1>🚧 Website Under Construction 🚧</h1>
+    <p>I'm working hard behind the scenes. Check back soon for something awesome!</p>
+  </header>
 
-<main>
-  <section>
-    <h2>Welcome</h2>
-    <p>Thanks for visiting my personal site. Here I share my projects, thoughts, and what I'm learning.</p>
-  </section>
-</main>
+  <main>
+    <section>
+      <h2>Welcome</h2>
+      <p>Thanks for visiting my personal site. Here I share my projects, thoughts, and what I'm learning.</p>
+    </section>
+  </main>
 
 
   <footer>
@@ -64,30 +73,30 @@
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       const menuToggle = document.querySelector('.menu-toggle');
       const nav = document.querySelector('nav');
       const menuOverlay = document.querySelector('.menu-overlay');
-  
+
       // Toggle menu when hamburger is clicked
-      menuToggle.addEventListener('click', function() {
+      menuToggle.addEventListener('click', function () {
         nav.classList.toggle('active');
-  
+
         if (nav.classList.contains('active')) {
           menuToggle.style.display = 'none'; // Hide button when menu is open
         }
       });
-  
+
       // Close menu when overlay is clicked
-      menuOverlay.addEventListener('click', function() {
+      menuOverlay.addEventListener('click', function () {
         nav.classList.remove('active');
         menuToggle.style.display = 'block'; // Show button again
       });
-  
+
       // Close menu when a link is clicked (in portrait mode only)
       const navLinks = document.querySelectorAll('nav a');
       navLinks.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
           if (window.matchMedia('(orientation: portrait)').matches) {
             nav.classList.remove('active');
             menuToggle.style.display = 'block'; // Show button again
@@ -96,6 +105,7 @@
       });
     });
   </script>
-  
+
 </body>
+
 </html>

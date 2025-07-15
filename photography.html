@@ -1,876 +1,890 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Photography Portfolio</title>
   <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --text-color: #333;
-            --light-text: #f8f9fa;
-            --background-color: #f8f9fa;
-            --card-color: #ffffff;
-            --transition-speed: 0.3s;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* FIXED: Modal Structure & Layout with consistent z-index hierarchy */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            overflow: auto;
-        }
-
-        .modal-container {
-            position: relative;
-            width: 90%;
-            max-width: 1200px;
-            margin: 40px auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 1; /* Relative z-index within modal */
-        }
-
-        .modal-image-container {
-            width: 100%;
-            background-color: #000;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .modal-image {
-            width: 100%;
-            display: block;
-            max-height: 70vh;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-            transform-origin: center center;
-            max-width: none;
-            user-select: none;
-        }
-
-        .modal-image.loading {
-            opacity: 0.3;
-        }
-
-        /* FIXED: Close button positioning - moved to top-left to avoid overlap */
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            left: 15px; /* CHANGED: Moved to left side */
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0,0,0,0.8);
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 100; /* High z-index within modal context */
-            border: 2px solid rgba(255,255,255,0.3);
-            font-size: 18px;
-        }
-
-        .modal-close:hover {
-            background-color: var(--accent-color);
-            transform: scale(1.1);
-        }
-
-        /* FIXED: Zoom Controls - repositioned and improved */
-        .zoom-controls {
-            position: absolute;
-            top: 15px;
-            right: 15px; /* Now has clear space since close moved to left */
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 90; /* Below close button but above other elements */
-        }
-
-        .zoom-btn {
-            width: 40px;
-            height: 40px;
-            background: rgba(0, 0, 0, 0.8);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-
-        .zoom-btn:hover {
-            background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.1);
-        }
-
-        .zoom-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* FIXED: Navigation with better positioning */
-        .modal-navigation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            pointer-events: none;
-            z-index: 80;
-        }
-
-        .modal-nav-btn {
-            background-color: rgba(0,0,0,0.7);
-            color: #fff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 20px;
-            pointer-events: auto;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-
-        .modal-nav-btn:hover {
-            background-color: var(--accent-color);
-            transform: scale(1.1);
-        }
-
-        /* Loading indicator */
-        .modal-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 24px;
-            z-index: 70;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-details {
-            padding: 20px;
-            color: var(--text-color);
-            z-index: 1;
-        }
-
-        .modal-title {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-        }
-
-        .modal-location {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-        }
-
-        .modal-location i {
-            margin-right: 6px;
-        }
-
-        .modal-description {
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .modal-exif {
-            background-color: #f4f4f4;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
-        }
-
-        .modal-exif h4 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .exif-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-        }
-
-        .exif-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .exif-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .exif-value {
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        /* Zoom functionality styles */
-        .modal-image[style*="scale"] {
-            cursor: grab;
-        }
-
-        .modal-image[style*="scale"]:active {
-            cursor: grabbing;
-        }
-
-        .modal.zoom-active {
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        /* FIXED: Consolidated mobile styles */
-        @media (orientation: portrait) {
-            .modal-container {
-                width: 95%;
-                margin: 10px auto;
-            }
-            
-            .modal-title {
-                font-size: 1.5rem;
-            }
-            
-            .modal-image {
-                max-height: 50vh;
-            }
-            
-            /* FIXED: Mobile button positioning - no more overlap */
-            .modal-close {
-                top: 10px;
-                left: 10px;
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-            }
-            
-            .zoom-controls {
-                top: 10px;
-                right: 10px;
-                gap: 6px;
-            }
-            
-            .zoom-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-            }
-            
-            .modal-nav-btn {
-                width: 44px;
-                height: 44px;
-                margin: 0 15px;
-            }
-            
-            .exif-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .modal-details {
-                padding: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .modal-container {
-                width: 98%;
-                margin: 5px auto;
-            }
-            
-            .modal-close {
-                top: 8px;
-                left: 8px;
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-            
-            .zoom-controls {
-                top: 8px;
-                right: 8px;
-            }
-            
-            .zoom-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
-            }
-            
-            .modal-nav-btn {
-                width: 40px;
-                height: 40px;
-                margin: 0 10px;
-            }
-        }
-
-        /* Rest of your existing styles remain the same */
-        header {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light-text);
-            background-color: #000;
-            overflow: hidden;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 2rem;
-            max-width: 800px;
-        }
-
-        .header-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.7;
-            background-size: cover;
-            background-position: center;
-            animation: zoomEffect 6s infinite alternate;
-            transition: opacity 1.2s ease-in-out;
-        }
-
-        @keyframes zoomEffect {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        .header-text h1 {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            font-weight: 300;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-
-        .header-text h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            font-weight: 300;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-        }
-
-        .tagline {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-        }
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            transition: all var(--transition-speed);
-        }
-
-        .navbar.scrolled {
-            background-color: rgba(0,0,0,0.95);
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            width: 100%;
-            max-width: 1400px;
-        }
-
-        .logo {
-            color: var(--light-text);
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .menu-list {
-            display: flex;
-            list-style: none;
-        }
-
-        .menu-list li {
-            position: relative;
-            margin-left: 1.5rem;
-        }
-
-        .menu-list a {
-            color: var(--light-text);
-            text-decoration: none;
-            padding: 0.5rem;
-            transition: color var(--transition-speed);
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .menu-list a:hover {
-            color: var(--accent-color);
-        }
-
-        .dropdown-indicator {
-            margin-left: 0.2rem;
-            font-size: 0.8rem;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: rgba(0,0,0,0.9);
-            min-width: 150px;
-            list-style: none;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all var(--transition-speed);
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .has-dropdown:hover .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-menu li {
-            margin: 0;
-        }
-
-        .dropdown-menu a {
-            display: block;
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .dropdown-menu a:hover {
-            background-color: rgba(52, 152, 219, 0.1);
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--light-text);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .menu-overlay {
-            display: none;
-        }
-
-        .gallery-container {
-            max-width: 1400px;
-            margin: 4rem auto;
-            padding: 0 1.5rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-weight: 300;
-            color: var(--primary-color);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            aspect-ratio: 1 / 1;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.05);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            color: white;
-            padding: 1rem;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            transform: translateY(0);
-        }
-
-        .gallery-title {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .gallery-description {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .categories {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .category-btn {
-            background: none;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            margin: 0.5rem;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all var(--transition-speed);
-            font-size: 0.9rem;
-        }
-
-        .category-btn:hover, .category-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .about-section {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 4rem 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            background-color: var(--card-color);
-            border-radius: 10px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-        }
-
-        .about-image {
-            flex: 1;
-            min-width: 300px;
-            padding: 1rem;
-        }
-
-        .about-image img {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-
-        .about-content {
-            flex: 2;
-            min-width: 300px;
-            padding: 2rem;
-        }
-
-        .about-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-            font-weight: 300;
-        }
-
-        .about-content p {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        footer {
-            background-color: var(--primary-color);
-            color: var(--light-text);
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-            margin-bottom: 2rem;
-            padding: 0 1rem;
-            text-align: left;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            font-weight: 300;
-            font-size: 1.3rem;
-        }
-
-        .footer-section p {
-            margin-bottom: 0.5rem;
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section a {
-            color: var(--light-text);
-            text-decoration: none;
-            opacity: 0.8;
-            transition: opacity var(--transition-speed);
-        }
-
-        .footer-section a:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
-
-        .social-icons {
-            display: flex;
-            margin-top: 1rem;
-        }
-
-        .social-icons a {
-            display: inline-block;
-            margin-right: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .copyright {
-            width: 100%;
-            text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        /* Additional mobile responsive improvements */
-        @media (max-width: 992px) {
-            .header-text h1 {
-                font-size: 3rem;
-            }
-            
-            .header-text h2 {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-                z-index: 102;
-            }
-            
-            nav {
-                position: fixed;
-                top: 0;
-                right: 0;
-                height: 100vh;
-                width: 0;
-                overflow: hidden;
-                background-color: rgba(0,0,0,0.95);
-                flex-direction: column;
-                align-items: flex-start;
-                justify-content: flex-start;
-                padding: 5rem 0 2rem;
-                transition: width var(--transition-speed);
-                opacity: 0;
-            }
-            
-            nav.active {
-                width: 70%;
-                opacity: 1;
-            }
-            
-            .menu-list {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .menu-list li {
-                margin: 0;
-                width: 100%;
-            }
-            
-            .menu-list a {
-                padding: 1rem 2rem;
-                display: block;
-                width: 100%;
-            }
-            
-            .dropdown-menu {
-                position: static;
-                background-color: rgba(0,0,0,0.3);
-                width: 100%;
-                max-height: 0;
-                overflow: hidden;
-                visibility: visible;
-                opacity: 1;
-                transform: none;
-                transition: max-height var(--transition-speed);
-            }
-            
-            .has-dropdown.active .dropdown-menu {
-                max-height: 500px;
-            }
-            
-            .dropdown-indicator {
-                float: right;
-            }
-            
-            .menu-overlay {
-                display: block;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.7);
-                z-index: 101;
-                visibility: hidden;
-                opacity: 0;
-                transition: opacity var(--transition-speed);
-            }
-            
-            nav.active + .menu-overlay {
-                visibility: visible;
-                opacity: 1;
-            }
-            
-            .header-text h1 {
-                font-size: 2.5rem;
-            }
-            
-            .header-text h2 {
-                font-size: 1.5rem;
-            }
-            
-            .tagline {
-                font-size: 1rem;
-            }
-            
-            .about-image, .about-content {
-                flex: 100%;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header-text h1 {
-                font-size: 2rem;
-            }
-            
-            .header-text h2 {
-                font-size: 1.2rem;
-            }
-            
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #3498db;
+      --text-color: #333;
+      --light-text: #f8f9fa;
+      --background-color: #f8f9fa;
+      --card-color: #ffffff;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    /* FIXED: Modal Structure & Layout with consistent z-index hierarchy */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      overflow: auto;
+    }
+
+    .modal-container {
+      position: relative;
+      width: 90%;
+      max-width: 1200px;
+      margin: 40px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1;
+      /* Relative z-index within modal */
+    }
+
+    .modal-image-container {
+      width: 100%;
+      background-color: #000;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .modal-image {
+      width: 100%;
+      display: block;
+      max-height: 70vh;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+      transform-origin: center center;
+      max-width: none;
+      user-select: none;
+    }
+
+    .modal-image.loading {
+      opacity: 0.3;
+    }
+
+    /* FIXED: Close button positioning - moved to top-left to avoid overlap */
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      /* CHANGED: Moved to left side */
+      width: 40px;
+      height: 40px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+      /* High z-index within modal context */
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      font-size: 18px;
+    }
+
+    .modal-close:hover {
+      background-color: var(--accent-color);
+      transform: scale(1.1);
+    }
+
+    /* FIXED: Zoom Controls - repositioned and improved */
+    .zoom-controls {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      /* Now has clear space since close moved to left */
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 90;
+      /* Below close button but above other elements */
+    }
+
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.8);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .zoom-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.1);
+    }
+
+    .zoom-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* FIXED: Navigation with better positioning */
+    .modal-navigation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 80;
+    }
+
+    .modal-nav-btn {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 20px;
+      pointer-events: auto;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-nav-btn:hover {
+      background-color: var(--accent-color);
+      transform: scale(1.1);
+    }
+
+    /* Loading indicator */
+    .modal-loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 24px;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-details {
+      padding: 20px;
+      color: var(--text-color);
+      z-index: 1;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+
+    .modal-location {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+    }
+
+    .modal-location i {
+      margin-right: 6px;
+    }
+
+    .modal-description {
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .modal-exif {
+      background-color: #f4f4f4;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .modal-exif h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .exif-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .exif-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exif-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 2px;
+    }
+
+    .exif-value {
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    /* Zoom functionality styles */
+    .modal-image[style*="scale"] {
+      cursor: grab;
+    }
+
+    .modal-image[style*="scale"]:active {
+      cursor: grabbing;
+    }
+
+    .modal.zoom-active {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    /* FIXED: Consolidated mobile styles */
+    @media (orientation: portrait) {
+      .modal-container {
+        width: 95%;
+        margin: 10px auto;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+      }
+
+      .modal-image {
+        max-height: 50vh;
+      }
+
+      /* FIXED: Mobile button positioning - no more overlap */
+      .modal-close {
+        top: 10px;
+        left: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+
+      .zoom-controls {
+        top: 10px;
+        right: 10px;
+        gap: 6px;
+      }
+
+      .zoom-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+      }
+
+      .modal-nav-btn {
+        width: 44px;
+        height: 44px;
+        margin: 0 15px;
+      }
+
+      .exif-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .modal-details {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modal-container {
+        width: 98%;
+        margin: 5px auto;
+      }
+
+      .modal-close {
+        top: 8px;
+        left: 8px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+
+      .zoom-controls {
+        top: 8px;
+        right: 8px;
+      }
+
+      .zoom-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+      }
+
+      .modal-nav-btn {
+        width: 40px;
+        height: 40px;
+        margin: 0 10px;
+      }
+    }
+
+    /* Rest of your existing styles remain the same */
+    header {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-text);
+      background-color: #000;
+      overflow: hidden;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+    }
+
+    .header-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.7;
+      background-size: cover;
+      background-position: center;
+      animation: zoomEffect 6s infinite alternate;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    @keyframes zoomEffect {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.1);
+      }
+    }
+
+    .header-text h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .header-text h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 300;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      transition: all var(--transition-speed);
+    }
+
+    .navbar.scrolled {
+      background-color: rgba(0, 0, 0, 0.95);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    .logo {
+      color: var(--light-text);
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .menu-list {
+      display: flex;
+      list-style: none;
+    }
+
+    .menu-list li {
+      position: relative;
+      margin-left: 1.5rem;
+    }
+
+    .menu-list a {
+      color: var(--light-text);
+      text-decoration: none;
+      padding: 0.5rem;
+      transition: color var(--transition-speed);
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .menu-list a:hover {
+      color: var(--accent-color);
+    }
+
+    .dropdown-indicator {
+      margin-left: 0.2rem;
+      font-size: 0.8rem;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.9);
+      min-width: 150px;
+      list-style: none;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all var(--transition-speed);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .has-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-menu li {
+      margin: 0;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .dropdown-menu a:hover {
+      background-color: rgba(52, 152, 219, 0.1);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--light-text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .menu-overlay {
+      display: none;
+    }
+
+    .gallery-container {
+      max-width: 1400px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 300;
+      color: var(--primary-color);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      aspect-ratio: 1 / 1;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      color: white;
+      padding: 1rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+      transform: translateY(0);
+    }
+
+    .gallery-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .gallery-description {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .categories {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .category-btn {
+      background: none;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      font-size: 0.9rem;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .about-section {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background-color: var(--card-color);
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .about-image {
+      flex: 1;
+      min-width: 300px;
+      padding: 1rem;
+    }
+
+    .about-image img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-content {
+      flex: 2;
+      min-width: 300px;
+      padding: 2rem;
+    }
+
+    .about-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      font-weight: 300;
+    }
+
+    .about-content p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    footer {
+      background-color: var(--primary-color);
+      color: var(--light-text);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .footer-section {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+      text-align: left;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 1rem;
+      font-weight: 300;
+      font-size: 1.3rem;
+    }
+
+    .footer-section p {
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-section a {
+      color: var(--light-text);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity var(--transition-speed);
+    }
+
+    .footer-section a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .social-icons {
+      display: flex;
+      margin-top: 1rem;
+    }
+
+    .social-icons a {
+      display: inline-block;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .copyright {
+      width: 100%;
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+
+    /* Additional mobile responsive improvements */
+    @media (max-width: 992px) {
+      .header-text h1 {
+        font-size: 3rem;
+      }
+
+      .header-text h2 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 102;
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 0;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.95);
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 5rem 0 2rem;
+        transition: width var(--transition-speed);
+        opacity: 0;
+      }
+
+      nav.active {
+        width: 70%;
+        opacity: 1;
+      }
+
+      .menu-list {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .menu-list li {
+        margin: 0;
+        width: 100%;
+      }
+
+      .menu-list a {
+        padding: 1rem 2rem;
+        display: block;
+        width: 100%;
+      }
+
+      .dropdown-menu {
+        position: static;
+        background-color: rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        visibility: visible;
+        opacity: 1;
+        transform: none;
+        transition: max-height var(--transition-speed);
+      }
+
+      .has-dropdown.active .dropdown-menu {
+        max-height: 500px;
+      }
+
+      .dropdown-indicator {
+        float: right;
+      }
+
+      .menu-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 101;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity var(--transition-speed);
+      }
+
+      nav.active+.menu-overlay {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .header-text h1 {
+        font-size: 2.5rem;
+      }
+
+      .header-text h2 {
+        font-size: 1.5rem;
+      }
+
+      .tagline {
+        font-size: 1rem;
+      }
+
+      .about-image,
+      .about-content {
+        flex: 100%;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-text h1 {
+        font-size: 2rem;
+      }
+
+      .header-text h2 {
+        font-size: 1.2rem;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 </head>
+
 <body>
   <header>
     <div class="header-background" id="backgroundImage1" style="opacity: 1;"></div>
@@ -885,9 +899,9 @@
   </header>
 
   <div class="navbar">
+    <button class="menu-toggle" aria-label="Menu">☰</button>
     <nav>
-      <a href="index.html" class="logo">FTW</a>
-      <button class="menu-toggle" aria-label="Menu">☰</button>
+      <div class="menu-overlay"></div>
       <ul class="menu-list">
         <li><a href="index.html">Home</a></li>
         <li class="has-dropdown">
@@ -903,18 +917,24 @@
             <li><a href="jewelry.html">Jewelry</a></li>
             <li><a href="collections.html">Collections</a></li>
             <li><a href="photography.html">Photography</a></li>
+            <li><a href="wallpapers.html">Wallpapers</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a>WebTools<span class="dropdown-indicator">▾</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="tools.html">Web Editor</a></li>
           </ul>
         </li>
         <li><a href="projects.html">Projects</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
-      <div class="menu-overlay"></div>
     </nav>
   </div>
 
   <div class="gallery-container">
     <h2 class="section-title">Photography Portfolio</h2>
-    
+
     <div class="categories">
       <button class="category-btn active">All</button>
       <button class="category-btn">Food</button>
@@ -927,7 +947,7 @@
       <button class="category-btn">Blue</button>
       <button class="category-btn">Misc</button>
     </div>
-    
+
     <div class="gallery-grid">
       <div class="gallery-item">
         <picture>
@@ -939,7 +959,7 @@
           <p class="gallery-description">Clear skies & harsh sunlight above SOTA</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
         <picture>
           <source srcset="img/photog/web-optimized/thumb-id2.webp" type="image/webp">
@@ -950,67 +970,68 @@
           <p class="gallery-description">Heavy cloud formations juxtaposed with clear, deep blue skies.</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id3.webp" type="image/webp">
-        <img src="img/photog/thumb-id3.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id3.webp" type="image/webp">
+          <img src="img/photog/thumb-id3.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Station at Twilight</h3>
           <p class="gallery-description">Office buildings darken as people commute home</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id4.webp" type="image/webp">
-        <img src="img/photog/thumb-id4.jpg" alt="Blue Sky Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id4.webp" type="image/webp">
+          <img src="img/photog/thumb-id4.jpg" alt="Blue Sky Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Concrete Apeture</h3>
           <p class="gallery-description">In a concrete jungle, surrounded by monoliths, the sky rarely shows itself.</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id5.webp" type="image/webp">
-        <img src="img/photog/thumb-id5.jpg" alt="Food Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id5.webp" type="image/webp">
+          <img src="img/photog/thumb-id5.jpg" alt="Food Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Birthday Roast Beef</h3>
-          <p class="gallery-description">A meal fit for a king, but it made me wonder when the last time I got a toy as a gift was.</p>
+          <p class="gallery-description">A meal fit for a king, but it made me wonder when the last time I got a toy as
+            a gift was.</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id6.webp" type="image/webp">
-        <img src="img/photog/thumb-id6.jpg" alt="Blue Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id6.webp" type="image/webp">
+          <img src="img/photog/thumb-id6.jpg" alt="Blue Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Modern Obelisk</h3>
           <p class="gallery-description">Once originally dedicated to Gods - no different by today's standards.</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id7.webp" type="image/webp">
-        <img src="img/photog/thumb-id7.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id7.webp" type="image/webp">
+          <img src="img/photog/thumb-id7.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Seaside Mosque</h3>
           <p class="gallery-description">A fitting place to walk over water</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id8.webp" type="image/webp">
-        <img src="img/photog/thumb-id8.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id8.webp" type="image/webp">
+          <img src="img/photog/thumb-id8.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Space Station</h3>
           <p class="gallery-description">Just kidding, old architecture truly is the best.</p>
@@ -1018,10 +1039,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id9.webp" type="image/webp">
-        <img src="img/photog/thumb-id9.jpg" alt="Black Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id9.webp" type="image/webp">
+          <img src="img/photog/thumb-id9.jpg" alt="Black Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Neon Trees</h3>
           <p class="gallery-description">An outdoor installation for a mall.</p>
@@ -1029,10 +1050,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id10.webp" type="image/webp">
-        <img src="img/photog/thumb-id10.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id10.webp" type="image/webp">
+          <img src="img/photog/thumb-id10.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Temple in the Clouds</h3>
           <p class="gallery-description">Straight out of a fantasy.</p>
@@ -1040,10 +1061,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id11.webp" type="image/webp">
-        <img src="img/photog/thumb-id11.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id11.webp" type="image/webp">
+          <img src="img/photog/thumb-id11.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Highlands at Night</h3>
           <p class="gallery-description">Bright lights, high altitude, empty streets.</p>
@@ -1051,21 +1072,22 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id12.webp" type="image/webp">
-        <img src="img/photog/thumb-id12.jpg" alt="White Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id12.webp" type="image/webp">
+          <img src="img/photog/thumb-id12.jpg" alt="White Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Room in the Clouds</h3>
-          <p class="gallery-description">Again, straight out of fantasy. Opening your windows and seeing nothing but clouds.</p>
+          <p class="gallery-description">Again, straight out of fantasy. Opening your windows and seeing nothing but
+            clouds.</p>
         </div>
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id13.webp" type="image/webp">
-        <img src="img/photog/thumb-id13.jpg" alt="Blue Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id13.webp" type="image/webp">
+          <img src="img/photog/thumb-id13.jpg" alt="Blue Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Airport Blues</h3>
           <p class="gallery-description">Warm and cool colours create a stark contrast in an empty airport.</p>
@@ -1073,21 +1095,22 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id14.webp" type="image/webp">
-        <img src="img/photog/thumb-id14.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id14.webp" type="image/webp">
+          <img src="img/photog/thumb-id14.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Future Malls</h3>
-          <p class="gallery-description">This is what people in the 90's thought the future would look like. Still no flying cars though.</p>
+          <p class="gallery-description">This is what people in the 90's thought the future would look like. Still no
+            flying cars though.</p>
         </div>
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id15.webp" type="image/webp">
-        <img src="img/photog/thumb-id15.jpg" alt="White Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id15.webp" type="image/webp">
+          <img src="img/photog/thumb-id15.jpg" alt="White Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Space Station II</h3>
           <p class="gallery-description">For an upscale mall this does look relatively industrial.</p>
@@ -1095,10 +1118,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id16.webp" type="image/webp">
-        <img src="img/photog/thumb-id16.jpg" alt="Black Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id16.webp" type="image/webp">
+          <img src="img/photog/thumb-id16.jpg" alt="Black Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Jellies</h3>
           <p class="gallery-description">Bright white against the abyss.</p>
@@ -1106,10 +1129,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id17.webp" type="image/webp">
-        <img src="img/photog/thumb-id17.jpg" alt="White Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id17.webp" type="image/webp">
+          <img src="img/photog/thumb-id17.jpg" alt="White Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Triangles</h3>
           <p class="gallery-description">Polygons!</p>
@@ -1117,21 +1140,22 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id18.webp" type="image/webp">
-        <img src="img/photog/thumb-id18.jpg" alt="Landscape Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id18.webp" type="image/webp">
+          <img src="img/photog/thumb-id18.jpg" alt="Landscape Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Rainy day at the beach</h3>
-          <p class="gallery-description">I was angry at first since I was looking forward to a sunny day at the beach, but in the end it was still time spent with friends.</p>
+          <p class="gallery-description">I was angry at first since I was looking forward to a sunny day at the beach,
+            but in the end it was still time spent with friends.</p>
         </div>
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id19.webp" type="image/webp">
-        <img src="img/photog/thumb-id19.jpg" alt="Landscape Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id19.webp" type="image/webp">
+          <img src="img/photog/thumb-id19.jpg" alt="Landscape Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Construction in the Clouds</h3>
           <p class="gallery-description">Building something with clouds in your face!</p>
@@ -1139,10 +1163,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id20.webp" type="image/webp">
-        <img src="img/photog/thumb-id20.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id20.webp" type="image/webp">
+          <img src="img/photog/thumb-id20.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Orange-tinted Hometown</h3>
           <p class="gallery-description">White LEDs shine bright while the sky bathes the town in orange.</p>
@@ -1150,10 +1174,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id21.webp" type="image/webp">
-        <img src="img/photog/thumb-id21.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id21.webp" type="image/webp">
+          <img src="img/photog/thumb-id21.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Worn Rainbow</h3>
           <p class="gallery-description">Exposed to the elements, the colour still remains.</p>
@@ -1161,10 +1185,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id22.webp" type="image/webp">
-        <img src="img/photog/thumb-id22.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id22.webp" type="image/webp">
+          <img src="img/photog/thumb-id22.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Airport Christmas Deco</h3>
           <p class="gallery-description">Multicoloured lights reflect against the metallic ceiling.</p>
@@ -1172,10 +1196,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id23.webp" type="image/webp">
-        <img src="img/photog/thumb-id23.jpg" alt="Blue Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id23.webp" type="image/webp">
+          <img src="img/photog/thumb-id23.jpg" alt="Blue Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Jellies II</h3>
           <p class="gallery-description">For something with no face or brain it's pretty cute.</p>
@@ -1183,10 +1207,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id24.webp" type="image/webp">
-        <img src="img/photog/thumb-id24.jpg" alt="Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id24.webp" type="image/webp">
+          <img src="img/photog/thumb-id24.jpg" alt="Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Pillar Reef</h3>
           <p class="gallery-description">I should go diving one day.</p>
@@ -1194,10 +1218,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id25.webp" type="image/webp">
-        <img src="img/photog/thumb-id25.jpg" alt="Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id25.webp" type="image/webp">
+          <img src="img/photog/thumb-id25.jpg" alt="Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Pillar Aquarium</h3>
           <p class="gallery-description">I can imagine the fishes looking out and seeing nothing but darkness</p>
@@ -1205,10 +1229,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id26.webp" type="image/webp">
-        <img src="img/photog/thumb-id26.jpg" alt="Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id26.webp" type="image/webp">
+          <img src="img/photog/thumb-id26.jpg" alt="Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Frutiger Aero</h3>
           <p class="gallery-description">I miss the early 2000s</p>
@@ -1216,10 +1240,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id27.webp" type="image/webp">
-        <img src="img/photog/thumb-id27.jpg" alt="Sky Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id27.webp" type="image/webp">
+          <img src="img/photog/thumb-id27.jpg" alt="Sky Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">The sky from beyond the fence</h3>
           <p class="gallery-description">The sun and clouds greet commuters on their way home.</p>
@@ -1227,21 +1251,22 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id28.webp" type="image/webp">
-        <img src="img/photog/thumb-id28.jpg" alt="Sky Landscape Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id28.webp" type="image/webp">
+          <img src="img/photog/thumb-id28.jpg" alt="Sky Landscape Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Rural Construction</h3>
-          <p class="gallery-description">Outside the city with no tall buildings in sight, construction still continues.</p>
+          <p class="gallery-description">Outside the city with no tall buildings in sight, construction still continues.
+          </p>
         </div>
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id29.webp" type="image/webp">
-        <img src="img/photog/thumb-id29.jpg" alt="Blue Sky Landscape Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id29.webp" type="image/webp">
+          <img src="img/photog/thumb-id29.jpg" alt="Blue Sky Landscape Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Blue Town</h3>
           <p class="gallery-description">White and blue buildings against the white and blue sky.</p>
@@ -1249,40 +1274,40 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id30.webp" type="image/webp">
-        <img src="img/photog/thumb-id30.jpg" alt="White Sky Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id30.webp" type="image/webp">
+          <img src="img/photog/thumb-id30.jpg" alt="White Sky Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Heaven's Garden</h3>
           <p class="gallery-description">A park/garden or the face of a building?</p>
         </div>
       </div>
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id31.webp" type="image/webp">        
-        <img src="img/photog/thumb-id31.jpg" alt="White Sky Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id31.webp" type="image/webp">
+          <img src="img/photog/thumb-id31.jpg" alt="White Sky Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Heaven's Garden II</h3>
           <p class="gallery-description">They grow bougainvillea up there :)</p>
         </div>
       </div>
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id32.webp" type="image/webp">
-        <img src="img/photog/thumb-id32.jpg" alt="Urban Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id32.webp" type="image/webp">
+          <img src="img/photog/thumb-id32.jpg" alt="Urban Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Stray</h3>
           <p class="gallery-description">It used to greet me everyday with its teary eyes, now it's gone.</p>
         </div>
       </div>
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id33.webp" type="image/webp">
-        <img src="img/photog/thumb-id33.jpg" alt="Urban Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id33.webp" type="image/webp">
+          <img src="img/photog/thumb-id33.jpg" alt="Urban Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Towers in the Lake</h3>
           <p class="gallery-description">
@@ -1299,21 +1324,21 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id34.webp" type="image/webp">
-        <img src="img/photog/thumb-id34.jpg" alt="Blue Urban Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id34.webp" type="image/webp">
+          <img src="img/photog/thumb-id34.jpg" alt="Blue Urban Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">False Moon</h3>
           <p class="gallery-description">The irreplaceable warm glow of an old street lamp.</p>
         </div>
       </div>
-      
+
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id35.webp" type="image/webp">
-        <img src="img/photog/thumb-id35.jpg" alt="Urban Nature Black Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id35.webp" type="image/webp">
+          <img src="img/photog/thumb-id35.jpg" alt="Urban Nature Black Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Abyss Lamp</h3>
           <p class="gallery-description">What is it doing? Its best.</p>
@@ -1321,10 +1346,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id36.webp" type="image/webp">
-        <img src="img/photog/thumb-id36.jpg" alt="Sky Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id36.webp" type="image/webp">
+          <img src="img/photog/thumb-id36.jpg" alt="Sky Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Corvus Adversus Caelum</h3>
           <p class="gallery-description">Corvus solus, contra lucem.</p>
@@ -1332,10 +1357,10 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id37.webp" type="image/webp">
-        <img src="img/photog/thumb-id37.jpg" alt="Sky Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id37.webp" type="image/webp">
+          <img src="img/photog/thumb-id37.jpg" alt="Sky Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Rainbow's end</h3>
           <p class="gallery-description">At the end was where my girl was waiting</p>
@@ -1343,21 +1368,22 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id38.webp" type="image/webp">
-        <img src="img/photog/thumb-id38.jpg" alt="Food Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id38.webp" type="image/webp">
+          <img src="img/photog/thumb-id38.jpg" alt="Food Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Duck by the Sea</h3>
-          <p class="gallery-description">A meal with friends by the sea in the evening. The secret bottom level of Maslow's hierarchy of needs.</p>
+          <p class="gallery-description">A meal with friends by the sea in the evening. The secret bottom level of
+            Maslow's hierarchy of needs.</p>
         </div>
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id39.webp" type="image/webp">
-        <img src="img/photog/thumb-id39.jpg" alt="Nature Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id39.webp" type="image/webp">
+          <img src="img/photog/thumb-id39.jpg" alt="Nature Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Droplets on Leaf</h3>
           <p class="gallery-description">No idea why I attempted macro photography on a random leaf but I did.</p>
@@ -1365,13 +1391,14 @@
       </div>
 
       <div class="gallery-item">
-      <picture>
-        <source srcset="img/photog/web-optimized/thumb-id40.webp" type="image/webp">
-        <img src="img/photog/thumb-id40.jpg" alt="Sky Photography" />
-      </picture>
+        <picture>
+          <source srcset="img/photog/web-optimized/thumb-id40.webp" type="image/webp">
+          <img src="img/photog/thumb-id40.jpg" alt="Sky Photography" />
+        </picture>
         <div class="gallery-overlay">
           <h3 class="gallery-title">Sky Canvas</h3>
-          <p class="gallery-description">The sky that day had colours I could never capture on my camera, much to my dismay.</p>
+          <p class="gallery-description">The sky that day had colours I could never capture on my camera, much to my
+            dismay.</p>
         </div>
       </div>
     </div>
@@ -1379,18 +1406,23 @@
 
   <div class="about-section">
     <div class="about-image">
-    <picture>
-      <source srcset="img/photog/web-optimized/lagoon.webp" type="image/webp">
-      <img src="img/photog/lagoon.png" alt="Photographer Profile Image" />
-    </picture>
+      <picture>
+        <source srcset="img/photog/web-optimized/lagoon.webp" type="image/webp">
+        <img src="img/photog/lagoon.png" alt="Photographer Profile Image" />
+      </picture>
     </div>
     <div class="about-content">
       <h2>About the Artist</h2>
-      <p>Welcome to my photography portfolio. I'm passionate about capturing the beauty of our world through my lens, with a special focus on sky photography and urban landscapes.</p>
-      <p>Photography allows me to express my perspective and share the fleeting moments that often go unnoticed in our busy lives. Each image tells a story and freezes a moment in time that can never be precisely recreated.</p>
-      <p>My work spans various styles and subjects, but I'm particularly drawn to the ever-changing canvas of the sky, and older architecture which I think are quickly being destroyed and replaced with glass towers.</p>
-      <p>I try my best to take photos that are "fantasy-like", and photos that don't include people to create a sense of liminality or isolation.</p>
-      <p>The art of taking photos itself is very personal to me. I was born with Antimetropia and Astigmatism in both eyes, and photography is the only way I think I can see the world as other people do.</p>
+      <p>Welcome to my photography portfolio. I'm passionate about capturing the beauty of our world through my lens,
+        with a special focus on sky photography and urban landscapes.</p>
+      <p>Photography allows me to express my perspective and share the fleeting moments that often go unnoticed in our
+        busy lives. Each image tells a story and freezes a moment in time that can never be precisely recreated.</p>
+      <p>My work spans various styles and subjects, but I'm particularly drawn to the ever-changing canvas of the sky,
+        and older architecture which I think are quickly being destroyed and replaced with glass towers.</p>
+      <p>I try my best to take photos that are "fantasy-like", and photos that don't include people to create a sense of
+        liminality or isolation.</p>
+      <p>The art of taking photos itself is very personal to me. I was born with Antimetropia and Astigmatism in both
+        eyes, and photography is the only way I think I can see the world as other people do.</p>
       <p>I hope my images inspire you to look around more often and appreciate the art show happening every day.</p>
     </div>
   </div>
@@ -1409,7 +1441,7 @@
         <h3 class="modal-title">Image Title</h3>
         <div class="modal-location"><i class="fas fa-map-marker-alt"></i> <span>Location</span></div>
         <p class="modal-description">Detailed description of the photograph and the story behind it.</p>
-        
+
         <div class="modal-exif">
           <h4>Technical Details</h4>
           <div class="exif-grid">
@@ -1459,7 +1491,7 @@
         <p>Email: your.email@example.com</p>
         <p>Location: Singapore</p>
       </div>
-      
+
       <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
@@ -1477,35 +1509,35 @@
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       // Navigation menu toggle for mobile
       const menuToggle = document.querySelector('.menu-toggle');
       const nav = document.querySelector('nav');
       const menuOverlay = document.querySelector('.menu-overlay');
-  
+
       // Toggle menu when hamburger is clicked
-      menuToggle.addEventListener('click', function() {
+      menuToggle.addEventListener('click', function () {
         nav.classList.toggle('active');
       });
-  
+
       // Close menu when overlay is clicked
-      menuOverlay.addEventListener('click', function() {
+      menuOverlay.addEventListener('click', function () {
         nav.classList.remove('active');
       });
-      
+
       // Mobile dropdown toggle
       const dropdownLinks = document.querySelectorAll('.has-dropdown > a');
       dropdownLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
           if (window.innerWidth <= 768) {
             e.preventDefault();
             this.parentElement.classList.toggle('active');
           }
         });
       });
-      
+
       // Navbar background change on scroll
-      window.addEventListener('scroll', function() {
+      window.addEventListener('scroll', function () {
         const navbar = document.querySelector('.navbar');
         if (window.scrollY > 50) {
           navbar.classList.add('scrolled');
@@ -1513,18 +1545,18 @@
           navbar.classList.remove('scrolled');
         }
       });
-      
+
       // Gallery filtering
       const categoryBtns = document.querySelectorAll('.category-btn');
       const galleryItems = document.querySelectorAll('.gallery-item');
-      
+
       categoryBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
           categoryBtns.forEach(b => b.classList.remove('active'));
           this.classList.add('active');
-          
+
           const category = this.textContent.toLowerCase();
-          
+
           if (category === 'all') {
             galleryItems.forEach(item => {
               item.style.display = 'block';
@@ -1540,34 +1572,34 @@
           }
         });
       });
-      
+
       // Modal for image viewing
       const modal = document.querySelector('.modal');
       const modalImg = document.querySelector('.modal-content');
       const modalClose = document.querySelector('.modal-close');
       const galleryImages = document.querySelectorAll('.gallery-item img');
-      
+
       galleryImages.forEach(img => {
-        img.addEventListener('click', function() {
+        img.addEventListener('click', function () {
           modal.style.display = 'block';
           modalImg.src = this.src;
         });
       });
-      
-      modalClose.addEventListener('click', function() {
+
+      modalClose.addEventListener('click', function () {
         modal.style.display = 'none';
       });
-      
-      window.addEventListener('click', function(e) {
+
+      window.addEventListener('click', function (e) {
         if (e.target === modal) {
           modal.style.display = 'none';
         }
       });
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       // Keep your existing script functionality
-      
+
       // Enhanced gallery and modal functionality
       const modal = document.querySelector('.modal');
       const modalImg = document.querySelector('.modal-image');
@@ -1577,7 +1609,7 @@
       const modalDescription = document.querySelector('.modal-description');
       const prevBtn = document.querySelector('.prev-btn');
       const nextBtn = document.querySelector('.next-btn');
-      
+
       const galleryItems = document.querySelectorAll('.gallery-item');
       let currentIndex = 0;
 
@@ -2001,7 +2033,7 @@
           focalLength: "4mm",
           dimensions: "4032 x 3024",
           fileSize: "5.93 MB"
-        },        
+        },
         {
           id: 29,
           title: "Blue Town",
@@ -2184,19 +2216,19 @@
         },
       ];
 
-        // Zoom functionality variables
+      // Zoom functionality variables
       let scale = 1;
       let isDragging = false;
       let startX = 0, startY = 0;
       let translateX = 0, translateY = 0;
       let initialDistance = 0;
       let initialScale = 1;
-      
+
       // Create zoom controls
       function createZoomControls() {
         // Check if zoom controls already exist
         if (document.querySelector('.zoom-controls')) return;
-        
+
         const zoomControls = document.createElement('div');
         zoomControls.className = 'zoom-controls';
         zoomControls.innerHTML = `
@@ -2210,67 +2242,67 @@
             <i class="fas fa-expand-arrows-alt"></i>
           </button>
         `;
-        
+
         // Insert zoom controls into modal
         const modalContent = document.querySelector('.modal-content') || modal;
         modalContent.appendChild(zoomControls);
-        
+
         // Add event listeners for zoom buttons
         const zoomInBtn = zoomControls.querySelector('.zoom-in');
         const zoomOutBtn = zoomControls.querySelector('.zoom-out');
         const zoomResetBtn = zoomControls.querySelector('.zoom-reset');
-        
+
         zoomInBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           zoomIn();
         });
-        
+
         zoomOutBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           zoomOut();
         });
-        
+
         zoomResetBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           resetZoom();
         });
       }
-      
+
       // Zoom functions
       function zoomIn() {
         scale = Math.min(scale * 1.2, 5); // Max zoom 5x
         updateImageTransform();
       }
-      
+
       function zoomOut() {
         scale = Math.max(scale / 1.2, 0.5); // Min zoom 0.5x
         updateImageTransform();
       }
-      
+
       function resetZoom() {
         scale = 1;
         translateX = 0;
         translateY = 0;
         updateImageTransform();
       }
-      
+
       function updateImageTransform() {
         modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
         modalImg.style.cursor = scale > 1 ? 'grab' : 'default';
       }
-      
+
       // Mouse wheel zoom
       // function handleWheel(e) {
       //   if (modal.style.display === 'block') {
       //     e.preventDefault();
-          
+
       //     const rect = modalImg.getBoundingClientRect();
       //     const x = e.clientX - rect.left;
       //     const y = e.clientY - rect.top;
-          
+
       //     const delta = e.deltaY > 0 ? 0.9 : 1.1;
       //     const newScale = Math.min(Math.max(scale * delta, 0.5), 5);
-          
+
       //     if (newScale !== scale) {
       //       // Zoom towards mouse position
       //       const scaleChange = newScale / scale;
@@ -2281,7 +2313,7 @@
       //     }
       //   }
       // }
-      
+
       // Mouse drag functionality
       function handleMouseDown(e) {
         if (scale > 1) {
@@ -2292,7 +2324,7 @@
           e.preventDefault();
         }
       }
-      
+
       function handleMouseMove(e) {
         if (isDragging && scale > 1) {
           translateX = e.clientX - startX;
@@ -2300,14 +2332,14 @@
           updateImageTransform();
         }
       }
-      
+
       function handleMouseUp() {
         isDragging = false;
         if (scale > 1) {
           modalImg.style.cursor = 'grab';
         }
       }
-      
+
       // Touch events for mobile zoom and pan
       function handleTouchStart(e) {
         if (e.touches.length === 1) {
@@ -2329,7 +2361,7 @@
         }
         e.preventDefault();
       }
-      
+
       function handleTouchMove(e) {
         if (e.touches.length === 1 && isDragging && scale > 1) {
           // Single touch drag
@@ -2344,37 +2376,37 @@
             touch2.clientX - touch1.clientX,
             touch2.clientY - touch1.clientY
           );
-          
+
           const newScale = Math.min(Math.max(initialScale * (currentDistance / initialDistance), 0.5), 5);
           scale = newScale;
           updateImageTransform();
         }
         e.preventDefault();
       }
-      
+
       function handleTouchEnd() {
         isDragging = false;
       }
-      
+
       // Update EXIF data in the modal
       function updateExifData(imageData) {
         const exifItems = document.querySelectorAll('.exif-item');
-        
+
         // Update Camera
         exifItems[0].querySelector('.exif-value').textContent = imageData.camera;
-        
+
         // Update Lens
         exifItems[1].querySelector('.exif-value').textContent = imageData.lens;
-        
+
         // Update Aperture
         exifItems[2].querySelector('.exif-value').textContent = imageData.aperture;
-        
+
         // Update Shutter Speed
         exifItems[3].querySelector('.exif-value').textContent = imageData.shutterSpeed;
-        
+
         // Update ISO
         exifItems[4].querySelector('.exif-value').textContent = imageData.iso;
-        
+
         // Update Focal Length
         exifItems[5].querySelector('.exif-value').textContent = imageData.focalLength;
 
@@ -2382,17 +2414,17 @@
 
         exifItems[7].querySelector('.exif-value').textContent = imageData.fileSize;
       }
-      
+
       // Display image in modal with its data
       function displayImage(index) {
         currentIndex = index;
         resetZoom();
         const data = imageData[index];
-        
+
         // Show loading state
         modalImg.src = ''; // Clear current image
         modalImg.classList.add('loading');
-        
+
         // Add a loading indicator if not already present
         let loader = document.querySelector('.modal-loader');
         if (!loader) {
@@ -2402,124 +2434,124 @@
           document.querySelector('.modal-image-container').appendChild(loader);
         }
         loader.style.display = 'flex';
-        
+
         // Update text content immediately
         modalTitle.textContent = data.title;
         modalLocation.textContent = data.location;
         modalDescription.textContent = data.description;
         updateExifData(data);
-        
+
         // Show modal
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-        
+
         // Load high-res image
         const highResImage = new Image();
-        highResImage.onload = function() {
+        highResImage.onload = function () {
           // Once loaded, update the modal image
           modalImg.src = data.highResUrl;
           modalImg.classList.remove('loading');
           loader.style.display = 'none';
         };
-        
-        highResImage.onerror = function() {
+
+        highResImage.onerror = function () {
           // Fallback to thumbnail if high-res fails to load
           modalImg.src = galleryItems[index].querySelector('img').src;
           modalImg.classList.remove('loading');
           loader.style.display = 'none';
         };
-        
+
         // Start loading the high-res image
         highResImage.src = data.highResUrl;
       }
 
-        // Initialize zoom controls
+      // Initialize zoom controls
       createZoomControls();
-      
+
       // Add event listeners for zoom functionality
       modalImg.addEventListener('mousedown', handleMouseDown);
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
+
       // Touch events for mobile
       modalImg.addEventListener('touchstart', handleTouchStart, { passive: false });
       modalImg.addEventListener('touchmove', handleTouchMove, { passive: false });
       modalImg.addEventListener('touchend', handleTouchEnd);
-      
+
       // Add click event to gallery items
       galleryItems.forEach((item, index) => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
           // First set the modal image to the thumbnail while high-res loads
           // This gives immediate visual feedback to the user
           modal.style.display = 'block';
           modalImg.src = this.querySelector('img').src;
-          
+
           // Then display the high-res version with metadata
           displayImage(index);
         });
       });
-      
+
       // Previous image button
-      prevBtn.addEventListener('click', function(e) {
+      prevBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         let newIndex = currentIndex - 1;
         if (newIndex < 0) newIndex = galleryItems.length - 1;
         displayImage(newIndex);
       });
-      
+
       // Next image button
-      nextBtn.addEventListener('click', function(e) {
+      nextBtn.addEventListener('click', function (e) {
         e.stopPropagation();
         let newIndex = currentIndex + 1;
         if (newIndex >= galleryItems.length) newIndex = 0;
         displayImage(newIndex);
       });
-      
+
       // Close modal
-      modalClose.addEventListener('click', function() {
+      modalClose.addEventListener('click', function () {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto'; // Restore scrolling
       });
-      
+
       // Close modal when clicking outside of content
-      modal.addEventListener('click', function(e) {
+      modal.addEventListener('click', function (e) {
         if (e.target === modal) {
           modal.style.display = 'none';
           document.body.style.overflow = 'auto';
         }
       });
-      
-      // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
-          if (modal.style.display === 'block') {
-            if (e.key === 'ArrowLeft') {
-              let newIndex = currentIndex - 1;
-              if (newIndex < 0) newIndex = galleryItems.length - 1;
-              displayImage(newIndex);
-            } else if (e.key === 'ArrowRight') {
-              let newIndex = currentIndex + 1;
-              if (newIndex >= galleryItems.length) newIndex = 0;
-              displayImage(newIndex);
-            } else if (e.key === 'Escape') {
-              modal.style.display = 'none';
-              document.body.style.overflow = 'auto';
-              resetZoom();
-            } else if (e.key === '+' || e.key === '=') {
-              e.preventDefault();
-              zoomIn();
-            } else if (e.key === '-') {
-              e.preventDefault();
-              zoomOut();
-            } else if (e.key === '0') {
-              e.preventDefault();
-              resetZoom();
-            }
-          }
-        });
-      });
 
-  // Array of background images
-  const backgroundImages = [
+      // Keyboard navigation
+      document.addEventListener('keydown', function (e) {
+        if (modal.style.display === 'block') {
+          if (e.key === 'ArrowLeft') {
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = galleryItems.length - 1;
+            displayImage(newIndex);
+          } else if (e.key === 'ArrowRight') {
+            let newIndex = currentIndex + 1;
+            if (newIndex >= galleryItems.length) newIndex = 0;
+            displayImage(newIndex);
+          } else if (e.key === 'Escape') {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetZoom();
+          } else if (e.key === '+' || e.key === '=') {
+            e.preventDefault();
+            zoomIn();
+          } else if (e.key === '-') {
+            e.preventDefault();
+            zoomOut();
+          } else if (e.key === '0') {
+            e.preventDefault();
+            resetZoom();
+          }
+        }
+      });
+    });
+
+    // Array of background images
+    const backgroundImages = [
       'img/photog/bedhead.jpg',
       'img/photog/hotel.jpg',
       'img/photog/temple.jpg',
@@ -2527,42 +2559,43 @@
       'img/photog/yingge.jpg',
       'img/photog/conscription.png',
     ];
-    
+
     let currentImageIndex = 0;
     let nextImageIndex = 1;
     let activeBackground = 1; // Tracks which background div is currently visible
-    
+
     const bg1 = document.getElementById('backgroundImage1');
     const bg2 = document.getElementById('backgroundImage2');
-    
+
     // Set initial backgrounds
     bg1.style.backgroundImage = `url('${backgroundImages[0]}')`;
     bg2.style.backgroundImage = `url('${backgroundImages[1]}')`;
-    
+
     // Change background every 5 seconds
     setInterval(crossfadeBackground, 5000);
-    
+
     function crossfadeBackground() {
       // Get the currently visible and hidden background elements
       const currentBg = activeBackground === 1 ? bg1 : bg2;
       const nextBg = activeBackground === 1 ? bg2 : bg1;
-      
+
       // Set the next image before starting the transition
       nextBg.style.backgroundImage = `url('${backgroundImages[nextImageIndex]}')`;
-      
+
       // Fade in the next image (which is currently hidden)
       nextBg.style.opacity = '1';
-      
+
       // Fade out the current image
       currentBg.style.opacity = '0';
-      
+
       // Toggle which background is active
       activeBackground = activeBackground === 1 ? 2 : 1;
-      
+
       // Update the indices for the next cycle
       currentImageIndex = nextImageIndex;
       nextImageIndex = (nextImageIndex + 1) % backgroundImages.length;
     }
   </script>
 </body>
+
 </html>
