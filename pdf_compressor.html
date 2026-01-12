@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Compressor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.3/tesseract.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0f23;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(72, 118, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(255, 0, 128, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+        
+        .textLayer {
+            position: absolute;
+            text-align: initial;
+            inset: 0;
+            overflow: hidden;
+            opacity: 0.2;
+            line-height: 1.0;
+            pointer-events: auto;
+        }
+
+        .textLayer span,
+        .textLayer br {
+            color: transparent;
+            position: absolute;
+            white-space: pre;
+            cursor: text;
+            transform-origin: 0% 0%;
+        }
+
+        .textLayer ::selection {
+            background: rgba(66, 133, 244, 0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.4),
+                0 0 0 1px rgba(255,255,255,0.1) inset;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: headerFloat 15s ease-in-out infinite;
+        }
+        
+        @keyframes headerFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            font-size: 1.1em;
+        }
+        
+        .upload-section {
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .upload-box {
+            border: 3px dashed rgba(102, 126, 234, 0.5);
+            border-radius: 16px;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .upload-box:hover::before {
+            opacity: 1;
+        }
+        
+        .upload-box:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-color: rgba(118, 75, 162, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+        }
+        
+        .upload-box.dragover {
+            background: #e8ebff;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .controls {
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        .value-display {
+            min-width: 80px;
+            text-align: right;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .estimate-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .estimate-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .estimate-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .ocr-note {
+            background: #d1ecf1;
+            border: 1px solid #17a2b8;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0c5460;
+        }
+        
+        .ocr-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .ocr-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .ocr-toggle label {
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .ocr-progress {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #17a2b8;
+        }
+        
+        .ocr-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .ocr-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #17a2b8, #20c997);
+            transition: width 0.3s;
+        }
+        
+        .ocr-status {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: #fff;
+        }
+        
+        .stat-box {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .viewer-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .viewer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .viewer-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .viewer-header h3 {
+            color: #333;
+            margin: 0;
+        }
+        
+        .selectable-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-selectable {
+            background: #4ade80;
+            color: white;
+        }
+        
+        .badge-image {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .pdf-canvas {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: block;
+        }
+        
+        .selection-hint {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 PDF Compressor</h1>
+            <p>Compress PDFs client-side while keeping text selectable</p>
+        </div>
+        
+        <div class="upload-section">
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📤</div>
+                <h2>Drop PDF here or click to upload</h2>
+                <p style="margin-top: 10px; color: #666;">Your file stays in your browser - no server upload</p>
+                <input type="file" id="fileInput" accept=".pdf">
+            </div>
+        </div>
+        
+        <div class="controls hidden" id="controls">
+            <div class="ocr-note">
+                <strong>✨ OCR Enabled!</strong> This tool automatically recognizes text from image-only PDFs using Tesseract.js, making scanned documents searchable and selectable.
+                <div class="hidden" id="ocrProgress">
+                    <div class="ocr-progress">
+                        <div class="ocr-status" id="ocrStatus">Initializing OCR engine...</div>
+                        <div class="ocr-progress-bar">
+                            <div class="ocr-progress-fill" id="ocrProgressFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Image Quality (lower = smaller file)</label>
+                <div class="slider-container">
+                    <input type="range" id="qualitySlider" min="10" max="100" value="60">
+                    <span class="value-display" id="qualityValue">60%</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Image Scale (smaller = more compression)</label>
+                <div class="slider-container">
+                    <input type="range" id="scaleSlider" min="25" max="100" value="75">
+                    <span class="value-display" id="scaleValue">75%</span>
+                </div>
+            </div>
+            
+            <div class="estimate-box" id="estimateBox">
+                <div class="estimate-label">Estimated Final Size</div>
+                <div class="estimate-value" id="estimatedSize">Calculating...</div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn" id="compressBtn">Compress PDF</button>
+            </div>
+        </div>
+        
+        <div class="stats hidden" id="stats">
+            <div class="stat-box">
+                <div class="stat-label">Original Size</div>
+                <div class="stat-value" id="originalSize">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Compressed Size</div>
+                <div class="stat-value" id="compressedSize">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Reduction</div>
+                <div class="stat-value" id="reduction">-</div>
+            </div>
+        </div>
+        
+        <div class="loading hidden" id="loading">
+            <div class="spinner"></div>
+            <p>Compressing your PDF...</p>
+        </div>
+        
+        <div class="viewer-section hidden" id="viewerSection">
+            <div class="viewer-grid">
+                <div class="viewer-box">
+                    <div class="viewer-header">
+                        <h3>Original PDF (Page 1)</h3>
+                        <span class="selectable-badge" id="originalBadge">Checking...</span>
+                    </div>
+                    <div class="canvas-wrapper" id="originalWrapper">
+                        <canvas class="pdf-canvas" id="originalCanvas"></canvas>
+                    </div>
+                    <div class="selection-hint">Try selecting text above</div>
+                </div>
+                <div class="viewer-box">
+                    <div class="viewer-header">
+                        <h3>Compressed PDF (Page 1)</h3>
+                        <span class="selectable-badge" id="compressedBadge">Processing...</span>
+                    </div>
+                    <div class="canvas-wrapper" id="compressedWrapper">
+                        <canvas class="pdf-canvas" id="compressedCanvas"></canvas>
+                    </div>
+                    <div class="selection-hint">Try selecting text above</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" id="downloadBtn">Save Compressed PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('fileInput');
+        const controls = document.getElementById('controls');
+        const compressBtn = document.getElementById('compressBtn');
+        const stats = document.getElementById('stats');
+        const loading = document.getElementById('loading');
+        const viewerSection = document.getElementById('viewerSection');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const scaleSlider = document.getElementById('scaleSlider');
+        const qualityValue = document.getElementById('qualityValue');
+        const scaleValue = document.getElementById('scaleValue');
+        
+        let originalPdfData = null;
+        let compressedPdfBlob = null;
+        let originalFileSize = 0;
+        let pdfNumPages = 0;
+        let ocrWorker = null;
+        let ocrEnabled = true; // OCR enabled by default
+        let originalFileName = 'document.pdf';
+        let hadOriginalText = false;
+        let usedOCR = false;
+        
+        // OCR initialization on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize OCR automatically
+            await initializeOCR();
+        });
+        
+        async function initializeOCR() {
+            try {
+                document.getElementById('ocrProgress').classList.remove('hidden');
+                document.getElementById('ocrStatus').textContent = 'Loading OCR engine... (this may take a moment)';
+                
+                ocrWorker = await Tesseract.createWorker('eng', 1, {
+                    logger: (m) => {
+                        if (m.status === 'loading tesseract core' || m.status === 'initializing tesseract' || m.status === 'loading language traineddata') {
+                            const progress = Math.round(m.progress * 100);
+                            document.getElementById('ocrProgressFill').style.width = progress + '%';
+                            document.getElementById('ocrStatus').textContent = m.status + '... ' + progress + '%';
+                        }
+                    }
+                });
+                
+                document.getElementById('ocrStatus').textContent = 'OCR engine ready! ✓';
+                document.getElementById('ocrProgressFill').style.width = '100%';
+                setTimeout(() => {
+                    document.getElementById('ocrProgress').classList.add('hidden');
+                }, 2000);
+            } catch (error) {
+                console.error('OCR initialization error:', error);
+                document.getElementById('ocrStatus').textContent = 'Error loading OCR: ' + error.message;
+            }
+        }
+        
+        // File upload handlers
+        uploadBox.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFile);
+        
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+        
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+        
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                const fakeEvent = { target: { files: [file] } };
+                handleFile(fakeEvent);
+            }
+        });
+        
+        // Slider handlers
+        qualitySlider.addEventListener('input', (e) => {
+            qualityValue.textContent = e.target.value + '%';
+            updateEstimate();
+        });
+        
+        scaleSlider.addEventListener('input', (e) => {
+            scaleValue.textContent = e.target.value + '%';
+            updateEstimate();
+        });
+        
+        async function handleFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            originalFileSize = file.size;
+            originalFileName = file.name.replace('.pdf', '');
+            
+            const reader = new FileReader();
+            reader.onload = async function(event) {
+                const buffer = event.target.result;
+                originalPdfData = new Uint8Array(buffer).slice();
+                controls.classList.remove('hidden');
+                document.getElementById('originalSize').textContent = formatBytes(file.size);
+                
+                // Get number of pages for estimation
+                const dataCopy = originalPdfData.slice();
+                const pdf = await pdfjsLib.getDocument({ data: dataCopy }).promise;
+                pdfNumPages = pdf.numPages;
+                
+                await renderOriginalPdf(originalPdfData);
+                updateEstimate();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        
+        function updateEstimate() {
+            if (!originalFileSize || !pdfNumPages) return;
+            
+            const quality = qualitySlider.value / 100;
+            const scale = scaleSlider.value / 100;
+            
+            // Estimation formula: considers quality, scale, and number of pages
+            // Base compression factor from quality and scale
+            const compressionFactor = (quality * 0.5 + scale * 0.5);
+            
+            // Estimate bytes per page after compression
+            const estimatedBytesPerPage = (originalFileSize / pdfNumPages) * compressionFactor * 0.4;
+            const estimatedTotal = estimatedBytesPerPage * pdfNumPages + 10000; // Add overhead
+            
+            const reduction = ((originalFileSize - estimatedTotal) / originalFileSize * 100).toFixed(0);
+            
+            document.getElementById('estimatedSize').textContent = 
+                formatBytes(estimatedTotal) + ' (' + reduction + '% smaller)';
+        }
+        
+        async function renderOriginalPdf(pdfData) {
+            const dataCopy = pdfData.slice();
+            const pdf = await pdfjsLib.getDocument({ data: dataCopy }).promise;
+            const page = await pdf.getPage(1);
+            const canvas = document.getElementById('originalCanvas');
+            const context = canvas.getContext('2d');
+            
+            const viewport = page.getViewport({ scale: 1.5 });
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+            
+            // Check for text content
+            const textContent = await page.getTextContent();
+            hadOriginalText = textContent.items.length > 0;
+            
+            const badge = document.getElementById('originalBadge');
+            if (hadOriginalText) {
+                badge.textContent = 'Text Selectable ✓';
+                badge.className = 'selectable-badge badge-selectable';
+                renderTextLayer(page, 'originalWrapper', viewport);
+            } else {
+                badge.textContent = 'Image Only';
+                badge.className = 'selectable-badge badge-image';
+            }
+        }
+        
+        async function renderTextLayer(page, wrapperId, viewport) {
+            const textContent = await page.getTextContent();
+            const wrapper = document.getElementById(wrapperId);
+            
+            // Remove old text layer if exists
+            const oldLayer = wrapper.querySelector('.textLayer');
+            if (oldLayer) oldLayer.remove();
+            
+            // Create text layer
+            const textLayerDiv = document.createElement('div');
+            textLayerDiv.className = 'textLayer';
+            wrapper.appendChild(textLayerDiv);
+            
+            // Render text
+            await pdfjsLib.renderTextLayer({
+                textContentSource: textContent,
+                container: textLayerDiv,
+                viewport: viewport,
+                textDivs: []
+            }).promise;
+        }
+        
+        compressBtn.addEventListener('click', compressPdf);
+        
+        async function compressPdf() {
+            if (!originalPdfData) return;
+            
+            loading.classList.remove('hidden');
+            viewerSection.classList.add('hidden');
+            stats.classList.add('hidden');
+            compressBtn.disabled = true;
+            usedOCR = false;
+            
+            // Show OCR progress if enabled
+            if (ocrEnabled) {
+                document.getElementById('ocrProgress').classList.remove('hidden');
+            }
+            
+            try {
+                const dataCopy = originalPdfData.slice();
+                const pdf = await pdfjsLib.getDocument({ data: dataCopy }).promise;
+                const { jsPDF } = window.jspdf;
+                const newPdf = new jsPDF();
+                
+                const quality = qualitySlider.value / 100;
+                const scale = scaleSlider.value / 100;
+                
+                newPdf.deletePage(1);
+                
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 2.0 * scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                    
+                    // Get existing text content
+                    let textContent = await page.getTextContent();
+                    let ocrText = null;
+                    
+                    // If OCR is enabled and page has no text, run OCR
+                    if (ocrEnabled && textContent.items.length === 0 && ocrWorker) {
+                        usedOCR = true;
+                        document.getElementById('ocrStatus').textContent = `Running OCR on page ${i} of ${pdf.numPages}...`;
+                        document.getElementById('ocrProgressFill').style.width = ((i - 1) / pdf.numPages * 100) + '%';
+                        
+                        const imageData = canvas.toDataURL('image/png');
+                        const result = await ocrWorker.recognize(imageData);
+                        ocrText = result.data;
+                    }
+                    
+                    const imgData = canvas.toDataURL('image/jpeg', quality);
+                    
+                    const pdfWidth = 210;
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    
+                    newPdf.addPage([pdfWidth, pdfHeight]);
+                    newPdf.setPage(i);
+                    newPdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    
+                    // Add text layer (either from original PDF or OCR)
+                    newPdf.setTextColor(255, 255, 255, 0);
+                    newPdf.setFontSize(8);
+                    
+                    if (ocrText && ocrText.words.length > 0) {
+                        // Use OCR text with position data
+                        ocrText.words.forEach(word => {
+                            const x = (word.bbox.x0 / canvas.width) * pdfWidth;
+                            const y = (word.bbox.y0 / canvas.height) * pdfHeight;
+                            newPdf.text(word.text, x, y);
+                        });
+                    } else if (textContent.items.length > 0) {
+                        // Use original text
+                        textContent.items.forEach(item => {
+                            const tx = (item.transform[4] / viewport.width) * pdfWidth;
+                            const ty = pdfHeight - (item.transform[5] / viewport.height) * pdfHeight;
+                            newPdf.text(item.str, tx, ty);
+                        });
+                    }
+                }
+                
+                if (ocrEnabled) {
+                    document.getElementById('ocrStatus').textContent = usedOCR ? 'OCR complete! ✓' : 'No OCR needed (text already present) ✓';
+                    document.getElementById('ocrProgressFill').style.width = '100%';
+                }
+                
+                compressedPdfBlob = newPdf.output('blob');
+                
+                const originalSize = originalPdfData.length;
+                const compressedSize = compressedPdfBlob.size;
+                const reduction = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+                
+                document.getElementById('compressedSize').textContent = formatBytes(compressedSize);
+                document.getElementById('reduction').textContent = reduction + '%';
+                
+                stats.classList.remove('hidden');
+                await renderCompressedPdf(compressedPdfBlob);
+                viewerSection.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    if (ocrEnabled) {
+                        document.getElementById('ocrProgress').classList.add('hidden');
+                    }
+                }, 2000);
+            } catch (error) {
+                console.error('Compression error:', error);
+                alert('Error compressing PDF: ' + error.message);
+            } finally {
+                loading.classList.add('hidden');
+                compressBtn.disabled = false;
+            }
+        }
+        
+        async function renderCompressedPdf(blob) {
+            const arrayBuffer = await blob.arrayBuffer();
+            const dataCopy = new Uint8Array(arrayBuffer).slice();
+            const pdf = await pdfjsLib.getDocument({ data: dataCopy }).promise;
+            const page = await pdf.getPage(1);
+            const canvas = document.getElementById('compressedCanvas');
+            const context = canvas.getContext('2d');
+            
+            const viewport = page.getViewport({ scale: 1.5 });
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+            
+            // Update badge based on what happened
+            const badge = document.getElementById('compressedBadge');
+            if (usedOCR) {
+                badge.textContent = 'OCR Applied ✓';
+                badge.className = 'selectable-badge badge-selectable';
+            } else if (hadOriginalText) {
+                badge.textContent = 'Text Preserved ✓';
+                badge.className = 'selectable-badge badge-selectable';
+            } else {
+                badge.textContent = 'Image Only';
+                badge.className = 'selectable-badge badge-image';
+            }
+            
+            // Render text layer for selection
+            const textContent = await page.getTextContent();
+            if (textContent.items.length > 0) {
+                renderTextLayer(page, 'compressedWrapper', viewport);
+            }
+        }
+        
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (!compressedPdfBlob) return;
+            
+            const url = URL.createObjectURL(compressedPdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // Generate filename with timestamp for uniqueness
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+            a.download = `${originalFileName}_compressed_${timestamp}.pdf`;
+            
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+        
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
