@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF OCR Compressor Pro - Advanced</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: #fff;
+}
+
+#app {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.header p {
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-radius: 12px 12px 0 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #718096;
+  border-bottom: 3px solid transparent;
+}
+
+.tab:hover {
+  color: #667eea;
+  background: #f7fafc;
+  transform: none;
+  box-shadow: none;
+}
+
+.tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: #f7fafc;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+#dropZone {
+  border: 3px dashed #cbd5e0;
+  padding: 60px 40px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: #f7fafc;
+}
+
+#dropZone:hover {
+  border-color: #667eea;
+  background: #edf2f7;
+}
+
+#dropZone.drag {
+  border-color: #667eea;
+  background: #e6f2ff;
+  transform: scale(1.02);
+}
+
+#dropZone .icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+#dropZone .text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+#dropZone .subtext {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.file-list {
+  margin-bottom: 20px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.file-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.file-size {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.remove-btn {
+  background: #feb2b2;
+  color: #742a2a;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  width: auto;
+  box-shadow: none;
+}
+
+.remove-btn:hover {
+  background: #fc8181;
+  transform: none;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.control-group {
+  background: #f7fafc;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.control-group label {
+  display: block;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+input[type="range"] {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #5568d3;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.value-display {
+  min-width: 60px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s;
+  background: white;
+  color: #2d3748;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  color: #2d3748;
+  cursor: pointer;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e0;
+  transition: 0.3s;
+  border-radius: 30px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #667eea;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(30px);
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.preset-btn {
+  flex: 1;
+  padding: 10px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  width: auto;
+  box-shadow: none;
+}
+
+.preset-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.preset-btn.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.info-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #edf2f7;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.info-value.savings {
+  color: #48bb78;
+}
+
+button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#progressBar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+#progressFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+#status {
+  text-align: center;
+  color: #4a5568;
+  font-weight: 500;
+  min-height: 24px;
+  margin-top: 12px;
+}
+
+.comparison-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.comparison-side {
+  background: #f7fafc;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.comparison-header h3 {
+  font-size: 1.3rem;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.comparison-badge {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.badge-before {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.badge-after {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.comparison-canvas {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 600px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.comparison-canvas canvas {
+  max-width: 100%;
+  max-height: 800px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border-radius: 8px;
+}
+
+.comparison-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 16px;
+  padding: 20px;
+  background: #f7fafc;
+  border-radius: 12px;
+}
+
+.comparison-nav .page-btn {
+  width: 50px;
+  height: 50px;
+  font-size: 1.2rem;
+}
+
+.comparison-nav .page-info {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+}
+
+.page-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  color: #4a5568;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+  transform: none;
+  box-shadow: none;
+}
+
+.page-btn:disabled {
+  opacity: 0.3;
+}
+
+.page-info {
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #2d3748;
+  border: 2px solid #e2e8f0;
+}
+
+.page-selector {
+  margin-top: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.page-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.page-chip {
+  padding: 6px 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.page-chip:hover {
+  background: #cbd5e0;
+}
+
+.page-chip.selected {
+  background: #667eea;
+  color: white;
+  border-color: #5568d3;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 968px) {
+  .comparison-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .card {
+    padding: 24px;
+  }
+  
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  #dropZone {
+    padding: 40px 20px;
+  }
+
+  .preset-buttons {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+  <div class="header">
+    <h1>📄 PDF OCR Compressor Pro</h1>
+    <p>Advanced compression with OCR, merging, and enhancement</p>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" data-tab="upload">📁 Upload & Merge</button>
+      <button class="tab" data-tab="settings">⚙️ Settings</button>
+      <button class="tab" data-tab="enhance">🎨 Image Enhancement</button>
+      <button class="tab" data-tab="security">🔐 Security</button>
+    </div>
+
+    <!-- UPLOAD TAB -->
+    <div class="tab-content active" id="upload">
+      <div id="dropZone">
+        <div class="icon">📎</div>
+        <div class="text">Drop PDF(s) here</div>
+        <div class="subtext">or click to browse • supports multiple files for merging</div>
+        <input type="file" id="fileInput" accept=".pdf" multiple style="display:none">
+      </div>
+
+      <div class="file-list" id="fileList"></div>
+
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">Total Files</span>
+          <span class="info-value" id="fileCount">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Total Pages</span>
+          <span class="info-value" id="totalPages">0</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Original Size</span>
+          <span class="info-value" id="originalSize">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Predicted Size</span>
+          <span class="info-value" id="predictedSize">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Savings</span>
+          <span class="info-value savings" id="savings">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-content" id="settings">
+      <div class="controls-grid">
+        <div class="control-group">
+          <label>🎚️ Compression Quality</label>
+          <div class="slider-container">
+            <input type="range" min="0.3" max="1" step="0.05" value="0.75" id="quality">
+            <span class="value-display" id="qlabel">0.75</span>
+          </div>
+          <div class="preset-buttons">
+            <button class="preset-btn" data-quality="0.4">📱 Web</button>
+            <button class="preset-btn active" data-quality="0.75">📄 Balanced</button>
+            <button class="preset-btn" data-quality="0.95">🖨️ Print</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>📑 Page Selection</label>
+          <input type="text" id="pageRange" placeholder="e.g., 1-5, 8, 10-12, or 'all'" value="all">
+          <div class="page-selector" id="pageSelector"></div>
+        </div>
+
+        <div class="control-group">
+          <label>🔍 Debug Mode</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="debugToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label>🌍 OCR Language</label>
+          <select id="ocrLang">
+            <option value="eng">English</option>
+            <option value="spa">Spanish</option>
+            <option value="fra">French</option>
+            <option value="deu">German</option>
+            <option value="chi_sim">Chinese (Simplified)</option>
+            <option value="jpn">Japanese</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENHANCEMENT TAB -->
+    <div class="tab-content" id="enhance">
+      <div class="controls-grid">
+        <div class="control-group">
+          <label>☀️ Brightness</label>
+          <div class="slider-container">
+            <input type="range" min="-50" max="50" step="1" value="0" id="brightness">
+            <span class="value-display" id="brightnessLabel">0</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>🎭 Contrast</label>
+          <div class="slider-container">
+            <input type="range" min="-50" max="50" step="1" value="0" id="contrast">
+            <span class="value-display" id="contrastLabel">0</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>🔆 Sharpness</label>
+          <div class="slider-container">
+            <input type="range" min="0" max="100" step="1" value="0" id="sharpness">
+            <span class="value-display" id="sharpnessLabel">0</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>⚫ Auto-Enhance</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="autoEnhance">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="preset-buttons">
+        <button class="preset-btn" id="resetEnhancement">🔄 Reset All</button>
+        <button class="preset-btn" id="presetScanned">📸 Fix Scanned Photo</button>
+        <button class="preset-btn" id="presetDark">💡 Brighten Dark Document</button>
+      </div>
+    </div>
+
+    <!-- SECURITY TAB -->
+    <div class="tab-content" id="security">
+      <div class="controls-grid">
+        <div class="control-group">
+          <label>🔐 Password Protection</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="enablePassword">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="control-group" id="passwordFields" style="display:none;">
+          <label>🔑 Enter Password</label>
+          <input type="password" id="pdfPassword" placeholder="Enter password">
+          <input type="password" id="pdfPasswordConfirm" placeholder="Confirm password" style="margin-top:12px;">
+        </div>
+      </div>
+    </div>
+
+    <button id="process" disabled>🚀 Process PDF</button>
+
+    <div id="progressBar"><div id="progressFill"></div></div>
+    <div id="status"></div>
+  </div>
+
+  <!-- BEFORE/AFTER COMPARISON -->
+  <div class="card hidden" id="comparisonSection">
+    <h2 style="margin-bottom: 24px; color: #2d3748;">📊 Before & After Comparison</h2>
+    
+    <div class="comparison-container">
+      <div class="comparison-side">
+        <div class="comparison-header">
+          <h3>Original</h3>
+          <span class="comparison-badge badge-before" id="beforeSize">-</span>
+        </div>
+        <div class="comparison-canvas">
+          <canvas id="beforeCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="comparison-side">
+        <div class="comparison-header">
+          <h3>Compressed & Enhanced</h3>
+          <span class="comparison-badge badge-after" id="afterSize">-</span>
+        </div>
+        <div class="comparison-canvas">
+          <canvas id="afterCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="comparison-nav">
+      <button class="page-btn" id="comparisonPrev">←</button>
+      <span class="page-info" id="comparisonPageInfo">Page 1 of 1</span>
+      <button class="page-btn" id="comparisonNext">→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+let pdfFiles = [];
+let allPages = [];
+let selectedPages = [];
+let beforePages = [];
+let afterPages = [];
+let currentComparisonPage = 0;
+const outputScale = window.devicePixelRatio || 1;
+
+// ===== TAB NAVIGATION =====
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== IMAGE ENHANCEMENT =====
+function applyEnhancements(srcCanvas) {
+  const brightness = parseInt(document.getElementById('brightness').value);
+  const contrast = parseInt(document.getElementById('contrast').value);
+  const sharpness = parseInt(document.getElementById('sharpness').value);
+  const autoEnhance = document.getElementById('autoEnhance').checked;
+
+  const c = document.createElement("canvas");
+  c.width = srcCanvas.width;
+  c.height = srcCanvas.height;
+  const ctx = c.getContext("2d");
+  ctx.drawImage(srcCanvas, 0, 0);
+
+  const img = ctx.getImageData(0, 0, c.width, c.height);
+  const d = img.data;
+
+  // Auto-enhance for scanned photos
+  if (autoEnhance) {
+    for (let i = 0; i < d.length; i += 4) {
+      const gray = 0.3 * d[i] + 0.59 * d[i + 1] + 0.11 * d[i + 2];
+      let v = (gray - 120) * 1.6 + 130; // Aggressive contrast + brightness
+      v = Math.max(0, Math.min(255, v));
+      d[i] = d[i + 1] = d[i + 2] = v;
+    }
+  } else {
+    // Manual adjustments
+    const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+    
+    for (let i = 0; i < d.length; i += 4) {
+      // Brightness
+      d[i] = Math.max(0, Math.min(255, d[i] + brightness));
+      d[i + 1] = Math.max(0, Math.min(255, d[i + 1] + brightness));
+      d[i + 2] = Math.max(0, Math.min(255, d[i + 2] + brightness));
+      
+      // Contrast
+      d[i] = Math.max(0, Math.min(255, contrastFactor * (d[i] - 128) + 128));
+      d[i + 1] = Math.max(0, Math.min(255, contrastFactor * (d[i + 1] - 128) + 128));
+      d[i + 2] = Math.max(0, Math.min(255, contrastFactor * (d[i + 2] - 128) + 128));
+    }
+  }
+
+  // Simple sharpness (unsharp mask approximation)
+  if (sharpness > 0) {
+    const amount = sharpness / 100;
+    const tempImg = ctx.createImageData(img);
+    for (let i = 0; i < d.length; i += 4) {
+      tempImg.data[i] = d[i];
+      tempImg.data[i + 1] = d[i + 1];
+      tempImg.data[i + 2] = d[i + 2];
+      tempImg.data[i + 3] = d[i + 3];
+    }
+    
+    for (let y = 1; y < c.height - 1; y++) {
+      for (let x = 1; x < c.width - 1; x++) {
+        const idx = (y * c.width + x) * 4;
+        for (let ch = 0; ch < 3; ch++) {
+          const blurred = (
+            tempImg.data[idx + ch] +
+            tempImg.data[((y - 1) * c.width + x) * 4 + ch] +
+            tempImg.data[((y + 1) * c.width + x) * 4 + ch] +
+            tempImg.data[(y * c.width + (x - 1)) * 4 + ch] +
+            tempImg.data[(y * c.width + (x + 1)) * 4 + ch]
+          ) / 5;
+          const sharp = tempImg.data[idx + ch] + amount * (tempImg.data[idx + ch] - blurred);
+          d[idx + ch] = Math.max(0, Math.min(255, sharp));
+        }
+      }
+    }
+  }
+
+  ctx.putImageData(img, 0, 0);
+  return c;
+}
+
+// Enhancement presets
+document.getElementById('resetEnhancement').onclick = () => {
+  document.getElementById('brightness').value = 0;
+  document.getElementById('contrast').value = 0;
+  document.getElementById('sharpness').value = 0;
+  document.getElementById('autoEnhance').checked = false;
+  updateEnhancementLabels();
+};
+
+document.getElementById('presetScanned').onclick = () => {
+  document.getElementById('brightness').value = 15;
+  document.getElementById('contrast').value = 30;
+  document.getElementById('sharpness').value = 20;
+  document.getElementById('autoEnhance').checked = false;
+  updateEnhancementLabels();
+};
+
+document.getElementById('presetDark').onclick = () => {
+  document.getElementById('brightness').value = 35;
+  document.getElementById('contrast').value = 20;
+  document.getElementById('sharpness').value = 0;
+  document.getElementById('autoEnhance').checked = false;
+  updateEnhancementLabels();
+};
+
+function updateEnhancementLabels() {
+  document.getElementById('brightnessLabel').textContent = document.getElementById('brightness').value;
+  document.getElementById('contrastLabel').textContent = document.getElementById('contrast').value;
+  document.getElementById('sharpnessLabel').textContent = document.getElementById('sharpness').value;
+}
+
+document.getElementById('brightness').oninput = updateEnhancementLabels;
+document.getElementById('contrast').oninput = updateEnhancementLabels;
+document.getElementById('sharpness').oninput = updateEnhancementLabels;
+
+// ===== OCR PREPROCESSING =====
+function preprocessForOCR(srcCanvas) {
+  // Apply enhancements first, then prepare for OCR
+  const enhanced = applyEnhancements(srcCanvas);
+  return enhanced;
+}
+
+// ===== OCR WORKERS =====
+const workerCount = Math.min(4, navigator.hardwareConcurrency || 2);
+let workers = [];
+async function initWorkers() {
+  const lang = document.getElementById('ocrLang').value;
+  for (let i = 0; i < workerCount; i++) {
+    const w = await Tesseract.createWorker(lang);
+    await w.setParameters({ tessedit_pageseg_mode: 6 });
+    workers.push(w);
+  }
+}
+
+// ===== UI FUNCTIONS =====
+function update(p, msg) {
+  document.getElementById("progressFill").style.width = p + "%";
+  document.getElementById("status").textContent = msg;
+}
+
+function makeName(originalName) {
+  const ext = originalName.split('.').pop();
+  const base = originalName.replace('.' + ext, '');
+  return `${base}_compressed_${crypto.randomUUID().slice(0, 8)}.${ext}`;
+}
+
+function formatBytes(bytes) {
+  if (bytes === 0) return '-';
+  const mb = bytes / 1024 / 1024;
+  return mb.toFixed(2) + ' MB';
+}
+
+// ===== PASSWORD TOGGLE =====
+document.getElementById('enablePassword').onchange = (e) => {
+  document.getElementById('passwordFields').style.display = e.target.checked ? 'block' : 'none';
+};
+
+// ===== DRAG & DROP =====
+const dz = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+
+dz.onclick = () => fileInput.click();
+
+dz.ondragover = e => {
+  e.preventDefault();
+  dz.classList.add("drag");
+};
+
+dz.ondragleave = () => dz.classList.remove("drag");
+
+dz.ondrop = async e => {
+  e.preventDefault();
+  dz.classList.remove("drag");
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+  if (files.length > 0) {
+    pdfFiles.push(...files);
+    updateFileList();
+    await loadAllPDFs();
+  }
+};
+
+fileInput.onchange = async e => {
+  const files = Array.from(e.target.files);
+  if (files.length > 0) {
+    pdfFiles.push(...files);
+    updateFileList();
+    await loadAllPDFs();
+  }
+};
+
+// ===== FILE LIST =====
+function updateFileList() {
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  
+  pdfFiles.forEach((file, idx) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `
+      <div class="file-info">
+        <span class="file-name">📄 ${file.name}</span>
+        <span class="file-size">${formatBytes(file.size)}</span>
+      </div>
+      <button class="remove-btn" onclick="removeFile(${idx})">Remove</button>
+    `;
+    list.appendChild(item);
+  });
+
+  document.getElementById('fileCount').textContent = pdfFiles.length;
+}
+
+window.removeFile = (idx) => {
+  pdfFiles.splice(idx, 1);
+  updateFileList();
+  if (pdfFiles.length > 0) {
+    loadAllPDFs();
+  } else {
+    allPages = [];
+    updateStats();
+  }
+};
+
+// ===== LOAD ALL PDFS =====
+async function loadAllPDFs() {
+  allPages = [];
+  let totalSize = 0;
+
+  for (const file of pdfFiles) {
+    totalSize += file.size;
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const vp = page.getViewport({ scale: 2, rotation: page.rotate });
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = vp.width * outputScale;
+      canvas.height = vp.height * outputScale;
+
+      await page.render({
+        canvasContext: ctx,
+        viewport: vp,
+        transform: [outputScale, 0, 0, outputScale, 0, 0]
+      }).promise;
+
+      const text = await page.getTextContent();
+      const hasText = text.items.length > 20;
+
+      allPages.push({ canvas, vp, hasText, fileName: file.name });
+    }
+  }
+
+  document.getElementById('originalSize').textContent = formatBytes(totalSize);
+  document.getElementById('totalPages').textContent = allPages.length;
+  document.getElementById('process').disabled = false;
+
+  updatePageSelector();
+  parsePageRange();
+  estimate();
+}
+
+// ===== PAGE SELECTION =====
+function updatePageSelector() {
+  const selector = document.getElementById('pageSelector');
+  const chips = document.createElement('div');
+  chips.className = 'page-chips';
+  
+  allPages.forEach((_, idx) => {
+    const chip = document.createElement('div');
+    chip.className = 'page-chip selected';
+    chip.textContent = idx + 1;
+    chip.onclick = () => {
+      chip.classList.toggle('selected');
+      parsePageRange();
+    };
+    chips.appendChild(chip);
+  });
+  
+  selector.innerHTML = '';
+  selector.appendChild(chips);
+}
+
+function parsePageRange() {
+  const rangeInput = document.getElementById('pageRange').value.trim().toLowerCase();
+  const chips = document.querySelectorAll('.page-chip');
+  
+  if (rangeInput === 'all') {
+    selectedPages = allPages.map((_, i) => i);
+    chips.forEach(chip => chip.classList.add('selected'));
+  } else {
+    selectedPages = [];
+    chips.forEach(chip => chip.classList.remove('selected'));
+    
+    const ranges = rangeInput.split(',').map(s => s.trim());
+    ranges.forEach(range => {
+      if (range.includes('-')) {
+        const [start, end] = range.split('-').map(n => parseInt(n.trim()) - 1);
+        for (let i = start; i <= end && i < allPages.length; i++) {
+          if (i >= 0 && !selectedPages.includes(i)) {
+            selectedPages.push(i);
+            chips[i].classList.add('selected');
+          }
+        }
+      } else {
+        const pageNum = parseInt(range) - 1;
+        if (pageNum >= 0 && pageNum < allPages.length && !selectedPages.includes(pageNum)) {
+          selectedPages.push(pageNum);
+          chips[pageNum].classList.add('selected');
+        }
+      }
+    });
+  }
+  
+  selectedPages.sort((a, b) => a - b);
+  estimate();
+}
+
+document.getElementById('pageRange').oninput = parsePageRange;
+
+// ===== QUALITY PRESETS =====
+document.querySelectorAll('.preset-btn[data-quality]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.preset-btn[data-quality]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const quality = parseFloat(btn.dataset.quality);
+    document.getElementById('quality').value = quality;
+    document.getElementById('qlabel').textContent = quality;
+    estimate();
+  };
+});
+
+// ===== SIZE PREDICTION =====
+function estimate() {
+  if (selectedPages.length === 0) {
+    document.getElementById('predictedSize').textContent = '-';
+    document.getElementById('savings').textContent = '-';
+    return;
+  }
+
+  let total = 0;
+  const q = parseFloat(document.getElementById('quality').value);
+  
+  selectedPages.forEach(idx => {
+    const page = allPages[idx];
+    total += (page.canvas.toDataURL("image/jpeg", q).length * 3) / 4;
+  });
+
+  const originalSize = pdfFiles.reduce((sum, f) => sum + f.size, 0);
+  const savings = ((originalSize - total) / originalSize * 100).toFixed(1);
+
+  document.getElementById('predictedSize').textContent = formatBytes(total);
+  document.getElementById('savings').textContent = savings + '%';
+}
+
+document.getElementById('quality').oninput = e => {
+  document.getElementById('qlabel').textContent = e.target.value;
+  estimate();
+};
+
+// ===== BEFORE/AFTER COMPARISON =====
+function showComparisonPage(idx) {
+  if (idx < 0 || idx >= beforePages.length) return;
+  currentComparisonPage = idx;
+
+  // Show before canvas
+  const beforeCanvas = document.getElementById('beforeCanvas');
+  const beforeCtx = beforeCanvas.getContext('2d');
+  const beforePage = beforePages[idx];
+
+  beforeCanvas.width = beforePage.width;
+  beforeCanvas.height = beforePage.height;
+  beforeCtx.drawImage(beforePage, 0, 0);
+
+  // Show after canvas
+  const afterCanvas = document.getElementById('afterCanvas');
+  const afterCtx = afterCanvas.getContext('2d');
+  const afterPage = afterPages[idx];
+
+  afterCanvas.width = afterPage.width;
+  afterCanvas.height = afterPage.height;
+  afterCtx.drawImage(afterPage, 0, 0);
+
+  // Update navigation
+  document.getElementById('comparisonPageInfo').textContent = `Page ${idx + 1} of ${beforePages.length}`;
+  document.getElementById('comparisonPrev').disabled = idx === 0;
+  document.getElementById('comparisonNext').disabled = idx === beforePages.length - 1;
+}
+
+document.getElementById('comparisonPrev').onclick = () => showComparisonPage(currentComparisonPage - 1);
+document.getElementById('comparisonNext').onclick = () => showComparisonPage(currentComparisonPage + 1);
+
+// Keyboard navigation for comparison
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('comparisonSection').classList.contains('hidden')) {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      showComparisonPage(currentComparisonPage - 1);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      showComparisonPage(currentComparisonPage + 1);
+    }
+  }
+});
+
+// ===== PROCESS PDF =====
+document.getElementById("process").onclick = async () => {
+  if (selectedPages.length === 0) {
+    alert('Please select at least one page to process!');
+    return;
+  }
+
+  // Validate password
+  const enablePassword = document.getElementById('enablePassword').checked;
+  if (enablePassword) {
+    const pwd1 = document.getElementById('pdfPassword').value;
+    const pwd2 = document.getElementById('pdfPasswordConfirm').value;
+    if (!pwd1 || pwd1 !== pwd2) {
+      alert('Passwords do not match or are empty!');
+      return;
+    }
+  }
+
+  const debugMode = document.getElementById('debugToggle').checked;
+  
+  update(10, "Initializing OCR workers...");
+  await initWorkers();
+
+  const { PDFDocument, StandardFonts, rgb } = PDFLib;
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const q = parseFloat(document.getElementById('quality').value);
+
+  beforePages = [];
+  afterPages = [];
+
+  const pageWeight = 60 / selectedPages.length;
+
+  // Parallel OCR on selected pages
+  const pagesToProcess = selectedPages.map(idx => allPages[idx]);
+  const ocrPromises = pagesToProcess.map((p, i) => {
+    if (p.hasText) return null;
+    const cleanCanvas = preprocessForOCR(p.canvas);
+    const w = workers[i % workers.length];
+    return w.recognize(cleanCanvas).then(r => ({ i, data: r.data }));
+  });
+
+  const results = (await Promise.all(ocrPromises)).filter(Boolean);
+
+  for (let i = 0; i < pagesToProcess.length; i++) {
+    const p = pagesToProcess[i];
+    update(20 + i * pageWeight, `Processing page ${i + 1} of ${pagesToProcess.length}`);
+
+    // Store before image
+    beforePages.push(p.canvas);
+
+    // Create after image with enhancements
+    const enhancedCanvas = applyEnhancements(p.canvas);
+    const img = await pdfDoc.embedJpg(
+      await (await fetch(enhancedCanvas.toDataURL("image/jpeg", q))).arrayBuffer()
+    );
+    
+    afterPages.push(enhancedCanvas);
+
+    const newPage = pdfDoc.addPage([p.vp.width, p.vp.height]);
+    newPage.drawImage(img, { x: 0, y: 0, width: p.vp.width, height: p.vp.height });
+
+    if (!p.hasText) {
+      const ocr = results.find(r => r.i === i).data;
+
+      const pdfW = newPage.getWidth();
+      const pdfH = newPage.getHeight();
+      const canvasW = p.canvas.width;
+      const canvasH = p.canvas.height;
+
+      ocr.words.forEach(word => {
+        const t = word.text.trim();
+        if (!t) return;
+
+        const x0 = word.bbox.x0;
+        const y0 = word.bbox.y0;
+        const x1 = word.bbox.x1;
+        const y1 = word.bbox.y1;
+
+        const x = (x0 / canvasW) * pdfW;
+        const y = pdfH - (y1 / canvasH) * pdfH;
+
+        const rawWidth = ((x1 - x0) / canvasW) * pdfW;
+        const rawHeight = ((y1 - y0) / canvasH) * pdfH;
+
+        const PAD_Y = rawHeight * 0.20;
+        const boxHeight = rawHeight + PAD_Y;
+
+        let fontSize = rawHeight * 0.85;
+        let textWidth = font.widthOfTextAtSize(t, fontSize);
+        fontSize = fontSize * (rawWidth / textWidth);
+        
+        const yAdjusted = y + rawHeight * 0.15;
+
+        newPage.drawText(t, {
+          x: x,
+          y: yAdjusted,
+          size: fontSize,
+          font,
+          opacity: 0
+        });
+
+        if (debugMode) {
+          newPage.drawRectangle({
+            x: x,
+            y,
+            width: rawWidth,
+            height: boxHeight,
+            borderColor: rgb(1, 0, 0),
+            borderWidth: 0.5
+          });
+        }
+      });
+    }
+  }
+
+  update(90, "Saving PDF...");
+  
+  let pdfBytes;
+  if (enablePassword) {
+    const password = document.getElementById('pdfPassword').value;
+    pdfBytes = await pdfDoc.save({
+      userPassword: password,
+      ownerPassword: password
+    });
+  } else {
+    pdfBytes = await pdfDoc.save();
+  }
+
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const fileName = pdfFiles.length === 1 ? makeName(pdfFiles[0].name) : `merged_compressed_${crypto.randomUUID().slice(0, 8)}.pdf`;
+  
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fileName;
+  a.click();
+
+  // Show comparison
+  const originalTotal = pdfFiles.reduce((sum, f) => sum + f.size, 0);
+  document.getElementById('beforeSize').textContent = formatBytes(originalTotal);
+  document.getElementById('afterSize').textContent = formatBytes(blob.size);
+  document.getElementById('comparisonSection').classList.remove('hidden');
+  
+  showComparisonPage(0);
+
+  await Promise.all(workers.map(w => w.terminate()));
+  workers = [];
+  update(100, "✅ Done! PDF downloaded successfully.");
+};
+</script>
+</body>
+</html>
