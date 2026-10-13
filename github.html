@@ -83,7 +83,8 @@ h1{font-size:clamp(2.7rem,6.2vw,5rem); font-weight:500; line-height:1; letter-sp
 .console{position:relative; background:var(--navy); border-radius:2.2rem; padding:1.7rem 1.8rem 1.9rem; box-shadow:inset 0 0 0 1px rgba(111,214,223,.3), 0 24px 50px -24px rgba(0,0,0,.6); min-height:15.5rem}
 .console .bar{display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan-bright); margin-bottom:1.1rem}
 .console .bar .dot{width:7px; height:7px; border-radius:50%; background:var(--gold-bright)}
-.console .ln{font-family:var(--mono); font-size:.8rem; line-height:1.95; color:var(--cream)}
+.hero>*{min-width:0}
+.console .ln{overflow-wrap:anywhere; font-family:var(--mono); font-size:.8rem; line-height:1.95; color:var(--cream)}
 .console .ln i{font-style:normal; color:var(--cyan-bright)}
 .console .ln b{color:var(--gold-bright); font-weight:700}
 .console .ln.note{color:rgba(247,241,227,.6)}
@@ -110,7 +111,8 @@ h1{font-size:clamp(2.7rem,6.2vw,5rem); font-weight:500; line-height:1; letter-sp
 .accts{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.5rem}
 .acct{display:inline-flex; align-items:baseline; gap:.55rem; border:1px solid rgba(247,241,227,.4); border-radius:999px; padding:.4rem .95rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; transition:background-color .25s, border-color .25s, color .25s}
 .acct span{color:var(--cyan-bright); text-transform:uppercase; letter-spacing:.1em; font-size:.64rem}
-.acct b{font-weight:700; color:var(--cream)}
+.acct{max-width:100%}
+.acct b{font-weight:700; color:var(--cream); overflow-wrap:anywhere; min-width:0}
 a.acct:hover{background:var(--gold-bright); border-color:var(--gold-bright); color:var(--ink)}
 a.acct:hover span,a.acct:hover b{color:var(--ink)}
 
@@ -140,12 +142,14 @@ a.acct:hover span,a.acct:hover b{color:var(--ink)}
 .log-section{background:var(--paper); border:1.5px solid var(--line); border-radius:2.6rem; padding:2.8rem 2.6rem; margin:3.4rem 0; display:grid; grid-template-columns:1.1fr .9fr; gap:2.4rem; align-items:center}
 .log-section h2{font-size:1.9rem; font-weight:500; margin-bottom:.8rem}
 .log-section p{font-size:1.08rem; color:var(--ink-soft); max-width:56ch; line-height:1.6}
-.logbox{background:var(--navy); color:var(--cream); border-radius:2.2rem; padding:1.7rem; box-shadow:inset 0 0 0 1px rgba(111,214,223,.25)}
+.log-section>*{min-width:0}
+.logbox{min-width:0; max-width:100%;background:var(--navy); color:var(--cream); border-radius:2.2rem; padding:1.7rem; box-shadow:inset 0 0 0 1px rgba(111,214,223,.25)}
 .logbox .title{font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan-bright); margin-bottom:.9rem; display:flex; align-items:center; gap:.5rem}
 .logbox .title .dot{width:7px; height:7px; border-radius:50%; background:var(--gold-bright)}
 .logbox .ln{font-family:var(--mono); font-size:.76rem; line-height:1.75; margin-bottom:.6rem}
+.logbox .ln{color:var(--cream)}
 .logbox .ln b{color:var(--cyan-bright); font-weight:700}
-.logbox .mail{margin-top:.9rem; display:block; font-family:var(--mono); font-size:.75rem; letter-spacing:.04em; color:var(--cyan-bright); border-top:1px dashed rgba(111,214,223,.4); padding-top:1rem; transition:color .18s}
+.logbox .mail{overflow-wrap:anywhere; word-break:break-word; margin-top:.9rem; display:block; font-family:var(--mono); font-size:.75rem; letter-spacing:.04em; color:var(--cyan-bright); border-top:1px dashed rgba(111,214,223,.4); padding-top:1rem; transition:color .18s}
 .logbox .mail:hover{color:var(--gold-bright)}
 
 /* --- footer --- */
@@ -159,7 +163,7 @@ a.acct:hover span,a.acct:hover b{color:var(--ink)}
 .foot-note{width:100%; font-size:.9rem; color:rgba(247,241,227,.7); font-family:var(--mono); letter-spacing:.04em; padding-top:.7rem}
 
 @media (max-width:900px){
-.hero{grid-template-columns:1fr; text-align:center; padding:2.8rem 0 2.6rem; gap:2rem}
+.hero{grid-template-columns:minmax(0,1fr); text-align:center; padding:2.8rem 0 2.6rem; gap:2rem}
 .lede{margin-left:auto; margin-right:auto}
 .overline{justify-content:center}
 .console{text-align:left}
@@ -167,7 +171,7 @@ a.acct:hover span,a.acct:hover b{color:var(--ink)}
 .topbar-inner{flex-direction:column; gap:.8rem}
 nav{justify-content:center}
 .controls h2{font-size:2rem}
-.log-section{grid-template-columns:1fr; gap:1.6rem; padding:2rem 1.6rem}
+.log-section{grid-template-columns:minmax(0,1fr); gap:1.6rem; padding:2rem 1.6rem}
 }
 @media (max-width:420px){.grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){
