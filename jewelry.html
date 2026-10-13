@@ -221,8 +221,11 @@ var(--paper)}
 .topbar-inner{flex-direction:column; gap:.8rem}
 nav{justify-content:center}
 .log-section{grid-template-columns:minmax(0,1fr); gap:1.6rem; padding:2rem 1.6rem}
-.m-card{grid-template-columns:1fr; overflow-y:auto}
-.m-stage{min-height:0; aspect-ratio:1; flex:none}
+.m-card{display:block; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch}
+.m-gallery{display:block; min-height:0}
+.m-stage{width:100%; min-height:0; aspect-ratio:1; max-height:62vh; flex:none}
+.m-thumbs{flex:none}
+.m-close{position:sticky; display:grid; top:.8rem; right:auto; margin:.8rem .8rem -48px auto}
 .m-info{overflow:visible; padding:1.8rem 1.5rem 1.8rem; background:var(--paper)}
 .group-head h2{font-size:2rem}
 }
