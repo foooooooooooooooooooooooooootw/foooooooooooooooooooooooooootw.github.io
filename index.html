@@ -1,111 +1,389 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang='en'>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Personal Website</title>
-  <link rel="stylesheet" href="css/style.css" />
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Foo T'suen Wei — Index · Atlas 04</title>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
+<style>
+:root{
+--cream:#F7F1E3; --paper:#FBF7EC; --ink:#212A45; --ink-soft:#565E7A;
+--navy:#1B2340; --navy-deep:#141B2E;
+--cyan:#1E9AAF; --cyan-bright:#6FD6DF; --cyan-wash:#E6F1F4;
+--pink:#F04E7E; --pink-wash:#FBE0EA;
+--blue:#2F6BFF; --blue-wash:#E3EBFB;
+--purple:#7B5CF2; --purple-wash:#ECE7FD;
+--gold:#C08B2B; --gold-bright:#F2B416; --gold-wash:#FBF1D3;
+--line:#212A45;
+--mono:'Space Mono',monospace; --serif:'Cormorant Garamond',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+background-color:var(--cream); color:var(--ink);
+font-family:var(--serif); line-height:1.55; font-size:17px; min-height:100vh; overflow-x:hidden;
+background-image:radial-gradient(rgba(27,31,51,0.05) 1px, transparent 1px),
+radial-gradient(rgba(30,154,175,0.05) 1px, transparent 1px);
+background-size:24px 24px, 56px 56px; background-position:0 0, 14px 28px; background-repeat:repeat;
+-webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--pink); color:var(--cream)}
+a{color:inherit; text-decoration:none}
+:focus-visible{outline:3px solid var(--cyan); outline-offset:3px; border-radius:999px}
+.mono{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase}
+.wrap{width:min(1100px, calc(100% - 3rem)); margin:0 auto}
+.rule{border:0; border-top:1px solid var(--line); margin:0 0 2.4rem}
+.topbar{position:sticky; top:0; z-index:30; background:rgba(247,241,227,.9); backdrop-filter:blur(8px); padding:.85rem 0; border-bottom:1px solid rgba(27,31,51,.16)}
+.topbar .wrap{display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap}
+.brand{font-size:1.1rem; font-weight:700; letter-spacing:.02em; display:flex; align-items:center; gap:.4rem; font-family:var(--serif)}
+.brand .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--line)}
+.brand span{color:var(--pink); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em}
+nav{display:flex; gap:.6rem; flex-wrap:wrap}
+nav a{
+font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink);
+background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem;
+transition:background-color .2s, color .2s, border-color .2s, transform .2s;
+}
+nav a:hover{background:var(--pink); color:var(--cream); border-color:var(--pink); transform:translateY(-1px)}
+.hero{padding:3.6rem 0 3.4rem; display:grid; grid-template-columns:1.15fr .85fr; gap:2.6rem; align-items:center; background:linear-gradient(180deg,rgba(30,154,175,.05), transparent 55%)}
+.overline{display:flex; align-items:center; gap:.55rem; color:var(--cyan); margin-bottom:1.1rem}
+.overline .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--ink)}
+h1{font-size:clamp(2.8rem,6.5vw,5.2rem); font-weight:500; line-height:1.02; letter-spacing:-.01em}
+h1 .pink{color:var(--pink)} .h-cyan{color:var(--cyan)} .gold{color:var(--gold)}
+h1 em{font-style:italic; font-weight:400}
+.lede{margin-top:1.3rem; font-size:1.22rem; color:var(--ink-soft); max-width:48ch; line-height:1.6}
+.lede b{color:var(--navy); font-weight:500}
+.cta{
+margin-top:2rem; display:inline-block; padding:.75rem 1.6rem; border:1.5px solid var(--line); border-radius:999px;
+background:var(--ink); color:var(--cream); font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+transition:background-color .25s, border-color .25s, transform .25s;
+}
+.cta:hover{background:var(--cyan); border-color:var(--cyan); transform:translateY(-2px)}
+.cta .arrow{transition:transform .25s}
+.cta:hover .arrow{transform:translateX(4px)}
+/* --- hero celestial graphic: star chart + orbiting planets --- */
+.orbit{
+position:relative; width:min(430px,100%); aspect-ratio:1; margin:0 auto;
+border:1.5px dashed var(--cyan); border-radius:50%;
+box-shadow:0 0 0 1px rgba(30,154,175,.15);
+}
+.orbit .plate-svg{position:absolute; inset:0; width:100%; height:100%; display:block; opacity:.9}
+.ring{position:absolute; border-radius:50%; pointer-events:none}
+.ring.a{inset:6%; border:1px dashed var(--cyan); opacity:.55; animation:spin 28s linear infinite}
+.ring.b{inset:24%; border:1px dashed var(--gold); opacity:.6; animation:spin 44s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.planet{
+position:absolute; top:50%; left:50%; border-radius:50%;
+background:var(--c,var(--pink));
+transform:translate(-50%,-50%) rotate(0deg) translateX(var(--r,118px));
+animation:orbit var(--dur,60s) linear infinite;
+}
+@keyframes orbit{
+from{transform:translate(-50%,-50%) rotate(0deg) translateX(var(--r,118px))}
+to{transform:translate(-50%,-50%) rotate(360deg) translateX(var(--r,118px))}
+}
+.planet.p-a{--r:120px; --dur:60s; --c:var(--pink); width:22px; height:22px; box-shadow:0 0 12px rgba(240,78,126,.55)}
+.planet.p-b{--r:92px; --dur:80s; --c:var(--gold-bright); width:16px; height:16px; border:2px solid var(--ink); animation-direction:reverse; animation-delay:-40s}
+.planet.p-c{--r:142px; --dur:100s; --c:var(--blue); width:12px; height:12px; box-shadow:0 0 12px rgba(47,107,255,.55); animation-delay:-55s}
+/* --- section head --- */
+.section-head{display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem}
+.section-head .no{color:var(--cyan); font-family:var(--mono); font-size:.72rem; letter-spacing:.08em}
+.section-head .no::before{content:'●'; color:var(--pink); margin-right:.3em}
+h2{font-size:2.4rem; font-weight:500}
+/* --- cards --- */
+.grid{display:grid; grid-template-columns:repeat(6,1fr); gap:1.4rem; padding:1.4rem 0 2.6rem}
+.card{grid-column:span 2; aspect-ratio:4/5; display:flex; flex-direction:column}
+.card:nth-child(4){grid-column:2 / 4}
+.card:nth-child(5){grid-column:4 / 6}
+.card .link{margin-top:auto}
+.card{
+position:relative; border:1.5px solid var(--line); border-radius:2.6rem; padding:1.8rem;
+transition:transform .25s ease, box-shadow .25s ease; background:var(--paper);
+}
+.card:hover{transform:translateY(-4px); box-shadow:0 18px 30px -14px rgba(27,31,51,.28)}
+.card .tag{
+font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+color:var(--ink-soft); margin-bottom:1.1rem; display:flex; align-items:center; gap:.45rem;
+}
+.card .tag b{font-weight:700}
+.card .thumb{
+width:84px; height:84px; margin-bottom:1.3rem;
+display:grid; place-items:center; position:relative; overflow:visible;
+}
+.card .thumb svg{width:100%; height:100%; display:block}
+.card:nth-child(1){background:var(--purple-wash)}
+.card:nth-child(1) .tag b{color:var(--purple)}
+.card:nth-child(1) h3 a{color:var(--purple)}
+.card:nth-child(2){background:var(--blue-wash)}
+.card:nth-child(2) .tag b{color:var(--blue)}
+.card:nth-child(2) h3 a{color:var(--blue)}
+.card:nth-child(3){background:var(--gold-wash)}
+.card:nth-child(3) .tag b{color:var(--gold)}
+.card:nth-child(3) h3 a{color:var(--gold)}
+.card h3{font-size:1.85rem; font-weight:600; margin-bottom:.4rem; letter-spacing:-.01em}
+.card p{font-size:1.02rem; color:var(--ink-soft); margin-bottom:1.1rem; line-height:1.55}
+.card .link{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase}
+.card:nth-child(1) .link{color:var(--purple)}
+.card:nth-child(2) .link{color:var(--blue)}
+.card:nth-child(3) .link{color:var(--gold)}
+.card:nth-child(4){background:var(--pink-wash)}
+.card:nth-child(4) .tag b{color:var(--pink)}
+.card:nth-child(4) h3 a{color:var(--pink)}
+.card:nth-child(4) .link{color:var(--pink)}
+.card:nth-child(5){background:var(--cyan-wash)}
+.card:nth-child(5) .tag b{color:var(--cyan)}
+.card:nth-child(5) h3 a{color:var(--cyan)}
+.card:nth-child(5) .link{color:var(--cyan)}
+.card .link:hover{text-decoration:underline; text-underline-offset:.3em}
+/* --- ticker --- */
+.ticker{overflow:hidden; background:var(--navy); color:var(--cream); border:1.5px solid var(--line); border-left:none; border-right:none; padding:.85rem 0; margin:0 0 2.6rem}
+.ticker-track{display:flex; align-items:center; gap:1.2rem; padding:0 2rem; width:max-content; animation:scroll 26s linear infinite; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase}
+.ticker span{white-space:nowrap}
+.ticker .sep{color:var(--gold-bright); font-style:normal; font-size:.8rem}
+@keyframes scroll{to{transform:translateX(-50%)}}
+/* --- about + transmission log --- */
+.about{
+border:1.5px solid var(--line); border-radius:2.6rem; padding:2.8rem 2.6rem; margin:0 0 3.4rem;
+background:var(--paper); position:relative; overflow:hidden;
+display:grid; grid-template-columns:1.1fr .9fr; gap:2.4rem; align-items:start;
+}
+.about::before{
+content:''; position:absolute; top:-70px; right:-70px; width:220px; height:220px; border-radius:50%;
+border:2px solid var(--gold-bright);
+}
+.about .copy h3{font-size:1.7rem; margin-bottom:.8rem}
+.about .copy h3 .no{color:var(--purple); font-family:var(--mono); font-size:.85rem; letter-spacing:.08em; text-transform:uppercase}
+.about .copy p{font-size:1.08rem; color:var(--ink-soft); max-width:60ch; margin-bottom:1.3rem; line-height:1.6}
+/* --- portrait --- */
+.portrait{
+width:125%; height: 130%; display:block; margin:0 auto; background:transparent;  z-index: 1;
+}
+/* --- transmission log section --- */
+.log-section{
+background:var(--paper); border:1.5px solid var(--line); border-radius:2.6rem; padding:2.8rem 2.6rem;
+display:grid; grid-template-columns:1.1fr .9fr; gap:2.4rem; align-items:center;
+}
+.log-section .copy h3{font-size:1.7rem; margin-bottom:.8rem}
+.log-section .copy h3 .no{color:var(--purple); font-family:var(--mono); font-size:.85rem; letter-spacing:.08em; text-transform:uppercase}
+.log-section .copy p{font-size:1.08rem; color:var(--ink-soft); max-width:60ch; margin-bottom:0; line-height:1.6}
+.log-section .logbox{align-self:center; width:100%}
+.cta-block{text-align:center; margin:2.8rem 0 3.4rem}
+.logbox{
+background:var(--navy); color:var(--cream); border-radius:2.2rem; padding:1.7rem;
+box-shadow:inset 0 0 0 1px rgba(111,214,223,.25);
+}
+.logbox .title{font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan-bright); margin-bottom:.9rem; display:flex; align-items:center; gap:.5rem}
+.logbox .title .dot{width:7px; height:7px; border-radius:50%; background:var(--gold-bright)}
+.logbox .ln{font-family:var(--mono); font-size:.78rem; line-height:1.85; margin-bottom:.5rem}
+.logbox .ln b{color:var(--cyan-bright); font-weight:700}
+.ok{color:var(--gold-bright)}
+.logbox .mail{margin-top:.9rem; display:block; font-family:var(--mono); font-size:.75rem; letter-spacing:.04em; color:var(--cyan-bright); text-decoration:none; border-top:1px dashed rgba(111,214,223,.4); padding-top:1rem; transition:color .18s}
+.logbox .mail:hover{color:var(--gold-bright)}
+/* --- footer --- */
+.footer{border-top:1.5px solid var(--line); background:var(--navy-deep); color:var(--cream); padding:1.5rem 0}
+.footer-inner{display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap}
+.footer .brand{color:var(--cream); font-weight:700; display:flex; align-items:center; gap:.4rem; font-size:1rem}
+.footer .brand .dot{background:var(--pink)}
+.foot-links{display:flex; gap:.9rem; align-items:center; flex-wrap:wrap}
+.foot-links a{
+font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+border:1px solid rgba(247,241,227,.35); border-radius:999px; padding:.35rem .9rem;
+transition:background-color .25s, color .25s, border-color .25s;
+}
+.foot-links a:hover{background:var(--gold-bright); color:var(--ink); border-color:var(--gold-bright)}
+.foot-note{width:100%; font-size:.9rem; color:rgba(247,241,227,.7); font-family:var(--mono); letter-spacing:.04em}
+@media (max-width:860px){
+.hero{grid-template-columns:1fr; text-align:center; padding-top:2.6rem; padding-bottom:2.6rem; gap:2rem}
+.lede{margin-left:auto; margin-right:auto}
+.cta{margin-left:auto; margin-right:auto}
+nav{flex-direction:column; align-items:center; gap:.4rem}
+.topbar .wrap{flex-direction:column; gap:.8rem}
+.about,.log-section{grid-template-columns:1fr; gap:1.6rem}
+.about::before{width:140px; height:140px; top:-55px; right:-55px}
+}
+@media (max-width:1020px){.grid{grid-template-columns:repeat(4,1fr)} .card:nth-child(n){grid-column:span 2} .card:nth-child(5){grid-column:2 / 4}}
+@media (max-width:560px){.grid{grid-template-columns:1fr} .card:nth-child(n){grid-column:auto}}
+@media (prefers-reduced-motion:reduce){
+.ticker-track,.ring,.planet{animation:none}
+html{scroll-behavior:auto}
+}
+</style>
 </head>
+<body id='top'>
+<div class='wrap'>
 
-<body>
-  <header>
-    <div class="header-content">
-      <div class="header-text">
-        <h1>Hi, I'm T'suen Wei.</h1>
-        <p class="tagline">Fintech • Analytics • Engineering • Marketing • Music Enthusiast • Aspiring Gemcutter</p>
-      </div>
-    </div>
-  </header>
-  <img src="img/eea99c18-823c-4474-9290-c5b8ecd400ed3-2048x1167.png" alt="Friends" class="responsive-image" />
-  <br></br>
+<header class='topbar'>
+<div class='topbar-inner'>
+<a class='brand' href='#top'>Foo T'suen Wei<span>·Atlas 04</span></a>
+</div>
+</header>
 
-  <div class="navbar">
-    <button class="menu-toggle" aria-label="Menu">☰</button>
-    <nav>
-      <div class="menu-overlay"></div>
-      <ul class="menu-list">
-        <li><a href="index.html">Home</a></li>
-        <li class="has-dropdown">
-          <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="bio.html">Bio</a></li>
-            <li><a href="music.html">Music</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown">
-          <a>Portfolio<span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="jewelry.html">Jewelry</a></li>
-            <li><a href="collections.html">Collections</a></li>
-            <li><a href="photography.html">Photography</a></li>
-            <li><a href="wallpapers.html">Wallpapers</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown">
-          <a>WebTools<span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="tools.html">Web Editor</a></li>
-          </ul>
-        </li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
-  <br><br><br><br><br>
+<main>
+<section class='hero' id='home'>
+<div class='hero-copy'>
+<p class='overline mono'><span class='dot'></span> Mission control · Atlas No. 04</p>
+<h1>Photographs, <span class='pink'>objects</span> &amp; <span class='h-cyan'><em>small code</em></span></h1>
+<p class='lede'>A quiet corner of the web for the things I make by hand — film, metal and stone, and the tiny programs that hold it all together. <b>Five rooms, one small sky.</b></p>
+<a class='cta' href='photography.html'>Start at the photographs <span class='arrow'>&rarr;</span></a>
+</div>
+<div class='orbit' aria-hidden='true'>
+<svg class='plate-svg' viewBox='0 0 420 420'>
+<circle cx='210' cy='210' r='205' fill='none' stroke='#E7E9F4' stroke-width='1'/>
+<circle cx='210' cy='210' r='150' fill='none' stroke='#1E9AAF' stroke-width='1' stroke-dasharray='3 7' opacity='.6'/>
+<line x1='210' y1='30' x2='210' y2='390' stroke='#E7E9F4' stroke-width='1'/>
+<line x1='30' y1='210' x2='390' y2='210' stroke='#E7E9F4' stroke-width='1'/>
+<line x1='90' y1='90' x2='330' y2='330' stroke='#E7E9F4' stroke-width='1' opacity='.6'/>
+<line x1='330' y1='90' x2='90' y2='330' stroke='#E7E9F4' stroke-width='1' opacity='.6'/>
+<path d='M210 210 L146 294 M210 210 L298 158 M210 210 L153 155' stroke='#1E9AAF' stroke-width='1.6' fill='none'/>
+<path d='M210 210 L317 229 M210 210 L113 235' stroke='#C08B2B' stroke-width='1.1' fill='none' stroke-dasharray='2 7'/>
+<path d='M298 158 L153 155 M146 294 L317 229' stroke='#E7E9F4' stroke-width='1' fill='none'/>
+<circle cx='146' cy='294' r='4' fill='#F2B416'/>
+<circle cx='298' cy='158' r='4' fill='#1E9AAF'/>
+<circle cx='153' cy='155' r='4' fill='#F2B416'/>
+<circle cx='317' cy='229' r='4' fill='#1E9AAF'/>
+<circle cx='113' cy='235' r='4' fill='#F2B416'/>
+<text x='210' y='213' font-family='mono' font-size='15' fill='#F2B416' text-anchor='middle'>✳</text>
+<text x='210' y='42' font-family='mono' font-size='11' fill='#565E7A' text-anchor='middle'>N</text>
+<text x='397' y='214' font-family='mono' font-size='11' fill='#565E7A' text-anchor='middle'>E</text>
+<text x='210' y='384' font-family='mono' font-size='11' fill='#565E7A' text-anchor='middle'>S</text>
+<text x='17' y='214' font-family='mono' font-size='11' fill='#565E7A' text-anchor='middle'>W</text>
+<text x='140' y='310' font-family='mono' font-size='12' fill='#212A45'>α</text>
+<text x='305' y='146' font-family='mono' font-size='12' fill='#212A45'>β</text>
+<text x='146' y='143' font-family='mono' font-size='12' fill='#212A45'>γ</text>
+<text x='325' y='236' font-family='mono' font-size='12' fill='#212A45'>δ</text>
+<text x='100' y='242' font-family='mono' font-size='12' fill='#212A45'>ε</text>
+</svg>
+<div class='ring a'></div>
+<div class='ring b'></div>
+<span class='planet p-a'></span>
+<span class='planet p-b'></span>
+<span class='planet p-c'></span>
+</div>
+</section>
 
-  <header class="under-construction">
-    <h1>🚧 Website Under Construction 🚧</h1>
-    <p>I'm working hard behind the scenes. Check back soon for something awesome!</p>
-  </header>
+<hr class='rule'>
 
-  <main>
-    <section>
-      <h2>Welcome</h2>
-      <p>Thanks for visiting my personal site. Here I share my projects, thoughts, and what I'm learning.</p>
-    </section>
-  </main>
+<section aria-label='What is in this site'>
+<div class='section-head'>
+<span class='no'>01 / What is here</span>
+<h2>The rooms</h2>
+</div>
+<div class='grid'>
+<article class='card'>
+<p class='tag'><b>PL 01</b> · Photography</p>
+<div class='thumb'><svg class='orb' viewBox='0 0 120 120' aria-hidden='true'>
+<defs>
+<linearGradient id='bhDisk' gradientUnits='userSpaceOnUse' x1='8' y1='0' x2='112' y2='0'><stop offset='0' stop-color='#F2B416'/><stop offset='.3' stop-color='#FFF3C8'/><stop offset='.58' stop-color='#F2B416'/><stop offset='.82' stop-color='#F04E7E'/><stop offset='1' stop-color='#7B5CF2'/></linearGradient>
+<linearGradient id='bhRing' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#FFF3C8'/><stop offset='.5' stop-color='#F2B416'/><stop offset='1' stop-color='#C08B2B'/></linearGradient>
+<clipPath id='bhFront'><rect x='0' y='60' width='120' height='60'/></clipPath>
+<filter id='bhGlow' x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='2.2'/></filter>
+</defs>
+<circle cx='60' cy='60' r='58' fill='#141B2E' stroke='#212A45' stroke-width='1.5'/>
+<g fill='#F7F1E3'><circle cx='20' cy='28' r='.9' opacity='.8'/><circle cx='98' cy='20' r='.7' opacity='.7'/><circle cx='92' cy='96' r='1' opacity='.8'/><circle cx='26' cy='94' r='.7' opacity='.6'/><circle cx='64' cy='9' r='.7' opacity='.6'/></g>
+<circle cx='60' cy='60' r='23' fill='none' stroke='#F2B416' stroke-width='5' opacity='.55' filter='url(#bhGlow)'/>
+<circle cx='60' cy='60' r='22' fill='none' stroke='url(#bhRing)' stroke-width='3.2'/>
+<g transform='rotate(-11 60 60)'>
+<path fill-rule='evenodd' fill='url(#bhDisk)' d='M8 60a52 9.5 0 1 0 104 0a52 9.5 0 1 0 -104 0ZM34 60a26 4 0 1 0 52 0a26 4 0 1 0 -52 0Z' opacity='.95'/>
+</g>
+<circle cx='60' cy='60' r='19.5' fill='#05070E'/>
+<circle cx='60' cy='60' r='19.5' fill='none' stroke='#FFF3C8' stroke-width='.9' opacity='.9'/>
+<g transform='rotate(-11 60 60)'><g clip-path='url(#bhFront)'>
+<path fill-rule='evenodd' fill='url(#bhDisk)' d='M8 60a52 9.5 0 1 0 104 0a52 9.5 0 1 0 -104 0ZM34 60a26 4 0 1 0 52 0a26 4 0 1 0 -52 0Z'/>
+</g></g>
+</svg></div>
+<h3><a href='photography.html'>Photography</a></h3>
+<p>Slow, grainy, mostly outside.</p>
+<a class='link' href='photography.html'>Open the darkroom &rarr;</a>
+</article>
+<article class='card'>
+<p class='tag'><b>PL 02</b> · Jewelry</p>
+<div class='thumb'><svg class='orb' viewBox='0 0 120 120' aria-hidden='true'><circle cx='60' cy='60' r='34' fill='#2F6BFF'/><circle cx='48' cy='47' r='11' fill='#F7F1E3' opacity='.35'/><circle cx='95' cy='34' r='7' fill='#F2B416'/><circle cx='93' cy='32' r='2.5' fill='#F7F1E3' opacity='.5'/></svg></div>
+<h3><a href='jewelry.html'>Jewelry</a></h3>
+<p>Small, worn-in pieces: Handmade. A reminder of the old world.</p>
+<a class='link' href='jewelry.html'>Open the bench &rarr;</a>
+</article>
+<article class='card'>
+<p class='tag'><b>PL 03</b> · Projects</p>
+<div class='thumb'><svg class='orb' viewBox='0 0 120 120' aria-hidden='true'><ellipse cx='60' cy='60' rx='48' ry='12' transform='rotate(20 60 60)' fill='none' stroke='#1E9AAF' stroke-width='2.5' opacity='.7'/><circle cx='60' cy='60' r='34' fill='#F2B416'/><circle cx='48' cy='47' r='11' fill='#F7F1E3' opacity='.45'/><path d='M12 60 A48 12 0 0 1 108 60' transform='rotate(20 60 60)' fill='none' stroke='#1E9AAF' stroke-width='2.5' opacity='.9'/></svg></div>
+<h3><a href='github.html'>Projects</a></h3>
+<p>The things on my GitHub: scripts, tools, and the occasional over-scoped/scope-creeped nightmare.</p>
+<a class='link' href='github.html'>Open the repo log &rarr;</a>
+</article>
+<article class='card'>
+<p class='tag'><b>PL 04</b> · Music</p>
+<div class='thumb'><svg class='orb' viewBox='0 0 120 120' aria-hidden='true'><ellipse cx='60' cy='60' rx='52' ry='13' transform='rotate(-16 60 60)' fill='none' stroke='#C08B2B' stroke-width='6' opacity='.5'/><circle cx='60' cy='60' r='34' fill='#F04E7E'/><circle cx='48' cy='47' r='11' fill='#F7F1E3' opacity='.35'/><path d='M8 60 A52 13 0 0 1 112 60' transform='rotate(-16 60 60)' fill='none' stroke='#F2B416' stroke-width='3.5' opacity='.9'/></svg></div>
+<h3><a href='music.html'>Music</a></h3>
+<p>Sound as it gets made: sketches, recordings, and the odd finished track.</p>
+<a class='link' href='music.html'>Open the airwaves &rarr;</a>
+</article>
+<article class='card'>
+<p class='tag'><b>PL 05</b> · Liminality</p>
+<div class='thumb'><svg class='orb' viewBox='0 0 120 120' aria-hidden='true'>
+<defs><clipPath id='limClip'><circle cx='60' cy='60' r='34'/></clipPath></defs>
+<ellipse cx='60' cy='60' rx='50' ry='12' transform='rotate(14 60 60)' fill='none' stroke='#C08B2B' stroke-width='2' stroke-dasharray='3 6' opacity='.7'/>
+<circle cx='60' cy='60' r='34' fill='#1E9AAF'/>
+<g clip-path='url(#limClip)' stroke='#F7F1E3' stroke-width='1.1' opacity='.45'><path d='M26 38H94M26 49H94M26 60H94M26 71H94M26 82H94M38 26V94M49 26V94M60 26V94M71 26V94M82 26V94'/></g>
+<circle cx='48' cy='47' r='11' fill='#F7F1E3' opacity='.35'/>
+<path d='M10 60 A50 12 0 0 1 110 60' transform='rotate(14 60 60)' fill='none' stroke='#C08B2B' stroke-width='2' stroke-dasharray='3 6' opacity='.9'/>
+<circle cx='96' cy='88' r='7' fill='#F7F1E3' stroke='#212A45' stroke-width='2'/><circle cx='94' cy='86' r='2' fill='#212A45' opacity='.18'/>
+</svg></div>
+<h3><a href='liminality.html'>Liminality</a></h3>
+<p>Empty halls, still pools and other places caught between destinations.</p>
+<a class='link' href='liminality.html'>Open the corridor &rarr;</a>
+</article>
+</div>
+</section>
 
+<div class='ticker' aria-hidden='true'>
+<div class='ticker-track'>
+<span>Photography</span><span class='sep'>✳</span><span>Jewelry</span><span class='sep'>✳</span><span>Projects</span><span class='sep'>✳</span>
+<span>Photography</span><span class='sep'>✳</span><span>Jewelry</span><span class='sep'>✳</span><span>Projects</span><span class='sep'>✳</span>
+</div>
+</div>
 
-  <footer>
-    <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
-  </footer>
+<section aria-label='About' id='about'>
+<div class='section-head'>
+<span class='no'>02 / About</span>
+<h2>Who is behind this</h2>
+</div>
+<div class='about'>
+<div class='copy'>
+<h3><span class='no'>02 /</span> The man in the mirror </h3>
+<p>When I'm not stargazing, I enjoy working with my hands. The camera is usually in my pocket, the soldering iron is in the bench drawer, and the terminal is never closed.</p>
+<p>Each room opens its own page: and hopefully more in the future.</p>
+</div>
+<img class='portrait' src='img\eea99c18-823c-4474-9290-c5b8ecd400ed3-2048x1167.png' alt='' />
+</div>
+</section>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const menuToggle = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('nav');
-      const menuOverlay = document.querySelector('.menu-overlay');
+<section aria-label='Contact' class='log-section'>
+<div class='copy'>
+<h3><span class='no'>03 /</span> Say hello</h3>
+<p>Just the work as it happens. If you want to say hello, the email below works.</p>
+</div>
+<aside class='logbox'>
+<p class='title'><span class='dot'></span> Status</p>
+<p class='ln'><b>SIG 01</b> Photographs — new set up now <span class='ok'>[new]</span></p>
+<p class='ln'><b>SIG 02</b> Jewelry — bench work in progress <span class='ok'>[in progress]</span></p>
+<p class='ln'><b>SIG 03</b> This site — live <span class='ok'>[live]</span></p>
+<a class='mail' href='mailto:foooooooooooooooooooooooooootw@gmail.com'>foooooooooooooooooooooooooootw@gmail.com</a>
+</aside>
+</section>
 
-      // Toggle menu when hamburger is clicked
-      menuToggle.addEventListener('click', function () {
-        nav.classList.toggle('active');
+<div class='cta-block'>
+<a class='cta' href='#home' style='background:var(--ink)'>Back to the sky &rarr;</a>
+</div>
+</main>
 
-        if (nav.classList.contains('active')) {
-          menuToggle.style.display = 'none'; // Hide button when menu is open
-        }
-      });
+<footer class='footer'>
+<div class='wrap footer-inner'>
+<span class='brand'>Foo T'suen Wei<span>·Atlas 04</span>· ©2026</span>
+</div>
+</footer>
 
-      // Close menu when overlay is clicked
-      menuOverlay.addEventListener('click', function () {
-        nav.classList.remove('active');
-        menuToggle.style.display = 'block'; // Show button again
-      });
-
-      // Close menu when a link is clicked (in portrait mode only)
-      const navLinks = document.querySelectorAll('nav a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function () {
-          if (window.matchMedia('(orientation: portrait)').matches) {
-            nav.classList.remove('active');
-            menuToggle.style.display = 'block'; // Show button again
-          }
-        });
-      });
-    });
-  </script>
-
+</div>
 </body>
-
 </html>

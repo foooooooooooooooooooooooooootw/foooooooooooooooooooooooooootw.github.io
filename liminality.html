@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Liminality — Foo T'suen Wei · Atlas 04</title>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
+<style>
+:root{
+--bg:#F0ECE4; --bg-alt:#E8E4DC; --text:#2A2520; --text-muted:#5A5550; --accent:#6A8A8E; --tile:#D8D4CC; --water:#A0B8BC;
+--cream:#F0ECE4; --paper:#F6F3EC; --ink:#212A45; --ink-soft:#565E7A; --navy:#1B2340; --navy-deep:#141B2E;
+--cyan:#1E9AAF; --cyan-bright:#6FD6DF; --pink:#F04E7E; --gold-bright:#F2B416; --line:#212A45;
+--mono:'Space Mono',monospace; --serif:'Cormorant Garamond',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg); color:var(--text); font-family:var(--serif); line-height:1.55; font-size:17px; min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+::selection{background:var(--pink); color:var(--cream)}
+a{color:inherit; text-decoration:none}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:3px solid var(--cyan); outline-offset:3px}
+.footer :focus-visible{outline-color:var(--cream)}
+.wrap{width:min(1100px, calc(100% - 3rem)); margin:0 auto}
+.wrap-wide{width:min(1500px, calc(100% - 4rem)); margin:0 auto}
+.skip{position:absolute; left:-999px; top:0; background:var(--ink); color:var(--cream); padding:.6rem 1rem; z-index:100; font-family:var(--mono); font-size:.72rem}
+.skip:focus{left:0}
+/* faint drifting light on the water */
+body::after{content:''; position:fixed; inset:0; pointer-events:none; z-index:1; background:radial-gradient(ellipse at 30% 20%, rgba(160,184,188,.16), transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(160,184,188,.12), transparent 50%); animation:shimmer 16s ease-in-out infinite alternate}
+@keyframes shimmer{from{opacity:.5; transform:translate3d(0,0,0)} to{opacity:1; transform:translate3d(-1.5%,1.2%,0)}}
+/* text that arrives slowly, one line at a time */
+.slow{opacity:0; animation:rise 2.4s ease forwards; animation-delay:var(--d,0s)}
+@keyframes rise{from{opacity:0; transform:translateY(30px)} to{opacity:1; transform:none}}
+@keyframes pulse{0%,100%{opacity:.45} 50%{opacity:.85}}
+
+/* --- top bar (unchanged) --- */
+.topbar{position:sticky; top:0; z-index:30; background:rgba(240,236,228,.94); backdrop-filter:blur(8px); padding:.85rem 0; border-bottom:1px solid rgba(42,37,32,.14)}
+.topbar-inner{display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap}
+.brand{font-size:1.1rem; font-weight:700; letter-spacing:.02em; display:flex; align-items:center; gap:.4rem}
+.brand .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--line)}
+.brand span{color:var(--pink); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em}
+nav{display:flex; gap:.6rem; flex-wrap:wrap}
+nav a{font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; transition:background-color .2s, color .2s, border-color .2s, transform .2s}
+nav a:hover{background:var(--pink); color:var(--cream); border-color:var(--pink); transform:translateY(-1px)}
+nav a[aria-current='page']{background:var(--ink); color:var(--cream)}
+
+/* --- hero: quiet, centred, slow --- */
+.hero{min-height:calc(100vh - 66px); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; padding:4rem 1.5rem 7rem; background:linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%)}
+.overline{font-family:var(--mono); font-size:.65rem; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); margin-bottom:1.6rem}
+h1{position:relative; font-size:clamp(2.8rem,9vw,7rem); font-weight:300; letter-spacing:.15em; text-transform:lowercase; line-height:1.05; color:var(--text)}
+/* a ghost copy of the title that slips out of register for a moment */
+h1::after{content:attr(data-text); position:absolute; inset:0; color:var(--accent); opacity:0; pointer-events:none; animation:glitch 9s ease-in-out infinite 5s}
+@keyframes glitch{0%,90%,100%{opacity:0; transform:translate(0)} 92%{opacity:.35; transform:translate(-3px,1px)} 94%{opacity:0; transform:translate(3px,-1px)} 96%{opacity:.25; transform:translate(1px,2px)} 98%{opacity:0; transform:translate(0)}}
+.lede{margin-top:1.5rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--text-muted); max-width:48ch; line-height:1.9}
+.scroll-hint{position:absolute; bottom:2.6rem; left:0; right:0; font-family:var(--mono); font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); animation:rise 2.4s ease forwards var(--d,0s), pulse 3s ease-in-out infinite calc(var(--d,0s) + 2.4s)}
+.scroll-hint::after{content:''; display:block; width:1px; height:40px; background:var(--accent); margin:14px auto 0; opacity:.4}
+
+/* --- gallery: scattered hairline frames over faint pool tiles --- */
+.gallery{padding:6rem 0 7rem; background-color:var(--bg-alt); background-image:linear-gradient(to right, rgba(106,138,142,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(106,138,142,.16) 1px, transparent 1px); background-size:60px 60px; position:relative}
+.controls{display:flex; flex-direction:column; gap:1rem; margin-bottom:3.4rem}
+.section-label{font-family:var(--mono); font-size:.6rem; letter-spacing:.3em; text-transform:uppercase; color:var(--accent)}
+.note{font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; color:var(--text-muted); border-left:3px solid var(--gold-bright); padding-left:.8rem}
+.wall{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:20px; row-gap:80px}
+.tile{display:block; width:100%; text-align:left; background:none; border:0; padding:0}
+.tile:nth-child(8n+1){grid-column:1 / 8}
+.tile:nth-child(8n+2){grid-column:8 / 13; align-self:end}
+.tile:nth-child(8n+3){grid-column:1 / 5; align-self:start}
+.tile:nth-child(8n+4){grid-column:5 / 13}
+.tile:nth-child(8n+5){grid-column:1 / 6}
+.tile:nth-child(8n+6){grid-column:6 / 13; align-self:end}
+.tile:nth-child(8n+7){grid-column:2 / 8; align-self:start}
+.tile:nth-child(8n+8){grid-column:8 / 12}
+.tile.rv{opacity:0; transform:translateY(40px); transition:opacity 1.6s ease, transform 1.6s ease; transition-delay:var(--d,0s)}
+.tile.rv.in{opacity:1; transform:none}
+.tile .frame{position:relative; display:block; overflow:hidden; border:1px solid var(--tile); background:var(--bg)}
+.tile .frame::after{content:''; position:absolute; inset:0; background:linear-gradient(to bottom, transparent 50%, rgba(240,236,228,.3) 100%); pointer-events:none}
+.tile:focus-visible{outline:none}
+.tile:focus-visible .frame{outline:3px solid var(--cyan); outline-offset:3px}
+.tile img{display:block; width:100%; height:100%; object-fit:cover; filter:saturate(.7) contrast(.95) brightness(1.05); transition:filter .8s ease, transform 1.2s ease}
+.tile:hover img{filter:saturate(.9) contrast(1) brightness(1.1); transform:scale(1.02)}
+.badge{position:absolute; left:.8rem; bottom:.8rem; z-index:1; font-family:var(--mono); font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; background:rgba(240,236,228,.92); color:var(--text); padding:.25rem .6rem}
+.play{position:absolute; right:.8rem; bottom:.8rem; z-index:1; width:32px; height:32px; border-radius:50%; background:rgba(240,236,228,.92); border:1px solid rgba(42,37,32,.4); display:grid; place-items:center; font-size:.65rem; padding-left:2px; color:var(--text)}
+.tile .cap{display:block; padding:1rem .25rem 0; font-family:var(--mono); font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; color:var(--text-muted)}
+.tile .t{display:block; margin-bottom:4px; opacity:.8; font-weight:400; font-size:.6rem; line-height:1.5}
+.tile .m{display:block; opacity:.5; font-size:.6rem}
+.empty{grid-column:1 / -1; border:1px dashed var(--accent); padding:2.4rem; text-align:center; color:var(--text-muted); font-size:1.1rem}
+
+/* --- footer (unchanged) --- */
+.footer{border-top:1.5px solid var(--line); background:var(--navy-deep); color:var(--cream); padding:1.5rem 0; position:relative; z-index:2}
+.footer-inner{display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap}
+.footer .brand{color:var(--cream); font-size:1rem}
+.foot-links{display:flex; gap:.9rem; align-items:center; flex-wrap:wrap}
+.foot-links a{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; border:1px solid rgba(240,236,228,.35); border-radius:999px; padding:.35rem .9rem; transition:background-color .25s, color .25s, border-color .25s}
+.foot-links a:hover{background:var(--gold-bright); color:var(--ink); border-color:var(--gold-bright)}
+
+.pill{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; background:transparent; border:1px solid rgba(42,37,32,.4); color:var(--text); border-radius:999px; padding:.4rem .9rem; transition:background-color .2s, color .2s, border-color .2s}
+.pill:hover{background:var(--text); color:var(--bg); border-color:var(--text)}
+
+/* --- viewer: pale, with zoom --- */
+.lb{width:100%; height:100%; max-width:none; max-height:none; border:0; padding:1rem; background:rgba(240,236,228,.98); color:var(--text)}
+.lb[open]{display:grid; grid-template:minmax(0,1fr) / minmax(0,1fr); place-items:center; animation:lbin .8s ease}
+@keyframes lbin{from{opacity:0} to{opacity:1}}
+.lb::backdrop{background:rgba(240,236,228,.7)}
+.lb-card{position:relative; width:min(1500px,100%); height:100%; display:flex; flex-direction:column; gap:.8rem}
+.lb-stage{position:relative; flex:1 1 auto; min-height:0; display:grid; place-items:center; background:var(--bg-alt); border:1px solid var(--tile); overflow:hidden; touch-action:none}
+.lb-stage img,.lb-stage video{position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:contain}
+.lb-stage img{user-select:none; -webkit-user-drag:none; cursor:zoom-in; will-change:transform}
+.lb-stage.zoomed img{cursor:grab}
+.lb-stage.panning img{cursor:grabbing}
+.lb-stage img.loading{filter:blur(6px) brightness(.9)}
+.zoombar{position:absolute; right:1rem; bottom:1rem; display:flex; align-items:center; gap:.35rem; z-index:2}
+.zoombar button{font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; min-width:2.2rem; height:2.2rem; padding:0 .7rem; border-radius:999px; background:rgba(240,236,228,.92); border:1px solid rgba(42,37,32,.35); color:var(--text); transition:background-color .2s, color .2s}
+.zoombar button:hover{background:var(--text); color:var(--bg); border-color:var(--text)}
+.zoombar .pct{font-family:var(--mono); font-size:.66rem; letter-spacing:.06em; color:var(--text-muted); min-width:3.2rem; text-align:center}
+.lb-stage .soon{position:absolute; left:50%; bottom:1rem; transform:translateX(-50%); font-family:var(--mono); font-size:.66rem; letter-spacing:.06em; background:var(--bg); border:1px solid var(--tile); padding:.35rem .9rem; white-space:nowrap}
+.lb-bar{flex:0 0 auto; max-height:34vh; overflow:auto; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem 2rem; flex-wrap:wrap}
+.lb-text h3{font-size:1.7rem; font-weight:300; letter-spacing:.04em; line-height:1.15}
+.lb-text p{font-family:var(--mono); font-size:.66rem; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin-top:.3rem}
+.lb-text .desc{font-family:var(--serif); font-size:1.1rem; letter-spacing:0; text-transform:none; color:var(--text-muted); margin-top:.5rem; max-width:60ch}
+.lb-btns{display:flex; gap:.5rem; align-items:center}
+.lb-count{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--text-muted); padding:0 .4rem}
+
+@media (max-width:900px){
+.topbar-inner{flex-direction:column; gap:.8rem}
+nav{justify-content:center}
+.wrap-wide{width:calc(100% - 2.4rem)}
+.gallery{padding:4rem 0 5rem}
+.wall{grid-template-columns:1fr 1fr; gap:15px; row-gap:50px}
+.tile:nth-child(n){grid-column:span 1; align-self:start}
+}
+@media (max-width:520px){.wall{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.slow,.scroll-hint{animation:none; opacity:1}
+h1::after,body::after,.lb[open]{animation:none}
+.tile.rv{opacity:1; transform:none; transition:none}
+.tile img,.zoombar button,.lb-stage img{transition:none!important}
+}
+</style>
+</head>
+<body id='top'>
+<a class='skip' href='#wall'>Skip to the frames</a>
+
+<header class='topbar'>
+<div class='wrap topbar-inner'>
+<a class='brand' href='index.html'>Foo T'suen Wei<span>·Atlas 04</span></a>
+<nav aria-label='Site pages'>
+<a href='index.html'>Home</a>
+<a href='photography.html'>Photography</a>
+<a href='jewelry.html'>Jewelry</a>
+<a href='github.html'>Projects</a>
+<a href='liminality.html' aria-current='page'>Liminality</a>
+</nav>
+</div>
+</header>
+
+<main>
+<section class='hero' aria-labelledby='page-title'>
+<p class='overline slow' style='--d:.6s'>Plate 05 · Spaces betwixt</p>
+<h1 id='page-title' class='slow' data-text='liminality' style='--d:1.2s'>Liminality</h1>
+<p class='lede slow' style='--d:2.2s'>Transitory places, perceived while stripped of their purpose</p>
+<a class='scroll-hint' href='#wall' style='--d:3.2s'>scroll</a>
+</section>
+
+<section class='gallery' id='wall'>
+<div class='wrap-wide'>
+<div class='controls'>
+<p class='section-label'>01 — the spaces</p>
+<p class='note' id='note' hidden></p>
+</div>
+<div class='wall' id='wallgrid'></div>
+</div>
+</section>
+</main>
+
+<footer class='footer'>
+<div class='wrap footer-inner'>
+<a class='brand' href='index.html'>Foo T'suen Wei<span>·Atlas 04</span>· ©2026</a>
+</div>
+</footer>
+
+<dialog class='lb' id='lb' aria-labelledby='lb-title'>
+<div class='lb-card'>
+<div class='lb-stage' id='lb-stage'></div>
+<div class='lb-bar'>
+<div class='lb-text'>
+<h3 id='lb-title'></h3>
+<p id='lb-meta'></p>
+<p class='desc' id='lb-desc'></p>
+</div>
+<div class='lb-btns'>
+<button class='pill' id='lb-prev' aria-label='Previous frame'>&larr; Prev</button>
+<span class='lb-count' id='lb-count'></span>
+<button class='pill' id='lb-next' aria-label='Next frame'>Next &rarr;</button>
+<button class='pill' id='lb-close' autofocus>Close</button>
+</div>
+</div>
+</div>
+</dialog>
+
+<script>
+/* ------------------------------------------------------------------
+   To add a frame, add one object to FRAMES:
+     type:   'image' or 'video'
+     src:    path to the file, e.g. 'img/liminal/pool1.jpg' or 'img/liminal/hall.mp4'
+     poster: a small image (e.g. 600px wide) used as the thumbnail in the grid. For a
+             video it is also the still shown before it plays; for an image the full
+             src is loaded only when the frame is opened. Leave empty to use src.
+     title, place, year, note (optional sentence), w/h (shape of the frame)
+   A frame with no src shows a generated sample room instead.
+   ------------------------------------------------------------------ */
+const FRAMES = [
+  { id:'f1',  type:'image', src:'img\\liminal\\IMG_20260729_000424.jpg', poster:'img\\liminal\\thumbs\\IMG_20260729_000424thumb.webp', title:'Indoor Garden',  place:'Terminal 2', year:'2026', w:4, h:5, kind:'hall',   seed:3,  note:'An empty airport. Feels like it could be a science lab.' },
+  { id:'f2',  type:'image', src:'img\\liminal\\IMG_20261008_061349.jpg',poster:'img\\liminal\\thumbs\\IMG_20261008_061349thumb.webp', title:'Conveyor Belts',       place:'Terminal 2', year:'2026', w:4, h:5, kind:'pool', seed:8, note:'No lines for me to wait for this time.' },
+  { id:'f3',  type:'video', src:'img\\liminal\\mbs.mp4', poster:'img\\liminal\\mbs.jpg', title:'Empty Mall',      place:'The Shoppes', year:'2026', w:16,h:9, kind:'garage', seed:5,  note:'Empty already?' },
+  { id:'f4',  type:'image', src:'img\\liminal\\IMG_20261008_101734.jpg', poster:'img\\liminal\\thumbs\\IMG_20261008_101734thumb.webp', title:'Hotel',      place:'The Pearl', year:'2026', w:16,h:9, kind:'garage', seed:5,  note:'Straight out of a dream' }
+];
+
+/* ---------- generated sample rooms (one-point perspective) ---------- */
+const PAL = {
+  hall:  { ceil:'#DAD6AE', wl:'#CFC174', wr:'#BDAE62', floor:'#8B7541', light:'#FFFFEA', back:'#C4B66C', door:'#5B4A27', seam:'rgba(90,74,30,.30)',  mark:null },
+  pool:  { ceil:'#E4ECEB', wl:'#CFE4E6', wr:'#BCD8DC', floor:'#6DB6C2', light:'#FFFFFF', back:'#C3DDE0', door:'#9CC5CB', seam:'rgba(40,110,125,.35)', mark:'#2E8FA3' },
+  garage:{ ceil:'#8E918C', wl:'#A9ACA6', wr:'#989B95', floor:'#6C6E6A', light:'#F3F5DC', back:'#7E817C', door:'#3E403D', seam:'rgba(40,40,36,.30)',  mark:'#E2C84B' },
+  office:{ ceil:'#DCDDD5', wl:'#B9C1C6', wr:'#A8B1B8', floor:'#5F7487', light:'#F7FBFF', back:'#AEB8BF', door:'#7A8791', seam:'rgba(40,55,70,.28)',  mark:null }
+};
+function room(kind, w, h, seed, hero){
+  const P = PAL[kind]; let s = seed * 9301 + 49297;
+  const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  const vx = w * (.5 + (rnd() - .5) * .16), vy = h * (.46 + (rnd() - .5) * .08);
+  const bw = w * (.16 + rnd() * .1), bh = h * (.17 + rnd() * .07), bx = vx - bw / 2, by = vy - bh / 2;
+  const L = (a, b, t) => a + (b - a) * t, f = n => n.toFixed(1);
+  const poly = (pts, fill, ex = '') => `<polygon points="${pts.map(p => p.map(f).join(',')).join(' ')}" fill="${fill}" ${ex}/>`;
+  const gid = 'v' + seed + (hero ? 'h' : '');
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice">`;
+  o += `<defs><radialGradient id="${gid}" cx="${vx / w}" cy="${vy / h}" r=".75"><stop offset=".35" stop-color="#0A0800" stop-opacity="0"/><stop offset="1" stop-color="#0A0800" stop-opacity=".5"/></radialGradient>
+        <filter id="g${gid}"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0"/></filter></defs>`;
+  o += poly([[0,0],[w,0],[bx+bw,by],[bx,by]], P.ceil);
+  o += poly([[0,h],[w,h],[bx+bw,by+bh],[bx,by+bh]], P.floor);
+  o += poly([[0,0],[bx,by],[bx,by+bh],[0,h]], P.wl);
+  o += poly([[w,0],[bx+bw,by],[bx+bw,by+bh],[w,h]], P.wr);
+  o += `<rect x="${f(bx)}" y="${f(by)}" width="${f(bw)}" height="${f(bh)}" fill="${P.back}"/>`;
+  if (kind !== 'pool' && (hero || rnd() > .3)) o += `<rect x="${f(bx + bw * .34)}" y="${f(by + bh * .22)}" width="${f(bw * .32)}" height="${f(bh * .78)}" fill="${P.door}"/>`;
+  if (hero) {
+    o += `<rect x="${f(bx + bw * .38)}" y="${f(by + bh * .06)}" width="${f(bw * .24)}" height="${f(bh * .13)}" fill="#2E8B57"/><text x="${f(bx + bw * .5)}" y="${f(by + bh * .165)}" font-family="Space Mono,monospace" font-size="${f(bw * .085)}" font-weight="700" fill="#E9FFEF" text-anchor="middle">EXIT</text>`;
+  }
+  const depth = i => 1 - Math.pow(.78, i);
+  for (let i = 1; i <= 9; i++) {
+    const t = depth(i), xl = L(0, bx, t), xr = L(w, bx + bw, t), yt = L(0, by, t), yb = L(h, by + bh, t);
+    o += `<line x1="${f(xl)}" y1="${f(yt)}" x2="${f(xl)}" y2="${f(yb)}" stroke="${P.seam}" stroke-width="${f(w * .0025)}"/>`;
+    o += `<line x1="${f(xr)}" y1="${f(yt)}" x2="${f(xr)}" y2="${f(yb)}" stroke="${P.seam}" stroke-width="${f(w * .0025)}"/>`;
+    o += `<line x1="${f(xl)}" y1="${f(yb)}" x2="${f(xr)}" y2="${f(yb)}" stroke="${P.seam}" stroke-opacity=".6" stroke-width="${f(w * .002)}"/>`;
+  }
+  if (P.mark) {
+    for (let i = 1; i <= 9; i += 2) {
+      const a = depth(i), b = depth(i + 1);
+      const q = t => [L(w / 2, vx, t), L(h, by + bh, t), L(w * .013, bw * .013, t)];
+      const [xa, ya, ha] = q(a), [xb, yb, hb] = q(b);
+      o += poly([[xa - ha, ya], [xa + ha, ya], [xb + hb, yb], [xb - hb, yb]], P.mark, 'opacity=".85"');
+    }
+  }
+  let lights = '';
+  const n = 8 + Math.floor(rnd() * 2);
+  for (let i = 1; i <= n; i++) {
+    const t0 = depth(i), t1 = depth(i + .42);
+    const pick = t => { const xl = L(0, bx, t), xr = L(w, bx + bw, t), y = L(0, by, t), sp = xr - xl; return [xl + sp * .36, xl + sp * .64, y]; };
+    const [a0, b0, y0] = pick(t0), [a1, b1, y1] = pick(t1);
+    const dead = !hero && rnd() < .1;
+    lights += poly([[a0,y0],[b0,y0],[b1,y1],[a1,y1]], dead ? P.ceil : P.light, dead ? 'opacity=".6"' : '');
+    if (!dead) {
+      const yf = L(h, by + bh, (t0 + t1) / 2), xc = L(w / 2, vx, (t0 + t1) / 2), rx = L(w * .22, bw * .2, t0);
+      lights += `<ellipse cx="${f(xc)}" cy="${f(yf)}" rx="${f(rx)}" ry="${f(rx * .16)}" fill="${P.light}" opacity=".16"/>`;
+    }
+  }
+  o += `<g class="lights">${lights}</g>`;
+  o += `<rect width="${w}" height="${h}" fill="url(#${gid})"/><rect width="${w}" height="${h}" filter="url(#g${gid})"/></svg>`;
+  return o;
+}
+const sampleURI = it => 'data:image/svg+xml;utf8,' + encodeURIComponent(room(it.kind, it.w * 100, it.h * 100, it.seed));
+
+/* ---------- page ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const thumb = it => it.poster || (it.type === 'video' ? sampleURI(it) : (it.src || sampleURI(it)));
+const meta = it => [it.place, it.year].filter(Boolean).join(' · ');
+let view = FRAMES.slice(), cur = -1, lastFocus = null;
+
+if (FRAMES.some(f => !f.src)) document.getElementById('note').hidden = false;
+
+function render(){
+  view = FRAMES.slice();
+  document.getElementById('wallgrid').innerHTML = view.length ? view.map((it, i) => `
+    <button class="tile" data-i="${i}" aria-label="Open ${esc(it.title)}${it.type === 'video' ? ' (video)' : ''}">
+      <span class="frame" style="aspect-ratio:${it.w}/${it.h}">
+        <img src="${esc(thumb(it))}" alt="" loading="lazy">
+        ${it.type === 'video' ? '<span class="badge">Video</span><span class="play" aria-hidden="true">&#9654;</span>' : ''}
+      </span>
+      <span class="cap"><span class="t">${esc(it.title)}</span>${meta(it) ? `<span class="m">${esc(meta(it))}</span>` : ''}</span>
+    </button>`).join('') : '<p class="empty">No frames here yet.</p>';
+  document.querySelectorAll('.tile img').forEach((img, i) => img.addEventListener('error', () => { img.src = sampleURI(view[i]); }, { once:true }));
+  reveal();
+}
+/* frames drift in slowly as they scroll into view */
+let io = null;
+function reveal(){
+  const tiles = [...document.querySelectorAll('.tile')];
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (io) io.disconnect();
+  tiles.forEach(t => t.classList.add('rv'));
+  io = new IntersectionObserver(es => {
+    const hit = es.filter(e => e.isIntersecting);
+    hit.forEach((e, k) => { e.target.style.setProperty('--d', (k * .22) + 's'); e.target.classList.add('in'); io.unobserve(e.target); });
+  }, { threshold:.08 });
+  tiles.forEach(t => io.observe(t));
+}
+document.getElementById('wallgrid').addEventListener('click', e => { const b = e.target.closest('.tile'); if (b) openAt(+b.dataset.i, b); });
+render();
+
+/* ---------- viewer ---------- */
+const lb = document.getElementById('lb'), stage = document.getElementById('lb-stage');
+
+/* zoom + pan for images: wheel, pinch, drag, double-click, or the buttons / keys + - 0 1 */
+const Z = { s:1, x:0, y:0, img:null, pct:null, ptrs:new Map(), d0:0, s0:1 };
+/* the picture is drawn with object-fit:contain inside the stage, so work out its real on-screen size */
+function zDrawn(){
+  const img = Z.img, sw = stage.clientWidth, sh = stage.clientHeight, nw = img.naturalWidth, nh = img.naturalHeight;
+  if (!nw || !nh) return [sw, sh, 0];
+  const k = Math.min(sw / nw, sh / nh); return [nw * k, nh * k, nw];
+}
+const zActual = () => { if (!Z.img) return 1; const [w,, nw] = zDrawn(); return nw && w ? Math.max(1, nw / w) : 1; };
+const zMax = () => Math.max(6, zActual() * 2);
+function zApply(smooth){
+  const img = Z.img; if (!img) return;
+  const [dw, dh, nw] = zDrawn();
+  const mx = Math.max(0, (dw * Z.s - stage.clientWidth) / 2), my = Math.max(0, (dh * Z.s - stage.clientHeight) / 2);
+  Z.x = Math.min(mx, Math.max(-mx, Z.x)); Z.y = Math.min(my, Math.max(-my, Z.y));
+  img.style.transition = smooth ? 'transform .25s ease' : 'none';
+  img.style.transform = `translate(${Z.x}px, ${Z.y}px) scale(${Z.s})`;
+  stage.classList.toggle('zoomed', Z.s > 1.001);
+  if (Z.pct) Z.pct.textContent = Z.s <= 1.001 ? 'Fit' : (nw ? Math.round(dw * Z.s / nw * 100) : Math.round(Z.s * 100)) + '%';
+}
+function zoomTo(ns, px = 0, py = 0, smooth = true){
+  ns = Math.min(zMax(), Math.max(1, ns));
+  if (ns <= 1.001) { ns = 1; Z.x = Z.y = 0; }
+  else { Z.x = px - (px - Z.x) * ns / Z.s; Z.y = py - (py - Z.y) * ns / Z.s; }
+  Z.s = ns; zApply(smooth);
+}
+const zPoint = e => { const r = stage.getBoundingClientRect(); return [e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2]; };
+function zInit(img){
+  Z.img = img; Z.s = 1; Z.x = Z.y = 0; Z.ptrs.clear();
+  stage.insertAdjacentHTML('beforeend', '<div class="zoombar" role="group" aria-label="Zoom"><button type="button" data-z="out" aria-label="Zoom out">&minus;</button><span class="pct" aria-live="polite">Fit</span><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="fit" aria-label="Fit to screen">Fit</button><button type="button" data-z="full" aria-label="Actual size">1:1</button></div>');
+  Z.pct = stage.querySelector('.pct');
+  zApply(false);
+}
+stage.addEventListener('click', e => {
+  const b = e.target.closest('[data-z]'); if (!b) return;
+  const a = b.dataset.z;
+  if (a === 'in') zoomTo(Z.s * 1.5); else if (a === 'out') zoomTo(Z.s / 1.5);
+  else if (a === 'fit') zoomTo(1); else if (a === 'full') zoomTo(Z.s > zActual() * .99 && Z.s < zActual() * 1.01 ? 1 : zActual());
+});
+stage.addEventListener('wheel', e => {
+  if (!Z.img || e.target.closest('.zoombar')) return;
+  e.preventDefault(); const [px, py] = zPoint(e);
+  zoomTo(Z.s * Math.exp(-e.deltaY * (e.ctrlKey ? .01 : .0018)), px, py, false);
+}, { passive:false });
+stage.addEventListener('dblclick', e => {
+  if (!Z.img || e.target.closest('.zoombar')) return;
+  const [px, py] = zPoint(e); zoomTo(Z.s > 1.001 ? 1 : Math.min(2.5, zMax()), px, py);
+});
+stage.addEventListener('pointerdown', e => {
+  if (!Z.img || e.target.closest('.zoombar')) return;
+  stage.setPointerCapture(e.pointerId); Z.ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+  if (Z.ptrs.size === 2) { const [a, b] = [...Z.ptrs.values()]; Z.d0 = Math.hypot(a[0] - b[0], a[1] - b[1]) || 1; Z.s0 = Z.s; }
+  if (Z.s > 1.001) stage.classList.add('panning');
+});
+stage.addEventListener('pointermove', e => {
+  if (!Z.img || !Z.ptrs.has(e.pointerId)) return;
+  const prev = Z.ptrs.get(e.pointerId); Z.ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+  if (Z.ptrs.size === 2) {
+    const [a, b] = [...Z.ptrs.values()], r = stage.getBoundingClientRect();
+    zoomTo(Z.s0 * Math.hypot(a[0] - b[0], a[1] - b[1]) / Z.d0, (a[0] + b[0]) / 2 - r.left - r.width / 2, (a[1] + b[1]) / 2 - r.top - r.height / 2, false);
+  } else if (Z.s > 1.001) { Z.x += e.clientX - prev[0]; Z.y += e.clientY - prev[1]; zApply(false); }
+});
+['pointerup', 'pointercancel'].forEach(t => stage.addEventListener(t, e => { Z.ptrs.delete(e.pointerId); if (!Z.ptrs.size) stage.classList.remove('panning'); }));
+addEventListener('resize', () => zApply(false));
+function show(i){
+  cur = (i + view.length) % view.length;
+  const it = view[cur];
+  stage.innerHTML = ''; Z.img = null; stage.classList.remove('zoomed', 'panning');
+  if (it.type === 'video' && it.src) {
+    const v = document.createElement('video');
+    Object.assign(v, { src:it.src, controls:true, autoplay:true, muted:true, loop:true, playsInline:true });
+    if (it.poster) v.poster = it.poster;
+    v.setAttribute('aria-label', it.title);
+    stage.appendChild(v);
+  } else {
+    const img = document.createElement('img');
+    const full = it.src && it.type === 'image' ? it.src : thumb(it);
+    img.alt = it.title; img.draggable = false;
+    img.addEventListener('error', () => { img.classList.remove('loading'); img.src = sampleURI(it); }, { once:true });
+    img.addEventListener('load', () => zApply(false));
+    if (it.poster && full !== it.poster) {
+      /* show the small thumbnail at once, swap in the full image when it has loaded */
+      img.src = it.poster; img.classList.add('loading');
+      const big = new Image(), mine = cur;
+      big.onload = () => { if (cur === mine && stage.contains(img)) { img.src = full; img.classList.remove('loading'); } };
+      big.onerror = () => { if (cur === mine) img.classList.remove('loading'); };
+      big.src = full;
+    } else img.src = full;
+    stage.appendChild(img);
+    zInit(img);
+    if (it.type === 'video') stage.insertAdjacentHTML('beforeend', '<span class="soon">No video file added yet</span>');
+  }
+  document.getElementById('lb-title').textContent = it.title;
+  document.getElementById('lb-meta').textContent = meta(it);
+  document.getElementById('lb-desc').textContent = it.note || '';
+  document.getElementById('lb-count').textContent = `${cur + 1} / ${view.length}`;
+  const many = view.length > 1;
+  document.getElementById('lb-prev').hidden = document.getElementById('lb-next').hidden = !many;
+  history.replaceState(null, '', '#' + it.id);
+}
+function openAt(i, trigger){
+  lastFocus = trigger || document.activeElement;
+  show(i);
+  if (!lb.open) lb.showModal();
+  document.body.classList.add('locked');
+}
+function closeLb(){ if (lb.open) lb.close(); }
+lb.addEventListener('close', () => {
+  stage.querySelectorAll('video').forEach(v => v.pause());
+  stage.innerHTML = '';
+  document.body.classList.remove('locked');
+  history.replaceState(null, '', location.pathname + location.search);
+  if (lastFocus && lastFocus.isConnected) lastFocus.focus();
+});
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+document.getElementById('lb-close').addEventListener('click', closeLb);
+document.getElementById('lb-prev').addEventListener('click', () => show(cur - 1));
+document.getElementById('lb-next').addEventListener('click', () => show(cur + 1));
+lb.addEventListener('keydown', e => {
+  if (e.target.tagName === 'VIDEO') return;
+  if (Z.img) {
+    if (e.key === '+' || e.key === '=') { zoomTo(Z.s * 1.4); e.preventDefault(); return; }
+    if (e.key === '-' || e.key === '_') { zoomTo(Z.s / 1.4); e.preventDefault(); return; }
+    if (e.key === '0') { zoomTo(1); return; }
+    if (e.key === '1') { zoomTo(zActual()); return; }
+  }
+  if (e.key === 'ArrowLeft' && view.length > 1) show(cur - 1);
+  if (e.key === 'ArrowRight' && view.length > 1) show(cur + 1);
+});
+
+/* open a frame straight from a link, e.g. liminality.html#f4 */
+const start = view.findIndex(f => f.id === location.hash.slice(1));
+if (start > -1) openAt(start);
+</script>
+</body>
+</html>

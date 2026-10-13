@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Signals from the Terminal — Projects · Atlas No. 04</title>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
+<style>
+:root{
+--cream:#F7F1E3; --paper:#FBF7EC; --ink:#212A45; --ink-soft:#565E7A;
+--navy:#1B2340; --navy-deep:#141B2E;
+--cyan:#1E9AAF; --cyan-bright:#6FD6DF; --cyan-wash:#E6F1F4;
+--pink:#F04E7E; --pink-wash:#FBE0EA;
+--blue:#2F6BFF; --blue-wash:#E3EBFB;
+--purple:#7B5CF2;
+--gold:#C08B2B; --gold-bright:#F2B416; --gold-wash:#FBF1D3;
+--line:#212A45;
+--mono:'Space Mono',monospace; --serif:'Cormorant Garamond',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+background-color:var(--cream); color:var(--ink);
+font-family:var(--serif); line-height:1.55; font-size:17px; min-height:100vh; overflow-x:hidden;
+background-image:radial-gradient(rgba(27,31,51,0.05) 1px, transparent 1px),
+radial-gradient(rgba(30,154,175,0.05) 1px, transparent 1px);
+background-size:24px 24px, 56px 56px; background-position:0 0, 14px 28px;
+-webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--pink); color:var(--cream)}
+a{color:inherit; text-decoration:none}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:3px solid var(--cyan); outline-offset:3px}
+.sky :focus-visible,.footer :focus-visible{outline-color:var(--cream)}
+.wrap{width:min(1100px, calc(100% - 3rem)); margin:0 auto}
+.skip{position:absolute; left:-999px; top:0; background:var(--ink); color:var(--cream); padding:.6rem 1rem; z-index:100; font-family:var(--mono); font-size:.72rem}
+.skip:focus{left:0}
+
+/* --- top bar --- */
+.topbar{position:sticky; top:0; z-index:30; background:rgba(247,241,227,.92); backdrop-filter:blur(8px); padding:.85rem 0; border-bottom:1px solid rgba(27,31,51,.16)}
+.topbar-inner{display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap}
+.brand{font-size:1.1rem; font-weight:700; letter-spacing:.02em; display:flex; align-items:center; gap:.4rem}
+.brand .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--line)}
+.brand span{color:var(--pink); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em}
+nav{display:flex; gap:.6rem; flex-wrap:wrap}
+nav a{font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; transition:background-color .2s, color .2s, border-color .2s, transform .2s}
+nav a:hover{background:var(--pink); color:var(--cream); border-color:var(--pink); transform:translateY(-1px)}
+nav a[aria-current='page']{background:var(--ink); color:var(--cream)}
+
+/* --- hero --- */
+.sky{position:relative; background:var(--navy-deep); color:var(--cream); overflow:hidden; border-bottom:1.5px solid var(--line)}
+.sky::before,.stars{content:''; position:absolute; inset:0; pointer-events:none}
+.sky::before{
+background-image:
+radial-gradient(1.3px 1.3px at 14px 24px,#fff,transparent 60%),
+radial-gradient(1px 1px at 96px 70px,rgba(255,255,255,.8),transparent 60%),
+radial-gradient(1.6px 1.6px at 170px 140px,#F2B416,transparent 60%),
+radial-gradient(1px 1px at 230px 36px,rgba(255,255,255,.7),transparent 60%),
+radial-gradient(1.2px 1.2px at 60px 190px,#6FD6DF,transparent 60%),
+radial-gradient(1px 1px at 270px 210px,rgba(255,255,255,.8),transparent 60%);
+background-size:300px 260px;
+}
+.stars{
+background-image:
+radial-gradient(1px 1px at 40px 90px,rgba(255,255,255,.6),transparent 60%),
+radial-gradient(1.4px 1.4px at 140px 20px,#fff,transparent 60%),
+radial-gradient(1px 1px at 200px 120px,rgba(111,214,223,.9),transparent 60%),
+radial-gradient(1.2px 1.2px at 90px 150px,rgba(255,255,255,.7),transparent 60%);
+background-size:211px 173px;
+}
+.sky::after{content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 78% 52%, rgba(30,154,175,.22), transparent 52%)}
+.hero{position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:2.6rem; align-items:center; padding:4rem 0 3.8rem}
+.overline{display:flex; align-items:center; gap:.55rem; color:var(--cyan-bright); margin-bottom:1.2rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase}
+.overline .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--cream)}
+h1{font-size:clamp(2.7rem,6.2vw,5rem); font-weight:500; line-height:1; letter-spacing:.035em; text-transform:uppercase}
+.lede{margin-top:1.4rem; font-size:1.22rem; color:rgba(247,241,227,.8); max-width:44ch; line-height:1.6}
+.cta{margin-top:2rem; display:inline-block; padding:.75rem 1.6rem; border:1.5px solid var(--cream); border-radius:999px; background:var(--cream); color:var(--ink); font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; transition:background-color .25s, border-color .25s, transform .25s}
+.cta:hover{background:var(--gold-bright); border-color:var(--gold-bright); transform:translateY(-2px)}
+
+/* console */
+.console{position:relative; background:var(--navy); border-radius:2.2rem; padding:1.7rem 1.8rem 1.9rem; box-shadow:inset 0 0 0 1px rgba(111,214,223,.3), 0 24px 50px -24px rgba(0,0,0,.6); min-height:15.5rem}
+.console .bar{display:flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan-bright); margin-bottom:1.1rem}
+.console .bar .dot{width:7px; height:7px; border-radius:50%; background:var(--gold-bright)}
+.console .ln{font-family:var(--mono); font-size:.8rem; line-height:1.95; color:var(--cream)}
+.console .ln i{font-style:normal; color:var(--cyan-bright)}
+.console .ln b{color:var(--gold-bright); font-weight:700}
+.console .ln.note{color:rgba(247,241,227,.6)}
+.console .ln.hidden{visibility:hidden}
+.console .cur{display:inline-block; width:.55em; height:1em; background:var(--gold-bright); vertical-align:-.15em; margin-left:.2em; animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* --- ticker --- */
+.ticker{overflow:hidden; background:var(--gold-bright); color:var(--ink); border-bottom:1.5px solid var(--line); padding:.75rem 0}
+.ticker-track{display:flex; align-items:center; gap:1.2rem; padding:0 2rem; width:max-content; animation:scroll 40s linear infinite; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase}
+.ticker span{white-space:nowrap}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* --- controls --- */
+.controls{padding:2.6rem 0 1.4rem; display:flex; justify-content:space-between; align-items:center; gap:1rem 2rem; flex-wrap:wrap}
+.controls h2{font-size:2.4rem; font-weight:500; line-height:1.1; width:100%}
+.filters,.sorts{display:flex; gap:.5rem; flex-wrap:wrap}
+.pill{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:.4rem .9rem; transition:background-color .2s, color .2s}
+.pill:hover{background:var(--cyan-wash)}
+.pill[aria-pressed='true']{background:var(--ink); color:var(--cream)}
+.count{font-family:var(--mono); font-size:.7rem; letter-spacing:.06em; color:var(--ink-soft); width:100%}
+.filterbar{display:flex; gap:.6rem 1.6rem; flex-wrap:wrap}
+.filterbar:empty{display:none}
+.accts{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.5rem}
+.acct{display:inline-flex; align-items:baseline; gap:.55rem; border:1px solid rgba(247,241,227,.4); border-radius:999px; padding:.4rem .95rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; transition:background-color .25s, border-color .25s, color .25s}
+.acct span{color:var(--cyan-bright); text-transform:uppercase; letter-spacing:.1em; font-size:.64rem}
+.acct b{font-weight:700; color:var(--cream)}
+a.acct:hover{background:var(--gold-bright); border-color:var(--gold-bright); color:var(--ink)}
+a.acct:hover span,a.acct:hover b{color:var(--ink)}
+
+/* --- mission cards --- */
+.grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:1.4rem; padding-bottom:1rem}
+.card{position:relative; display:flex; flex-direction:column; border:1.5px solid var(--line); border-radius:2.6rem; padding:1.7rem 1.7rem 1.8rem; background:var(--wash); transition:transform .25s ease, box-shadow .25s ease}
+.card:hover{transform:translateY(-4px); box-shadow:0 18px 30px -14px rgba(27,31,51,.28)}
+.pinbadge{position:absolute; top:-.8rem; left:1.8rem; background:var(--ink); color:var(--cream); border:1.5px solid var(--line); border-radius:999px; padding:.2rem .8rem; font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase}
+.card .top{display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:1rem}
+.card .tag{font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin-top:.3rem}
+.card .tag b{color:var(--accent); font-weight:700}
+.card .orb{flex:0 0 auto; width:62px; height:62px}
+.card .orb svg{width:100%; height:100%; display:block; overflow:visible}
+.card h3{font-size:1.8rem; font-weight:600; line-height:1.15; letter-spacing:-.01em; margin-bottom:.45rem; overflow-wrap:anywhere}
+.card .desc{font-size:1.06rem; color:var(--ink-soft); line-height:1.5; margin-bottom:1rem}
+.chips{display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:1.1rem}
+.chips span{font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; border:1px solid rgba(33,42,69,.45); border-radius:999px; padding:.15rem .6rem; color:var(--ink-soft)}
+.card .meta{margin-top:auto; padding-top:.9rem; border-top:1px dashed rgba(33,42,69,.35); display:flex; justify-content:space-between; align-items:center; gap:.8rem; flex-wrap:wrap; font-family:var(--mono); font-size:.68rem; letter-spacing:.04em; color:var(--ink-soft)}
+.card .open{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+.card .open::after{content:''; position:absolute; inset:0; border-radius:inherit}
+.card:hover .open{text-decoration:underline; text-underline-offset:.3em}
+.card .open:focus-visible{outline:none}
+.card:has(.open:focus-visible){outline:3px solid var(--cyan); outline-offset:3px}
+.empty{grid-column:1/-1; background:var(--paper); border:1.5px dashed var(--line); border-radius:2.6rem; padding:2.4rem; text-align:center; color:var(--ink-soft); font-size:1.1rem}
+
+/* --- closing --- */
+.log-section{background:var(--paper); border:1.5px solid var(--line); border-radius:2.6rem; padding:2.8rem 2.6rem; margin:3.4rem 0; display:grid; grid-template-columns:1.1fr .9fr; gap:2.4rem; align-items:center}
+.log-section h2{font-size:1.9rem; font-weight:500; margin-bottom:.8rem}
+.log-section p{font-size:1.08rem; color:var(--ink-soft); max-width:56ch; line-height:1.6}
+.logbox{background:var(--navy); color:var(--cream); border-radius:2.2rem; padding:1.7rem; box-shadow:inset 0 0 0 1px rgba(111,214,223,.25)}
+.logbox .title{font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan-bright); margin-bottom:.9rem; display:flex; align-items:center; gap:.5rem}
+.logbox .title .dot{width:7px; height:7px; border-radius:50%; background:var(--gold-bright)}
+.logbox .ln{font-family:var(--mono); font-size:.76rem; line-height:1.75; margin-bottom:.6rem}
+.logbox .ln b{color:var(--cyan-bright); font-weight:700}
+.logbox .mail{margin-top:.9rem; display:block; font-family:var(--mono); font-size:.75rem; letter-spacing:.04em; color:var(--cyan-bright); border-top:1px dashed rgba(111,214,223,.4); padding-top:1rem; transition:color .18s}
+.logbox .mail:hover{color:var(--gold-bright)}
+
+/* --- footer --- */
+.footer{border-top:1.5px solid var(--line); background:var(--navy-deep); color:var(--cream); padding:1.5rem 0}
+.footer-inner{display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap}
+.footer .brand{color:var(--cream); font-size:1rem}
+.footer .brand .dot{background:var(--pink)}
+.foot-links{display:flex; gap:.9rem; align-items:center; flex-wrap:wrap}
+.foot-links a{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; border:1px solid rgba(247,241,227,.35); border-radius:999px; padding:.35rem .9rem; transition:background-color .25s, color .25s, border-color .25s}
+.foot-links a:hover{background:var(--gold-bright); color:var(--ink); border-color:var(--gold-bright)}
+.foot-note{width:100%; font-size:.9rem; color:rgba(247,241,227,.7); font-family:var(--mono); letter-spacing:.04em; padding-top:.7rem}
+
+@media (max-width:900px){
+.hero{grid-template-columns:1fr; text-align:center; padding:2.8rem 0 2.6rem; gap:2rem}
+.lede{margin-left:auto; margin-right:auto}
+.overline{justify-content:center}
+.console{text-align:left}
+.accts{justify-content:center}
+.topbar-inner{flex-direction:column; gap:.8rem}
+nav{justify-content:center}
+.controls h2{font-size:2rem}
+.log-section{grid-template-columns:1fr; gap:1.6rem; padding:2rem 1.6rem}
+}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+.ticker-track,.console .cur{animation:none}
+html{scroll-behavior:auto}
+.card{transition:none}
+}
+</style>
+</head>
+<body id='top'>
+<a class='skip' href='#missions'>Skip to the projects</a>
+
+<header class='topbar'>
+<div class='wrap topbar-inner'>
+<a class='brand' href='index.html'>Foo T'suen Wei<span>·04</span></a>
+<nav aria-label='Site pages'>
+<a href='index.html'>Home</a>
+<a href='photography.html'>Photography</a>
+<a href='jewelry.html'>Jewelry</a>
+<a href='github.html' aria-current='page'>Projects</a>
+<a href='liminality.html'>Liminality</a>
+</nav>
+</div>
+</header>
+
+<main>
+<section class='sky' aria-labelledby='page-title'>
+<div class='stars' aria-hidden='true'></div>
+<div class='wrap hero'>
+<div>
+<p class='overline'><span class='dot'></span> Plate 03 · The terminal</p>
+<h1 id='page-title'>Signals to the Stars</h1>
+<p class='lede'>Code on GitHub, models and spaces on Hugging Face. Each project is logged here as a small mission.</p>
+<a class='cta' href='#missions'>Open the log &darr;</a>
+<div class='accts' id='accts' role='group' aria-label='Accounts'></div>
+</div>
+<aside class='console' aria-label='Log summary'>
+<p class='bar'><span class='dot'></span> Mission log</p>
+<div id='console'></div>
+</aside>
+</div>
+</section>
+
+<div class='ticker' aria-hidden='true'><div class='ticker-track' id='ticker'></div></div>
+
+<div class='wrap' id='missions'>
+<div class='controls'>
+<h2>The missions</h2>
+<div class='filterbar'><div class='filters' id='sites' role='group' aria-label='Filter by site'></div><div class='filters' id='filters' role='group' aria-label='Filter by language or type'></div></div>
+<div class='sorts' role='group' aria-label='Sort'>
+<button class='pill' data-sort='recent' aria-pressed='true'>Latest signal</button>
+<button class='pill' data-sort='score' aria-pressed='false'>Most stars &amp; likes</button>
+</div>
+<p class='count' id='count' aria-live='polite'></p>
+</div>
+<div class='grid' id='grid'></div>
+
+<section class='log-section' aria-labelledby='contact-title'>
+<div>
+<h2 id='contact-title'>Found a bug, or a better way?</h2>
+<p>Everything here is small and self-directed. Issues and pull requests on any repo are welcome, and so is an email.</p>
+</div>
+<aside class='logbox'>
+<p class='title'><span class='dot'></span> Contact</p>
+<p class='ln'><b>ISSUES</b> Open one on the repo, or start a discussion on Hugging Face.</p>
+<p class='ln'><b>MAIL</b> For anything else, write below.</p>
+<a class='mail' href='mailto:foooooooooooooooooooooooooootw@gmail.com'>foooooooooooooooooooooooooootw@gmail.com</a>
+</aside>
+</section>
+</div>
+</main>
+
+<footer class='footer'>
+<div class='wrap footer-inner'>
+<span class='brand'>Foo T'suen Wei<span>·Atlas 04</span>· ©2026</span>
+</div>
+</footer>
+
+<script>
+/* ------------------------------------------------------------------
+   Put your usernames here to load your real projects. Leave both empty
+   to preview the page with sample data.
+     GITHUB_USER   public repos (forks included)
+     HF_USER       public models, datasets and spaces on Hugging Face
+     OTHER_ACCOUNTS  sites with no live feed, shown as links only, e.g.
+                   { site:'Kaggle', user:'yourname', url:'https://www.kaggle.com/yourname' }
+   PINNED        fallback list of GitHub repo names to pin. The page first
+                   reads pinned.json (kept in sync with your real profile pins
+                   by the GitHub Action in pinned.yml); this list is only used
+                   if that file is missing. Order: Hugging Face, pinned GitHub,
+                   then everything else newest first. Forks are included.
+   EXCLUDE       any other names to hide. Your profile README repo (named like
+                   your username) and your username.github.io repo are always
+                   hidden.
+   Both sites' public APIs need no key. GitHub allows about 60 requests
+   an hour per visitor, which is plenty for a personal site.
+   ------------------------------------------------------------------ */
+const GITHUB_USER = 'foooooooooooooooooooooooooootw';
+const HF_USER = 'fooooooooooooooooooooooooooooooooooooooooo';
+const OTHER_ACCOUNTS = [];
+const PINNED = ['DeepMosaicsPlus', 'Edge', 'Edge-Android'];
+const EXCLUDE = [];
+const ACTIVE_DAYS = 365;      // updated within this many days = Active
+
+const SAMPLE_PINNED = ['atlas-site', 'stone-id'];   // preview only
+const day = 86400000, ago = d => new Date(Date.now() - d * day).toISOString();
+const SAMPLE_GH = [
+  { name:'film-scan-sorter', description:'Sorts scanned film frames into rolls by EXIF and edge-code.', language:'Python', stargazers_count:14, forks_count:2, pushed_at:ago(6),  html_url:'#', topics:['photography','cli'] },
+  { name:'bench-log',        description:'A tiny logbook for stones, cuts and polish times.',         language:'JavaScript', stargazers_count:6,  forks_count:0, pushed_at:ago(19), html_url:'#', topics:['jewelry','pwa'] },
+  { name:'atlas-site',       description:'This website. Hand-written HTML, no framework.',            language:'HTML', stargazers_count:3,  forks_count:0, pushed_at:ago(2),  html_url:'#', topics:['website'] },
+  { name:'tinyfetch',        description:'A weekend rewrite of a system-info printer, in Rust.',      language:'Rust', stargazers_count:41, forks_count:5, pushed_at:ago(75), html_url:'#', topics:['cli','rust'] },
+  { name:'palette-pull',     description:'Pulls a colour palette out of any photo.',                  language:'Python', stargazers_count:22, forks_count:3, pushed_at:ago(210),html_url:'#', topics:['images'] },
+  { name:'dotfiles',         description:'Shell, editor and terminal config.',                        language:'Shell', stargazers_count:2,  forks_count:0, pushed_at:ago(33), html_url:'#', topics:[] },
+  { name:'old-scraper',      description:'Price tracker for a shop that no longer exists.',           language:'JavaScript', stargazers_count:1,  forks_count:0, pushed_at:ago(900),html_url:'#', topics:[], archived:true }
+];
+/* shaped like Hugging Face's own list responses */
+const SAMPLE_HF = {
+  models:   [ { id:'your-hf/film-grain-net',  likes:18, downloads:1240, lastModified:ago(11),  tags:['image-to-image','pytorch','safetensors','license:mit'] },
+              { id:'your-hf/palette-tagger', likes:4,  downloads:210,  lastModified:ago(150), tags:['image-classification','onnx'] } ],
+  datasets: [ { id:'your-hf/bench-stones',    likes:7,  downloads:96,   lastModified:ago(40),  tags:['jewelry','task_categories:image-classification','size_categories:n<1K'] } ],
+  spaces:   [ { id:'your-hf/stone-id',        likes:12, sdk:'gradio',   lastModified:ago(4),   tags:['gradio','region:us'] } ]
+};
+
+const PALETTE = [
+  { wash:'#FBE0EA', accent:'#C72A5A', orb:'#F04E7E' },   // 0 pink
+  { wash:'#E3EBFB', accent:'#2457D6', orb:'#2F6BFF' },   // 1 blue
+  { wash:'#FBF1D3', accent:'#8A5F0F', orb:'#F2B416' },   // 2 gold
+  { wash:'#E6F1F4', accent:'#14707F', orb:'#1E9AAF' },   // 3 cyan
+  { wash:'#ECE7FD', accent:'#5B3FD0', orb:'#7B5CF2' },   // 4 purple
+  { wash:'#E1F1E6', accent:'#1F6E41', orb:'#3E9B6B' }    // 5 green
+];
+const NONE = { wash:'#F1EEE6', accent:'#565E7A', orb:'#8D93AC' };
+const HF_TONE = PALETTE[2];                                 // everything from Hugging Face is yellow, like its logo
+const LANG_ORDER = [1, 4, 5, 0, 3];                         // GitHub languages use the other five colours
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const daysSince = iso => iso ? Math.max(0, Math.floor((Date.now() - new Date(iso)) / day)) : Infinity;
+function since(iso){
+  const d = daysSince(iso);
+  if (d === Infinity) return 'date unknown';
+  if (d < 1) return 'today';
+  if (d < 31) return d + (d === 1 ? ' day ago' : ' days ago');
+  if (d < 365) { const m = Math.round(d / 30); return m + (m === 1 ? ' month ago' : ' months ago'); }
+  const y = Math.round(d / 365); return y + (y === 1 ? ' year ago' : ' years ago');
+}
+const fmtN = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
+const status = r => r.archived ? 'Retired' : (daysSince(r.pushed) <= ACTIVE_DAYS ? 'Active' : 'Resting');
+
+/* ---------- one shape for every project, whichever site it came from ---------- */
+const isHidden = name => {
+  const n = String(name).toLowerCase(), u = (GITHUB_USER || 'your-github').toLowerCase();
+  return n === u || n === `${u}.github.io` || EXCLUDE.some(x => String(x).toLowerCase() === n);
+};
+function fromGitHub(r){
+  return { site:'GitHub', name:r.name, url:r.html_url, kind:r.language || 'Other', desc:r.description,
+    score:r.stargazers_count || 0, stats:[`★ ${r.stargazers_count || 0}`, `forks ${r.forks_count || 0}`],
+    pushed:r.pushed_at, chips:[...(r.fork ? ['fork'] : []), ...(r.topics || [])].slice(0, 3), archived:!!r.archived, cta:'Open the repo' };
+}
+const HF_KINDS = { models:{ kind:'Model', path:'' }, datasets:{ kind:'Dataset', path:'datasets/' }, spaces:{ kind:'Space', path:'spaces/' } };
+const HF_NOISE = new Set(['endpoints_compatible', 'autotrain_compatible']);
+function fromHF(type, r, sample){
+  const k = HF_KINDS[type], plain = (r.tags || []).filter(t => !t.includes(':') && !HF_NOISE.has(t));
+  return { site:'Hugging Face', name:(r.id || '').split('/').slice(1).join('/') || r.id,
+    url:sample ? '#' : `https://huggingface.co/${k.path}${r.id}`, kind:k.kind,
+    desc:type === 'spaces' ? `A ${r.sdk || 'web'} Space.` : `A ${k.kind.toLowerCase()} on Hugging Face.`,   // the list API returns no descriptions
+    score:r.likes || 0, stats:[`♥ ${r.likes || 0}`, ...(type === 'spaces' ? [] : [`↓ ${fmtN(r.downloads || 0)}`])],
+    pushed:r.lastModified || r.createdAt, chips:plain.slice(0, 3), archived:false, cta:'Open on Hugging Face' };
+}
+const sampleItems = () => [
+  ...SAMPLE_GH.map(fromGitHub),
+  ...Object.entries(SAMPLE_HF).flatMap(([t, l]) => l.map(r => fromHF(t, r, true)))
+];
+
+async function getJSON(url){ const res = await fetch(url); if (!res.ok) throw new Error(res.status); return res.json(); }
+async function load(){
+  if (!GITHUB_USER && !HF_USER) return { items:sampleItems(), sample:true, failed:[] };
+  const jobs = [];
+  if (GITHUB_USER) jobs.push(['GitHub', getJSON(`https://api.github.com/users/${encodeURIComponent(GITHUB_USER)}/repos?per_page=100&sort=pushed`).then(l => l.filter(r => !isHidden(r.name)).map(fromGitHub))]);
+  if (HF_USER) Object.keys(HF_KINDS).forEach(t => jobs.push(['Hugging Face', getJSON(`https://huggingface.co/api/${t}?author=${encodeURIComponent(HF_USER)}&sort=lastModified&direction=-1&limit=100`).then(l => l.filter(r => !r.private && !EXCLUDE.some(x => String(x).toLowerCase() === (r.id || '').split('/').slice(1).join('/').toLowerCase())).map(r => fromHF(t, r)))]));
+  const settled = await Promise.allSettled(jobs.map(j => j[1]));
+  const items = [], failed = [];
+  settled.forEach((r, i) => { if (r.status === 'fulfilled') items.push(...r.value); else if (!failed.includes(jobs[i][0])) failed.push(jobs[i][0]); });
+  const wanted = (GITHUB_USER ? 1 : 0) + (HF_USER ? 1 : 0);
+  if (!items.length && failed.length >= wanted) return { items:sampleItems(), sample:'failed', failed };
+  return { items, sample:false, failed };
+}
+
+let repos = [], siteKey = 'All', kindKey = 'All', sortKey = 'recent', colorOf = {}, state = {};
+
+function orbSVG(c, moon){
+  return `<svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="60" rx="52" ry="13" transform="rotate(-16 60 60)" fill="none" stroke="${c.orb}" stroke-width="5" opacity=".45"/><circle cx="60" cy="60" r="32" fill="${c.orb}" stroke="#212A45" stroke-width="2.5"/><circle cx="49" cy="48" r="10" fill="#F7F1E3" opacity=".4"/><path d="M8 60 A52 13 0 0 1 112 60" transform="rotate(-16 60 60)" fill="none" stroke="${c.orb}" stroke-width="3" opacity=".9"/>${moon ? '<circle cx="98" cy="26" r="9" fill="#F7F1E3" stroke="#212A45" stroke-width="2.5"/><circle cx="95" cy="23" r="2.6" fill="#212A45" opacity=".18"/>' : ''}</svg>`;
+}
+
+/* Hugging Face first, then pinned GitHub repos (in profile order), then everything else in the chosen order */
+function order(list){
+  const by = sortKey === 'score'
+    ? (a, b) => b.score - a.score || new Date(b.pushed || 0) - new Date(a.pushed || 0)
+    : (a, b) => new Date(b.pushed || 0) - new Date(a.pushed || 0);
+  const tier = r => r.site === 'Hugging Face' ? 0 : r.pin >= 0 ? 1 : 2;
+  return list.slice().sort((a, b) => tier(a) - tier(b) || (tier(a) === 1 ? a.pin - b.pin : by(a, b)));
+}
+
+/* pinned.json is written by the GitHub Action in .github/workflows/pinned.yml from your real profile pins */
+async function loadPins(){
+  try { const l = await getJSON('pinned.json?' + Date.now()); if (Array.isArray(l) && l.length) return { list:l, source:'profile' }; } catch (e) {}
+  return { list:PINNED, source:'manual' };
+}
+
+function render(){
+  const list = order(repos.filter(r => (siteKey === 'All' || r.site === siteKey) && (kindKey === 'All' || r.kind === kindKey)));
+  const pinnedShown = list.filter(r => r.pin >= 0).length;
+  document.getElementById('count').textContent = `${list.length} of ${repos.length} missions shown${pinnedShown ? ` · ${pinnedShown} pinned` : ''}`;
+  document.getElementById('grid').innerHTML = list.length ? list.map(r => {
+    const c = r.site === 'Hugging Face' ? HF_TONE : (colorOf[r.kind] || NONE), st = status(r);
+    const chips = r.chips.map(t => `<span>${esc(t)}</span>`).join('');
+    return `<article class="card" style="--wash:${c.wash};--accent:${c.accent}">${r.pin >= 0 ? '<span class="pinbadge">Pinned</span>' : ''}
+      <div class="top">
+        <p class="tag"><b>${esc(r.kind)}</b> · ${esc(r.site)} · ${st}</p>
+        <div class="orb">${orbSVG(c, r.site === 'Hugging Face')}</div>
+      </div>
+      <h3>${esc(r.name)}</h3>
+      <p class="desc">${esc(r.desc || 'No description yet.')}</p>
+      ${chips ? `<div class="chips">${chips}</div>` : ''}
+      <div class="meta">
+        <span>${r.stats.join(' · ')} · ${since(r.pushed)}</span>
+        <a class="open" href="${esc(r.url)}" ${r.url === '#' ? '' : 'target="_blank" rel="noopener"'} aria-label="${esc(r.cta)}: ${esc(r.name)}">${esc(r.cta)} &rarr;</a>
+      </div>
+    </article>`;
+  }).join('') : `<p class="empty">${repos.length ? 'Nothing matches those filters yet.' : 'No public projects found for these usernames yet.'}</p>`;
+}
+
+function pills(box, label, keys, current, attr){
+  box.innerHTML = [label, ...keys].map(k => { const v = k === label ? 'All' : k; return `<button class="pill" data-${attr}="${esc(v)}" aria-pressed="${v === current}">${esc(k)}</button>`; }).join('');
+}
+function buildKinds(){
+  const pool = repos.filter(r => siteKey === 'All' || r.site === siteKey);
+  const kinds = [...new Set(pool.map(r => r.kind))].sort();
+  if (kindKey !== 'All' && !kinds.includes(kindKey)) kindKey = 'All';
+  pills(document.getElementById('filters'), 'All types', kinds, kindKey, 'kind');
+}
+function buildFilters(){
+  const sites = [...new Set(repos.map(r => r.site))];
+  const langs = [...new Set(repos.filter(r => r.site !== 'Hugging Face').map(r => r.kind))].sort();
+  let i = 0;
+  langs.forEach(k => colorOf[k] = k === 'Other' ? NONE : PALETTE[LANG_ORDER[i++ % LANG_ORDER.length]]);
+  const sbox = document.getElementById('sites');
+  if (sites.length > 1) pills(sbox, 'All sites', sites, siteKey, 'site'); else sbox.innerHTML = '';
+  buildKinds();
+  sbox.addEventListener('click', e => {
+    const b = e.target.closest('[data-site]'); if (!b) return;
+    siteKey = b.dataset.site; sbox.querySelectorAll('.pill').forEach(p => p.setAttribute('aria-pressed', p === b));
+    buildKinds(); render();
+  });
+  document.getElementById('filters').addEventListener('click', e => {
+    const b = e.target.closest('[data-kind]'); if (!b) return;
+    kindKey = b.dataset.kind; document.querySelectorAll('#filters .pill').forEach(p => p.setAttribute('aria-pressed', p === b));
+    render();
+  });
+}
+
+/* the usernames, as links, so a visitor can go and find the rest */
+function buildAccounts(){
+  const list = [];
+  const demo = state.sample === true;
+  if (GITHUB_USER || demo) list.push({ site:'GitHub', user:GITHUB_USER || 'your-github', url:GITHUB_USER ? `https://github.com/${GITHUB_USER}` : '#' });
+  if (HF_USER || demo) list.push({ site:'Hugging Face', user:HF_USER || 'your-hf', url:HF_USER ? `https://huggingface.co/${HF_USER}` : '#' });
+  OTHER_ACCOUNTS.forEach(a => list.push(a));
+  document.getElementById('accts').innerHTML = list.map(a => `<a class="acct" href="${esc(a.url || '#')}" ${a.url && a.url !== '#' ? 'target="_blank" rel="noopener"' : ''}><span>${esc(a.site)}</span><b>@${esc(a.user)}</b></a>`).join('');
+}
+
+function buildConsole(){
+  const n = repos.length, st = { Active:0, Resting:0, Retired:0 };
+  repos.forEach(r => st[status(r)]++);
+  const gh = repos.filter(r => r.site === 'GitHub').length, hf = repos.filter(r => r.site === 'Hugging Face').length;
+  const latest = repos.reduce((a, r) => !a || new Date(r.pushed || 0) > new Date(a.pushed || 0) ? r : a, null);
+  const lines = [];
+  if (state.sample === true) lines.push({ h:`<i>&gt;</i> contacting sample data` });
+  else {
+    if (GITHUB_USER) lines.push({ h:`<i>&gt;</i> contacting github.com/${esc(GITHUB_USER)}` });
+    if (HF_USER) lines.push({ h:`<i>&gt;</i> contacting huggingface.co/${esc(HF_USER)}` });
+  }
+  lines.push({ h:`<i>&gt;</i> <b>${n}</b> missions found` });
+  if (gh && hf) lines.push({ h:`<i>&gt;</i> <b>${gh}</b> on github · <b>${hf}</b> on hugging face` });
+  lines.push({ h:`<i>&gt;</i> <b>${st.Active}</b> active · <b>${st.Resting}</b> resting · <b>${st.Retired}</b> retired` });
+  if (latest) lines.push({ h:`<i>&gt;</i> last signal: <b>${esc(latest.name)}</b>, ${since(latest.pushed)}` });
+  if (state.missingPins && state.missingPins.length) lines.push({ h:`Pinned but not found: ${state.missingPins.map(esc).join(', ')}.`, note:true });
+  if (state.sample === true) lines.push({ h:'Preview only. Set GITHUB_USER and HF_USER in the script to load your projects.', note:true });
+  if (state.sample === 'failed') lines.push({ h:`Could not reach ${state.failed.map(esc).join(' or ')}, so these are sample missions.`, note:true });
+  else if (state.failed.length) lines.push({ h:`Could not reach ${state.failed.map(esc).join(' or ')}. Showing the rest.`, note:true });
+  lines.push({ h:`<i>&gt;</i> ready<span class="cur" aria-hidden="true"></span>` });
+
+  const box = document.getElementById('console');
+  box.innerHTML = lines.map(l => `<p class="ln${l.note ? ' note' : ''}">${l.h}</p>`).join('');
+  // one orchestrated moment: print the lines in sequence, once
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const els = [...box.children]; els.forEach(el => el.classList.add('hidden'));
+    els.forEach((el, i) => setTimeout(() => el.classList.remove('hidden'), 350 + i * 420));
+  }
+}
+
+(async function init(){
+  state = await load(); repos = state.items;
+  const got = state.sample === true ? { list:SAMPLE_PINNED } : await loadPins();
+  const pins = got.list.map(x => String(x).toLowerCase());
+  repos.forEach(r => r.pin = r.site === 'GitHub' ? pins.indexOf(r.name.toLowerCase()) : -1);
+  state.missingPins = state.sample === false ? got.list.filter(x => !repos.some(r => r.site === 'GitHub' && r.name.toLowerCase() === String(x).toLowerCase())) : [];
+  buildFilters();
+  buildAccounts();
+  buildConsole();
+  const names = order(repos).map(r => `<span>${esc(r.name)}</span><span>&#10035;</span>`).join('');
+  document.getElementById('ticker').innerHTML = names + names;
+  document.querySelectorAll('[data-sort]').forEach(b => b.addEventListener('click', () => {
+    sortKey = b.dataset.sort;
+    document.querySelectorAll('[data-sort]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    render();
+  }));
+  render();
+})();
+</script>
+</body>
+</html>

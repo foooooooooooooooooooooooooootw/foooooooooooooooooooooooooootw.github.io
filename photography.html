@@ -1,2601 +1,408 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang='en'>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Photography Portfolio</title>
-  <style>
-    :root {
-      --primary-color: #2c3e50;
-      --accent-color: #3498db;
-      --text-color: #333;
-      --light-text: #f8f9fa;
-      --background-color: #f8f9fa;
-      --card-color: #ffffff;
-      --transition-speed: 0.3s;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.6;
-    }
-
-    /* FIXED: Modal Structure & Layout with consistent z-index hierarchy */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.9);
-      overflow: auto;
-    }
-
-    .modal-container {
-      position: relative;
-      width: 90%;
-      max-width: 1200px;
-      margin: 40px auto;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 1;
-      /* Relative z-index within modal */
-    }
-
-    .modal-image-container {
-      width: 100%;
-      background-color: #000;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .modal-image {
-      width: 100%;
-      display: block;
-      max-height: 70vh;
-      object-fit: contain;
-      transition: transform 0.3s ease;
-      transform-origin: center center;
-      max-width: none;
-      user-select: none;
-    }
-
-    .modal-image.loading {
-      opacity: 0.3;
-    }
-
-    /* FIXED: Close button positioning - moved to top-left to avoid overlap */
-    .modal-close {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      /* CHANGED: Moved to left side */
-      width: 40px;
-      height: 40px;
-      background-color: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 100;
-      /* High z-index within modal context */
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      font-size: 18px;
-    }
-
-    .modal-close:hover {
-      background-color: var(--accent-color);
-      transform: scale(1.1);
-    }
-
-    /* FIXED: Zoom Controls - repositioned and improved */
-    .zoom-controls {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      /* Now has clear space since close moved to left */
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 90;
-      /* Below close button but above other elements */
-    }
-
-    .zoom-btn {
-      width: 40px;
-      height: 40px;
-      background: rgba(0, 0, 0, 0.8);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .zoom-btn:hover {
-      background: rgba(0, 0, 0, 0.9);
-      transform: scale(1.1);
-    }
-
-    .zoom-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* FIXED: Navigation with better positioning */
-    .modal-navigation {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      pointer-events: none;
-      z-index: 80;
-    }
-
-    .modal-nav-btn {
-      background-color: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 0 20px;
-      pointer-events: auto;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .modal-nav-btn:hover {
-      background-color: var(--accent-color);
-      transform: scale(1.1);
-    }
-
-    /* Loading indicator */
-    .modal-loader {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 24px;
-      z-index: 70;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-details {
-      padding: 20px;
-      color: var(--text-color);
-      z-index: 1;
-    }
-
-    .modal-title {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-      color: var(--primary-color);
-    }
-
-    .modal-location {
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-      color: var(--accent-color);
-      display: flex;
-      align-items: center;
-    }
-
-    .modal-location i {
-      margin-right: 6px;
-    }
-
-    .modal-description {
-      line-height: 1.6;
-      margin-bottom: 20px;
-      font-size: 1.1rem;
-    }
-
-    .modal-exif {
-      background-color: #f4f4f4;
-      padding: 15px;
-      border-radius: 6px;
-      margin-top: 15px;
-    }
-
-    .modal-exif h4 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: var(--primary-color);
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-
-    .exif-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 10px;
-    }
-
-    .exif-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .exif-label {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 2px;
-    }
-
-    .exif-value {
-      font-weight: 500;
-      font-size: 1rem;
-    }
-
-    /* Zoom functionality styles */
-    .modal-image[style*="scale"] {
-      cursor: grab;
-    }
-
-    .modal-image[style*="scale"]:active {
-      cursor: grabbing;
-    }
-
-    .modal.zoom-active {
-      user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-    }
-
-    /* FIXED: Consolidated mobile styles */
-    @media (orientation: portrait) {
-      .modal-container {
-        width: 95%;
-        margin: 10px auto;
-      }
-
-      .modal-title {
-        font-size: 1.5rem;
-      }
-
-      .modal-image {
-        max-height: 50vh;
-      }
-
-      /* FIXED: Mobile button positioning - no more overlap */
-      .modal-close {
-        top: 10px;
-        left: 10px;
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-      }
-
-      .zoom-controls {
-        top: 10px;
-        right: 10px;
-        gap: 6px;
-      }
-
-      .zoom-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
-      }
-
-      .modal-nav-btn {
-        width: 44px;
-        height: 44px;
-        margin: 0 15px;
-      }
-
-      .exif-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .modal-details {
-        padding: 15px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .modal-container {
-        width: 98%;
-        margin: 5px auto;
-      }
-
-      .modal-close {
-        top: 8px;
-        left: 8px;
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-      }
-
-      .zoom-controls {
-        top: 8px;
-        right: 8px;
-      }
-
-      .zoom-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 12px;
-      }
-
-      .modal-nav-btn {
-        width: 40px;
-        height: 40px;
-        margin: 0 10px;
-      }
-    }
-
-    /* Rest of your existing styles remain the same */
-    header {
-      position: relative;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--light-text);
-      background-color: #000;
-      overflow: hidden;
-    }
-
-    .header-content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding: 2rem;
-      max-width: 800px;
-    }
-
-    .header-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.7;
-      background-size: cover;
-      background-position: center;
-      animation: zoomEffect 6s infinite alternate;
-      transition: opacity 1.2s ease-in-out;
-    }
-
-    @keyframes zoomEffect {
-      from {
-        transform: scale(1);
-      }
-
-      to {
-        transform: scale(1.1);
-      }
-    }
-
-    .header-text h1 {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      font-weight: 300;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-    }
-
-    .header-text h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      font-weight: 300;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-    }
-
-    .tagline {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-    }
-
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 100;
-      display: flex;
-      justify-content: center;
-      transition: all var(--transition-speed);
-    }
-
-    .navbar.scrolled {
-      background-color: rgba(0, 0, 0, 0.95);
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      width: 100%;
-      max-width: 1400px;
-    }
-
-    .logo {
-      color: var(--light-text);
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .menu-list {
-      display: flex;
-      list-style: none;
-    }
-
-    .menu-list li {
-      position: relative;
-      margin-left: 1.5rem;
-    }
-
-    .menu-list a {
-      color: var(--light-text);
-      text-decoration: none;
-      padding: 0.5rem;
-      transition: color var(--transition-speed);
-      font-weight: 300;
-      letter-spacing: 1px;
-    }
-
-    .menu-list a:hover {
-      color: var(--accent-color);
-    }
-
-    .dropdown-indicator {
-      margin-left: 0.2rem;
-      font-size: 0.8rem;
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: rgba(0, 0, 0, 0.9);
-      min-width: 150px;
-      list-style: none;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px);
-      transition: all var(--transition-speed);
-      border-radius: 4px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .has-dropdown:hover .dropdown-menu {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .dropdown-menu li {
-      margin: 0;
-    }
-
-    .dropdown-menu a {
-      display: block;
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .dropdown-menu a:hover {
-      background-color: rgba(52, 152, 219, 0.1);
-    }
-
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      color: var(--light-text);
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .menu-overlay {
-      display: none;
-    }
-
-    .gallery-container {
-      max-width: 1400px;
-      margin: 4rem auto;
-      padding: 0 1.5rem;
-    }
-
-    .section-title {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      font-weight: 300;
-      color: var(--primary-color);
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .gallery-item {
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      aspect-ratio: 1 / 1;
-    }
-
-    .gallery-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    }
-
-    .gallery-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .gallery-item:hover img {
-      transform: scale(1.05);
-    }
-
-    .gallery-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-      color: white;
-      padding: 1rem;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-    }
-
-    .gallery-item:hover .gallery-overlay {
-      transform: translateY(0);
-    }
-
-    .gallery-title {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .gallery-description {
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
-
-    .categories {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-
-    .category-btn {
-      background: none;
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
-      padding: 0.5rem 1rem;
-      margin: 0.5rem;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all var(--transition-speed);
-      font-size: 0.9rem;
-    }
-
-    .category-btn:hover,
-    .category-btn.active {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    .about-section {
-      max-width: 1200px;
-      margin: 4rem auto;
-      padding: 4rem 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      background-color: var(--card-color);
-      border-radius: 10px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .about-image {
-      flex: 1;
-      min-width: 300px;
-      padding: 1rem;
-    }
-
-    .about-image img {
-      width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .about-content {
-      flex: 2;
-      min-width: 300px;
-      padding: 2rem;
-    }
-
-    .about-content h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--primary-color);
-      font-weight: 300;
-    }
-
-    .about-content p {
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
-      line-height: 1.8;
-    }
-
-    footer {
-      background-color: var(--primary-color);
-      color: var(--light-text);
-      text-align: center;
-      padding: 2rem;
-      margin-top: 4rem;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .footer-section {
-      flex: 1;
-      min-width: 250px;
-      margin-bottom: 2rem;
-      padding: 0 1rem;
-      text-align: left;
-    }
-
-    .footer-section h3 {
-      margin-bottom: 1rem;
-      font-weight: 300;
-      font-size: 1.3rem;
-    }
-
-    .footer-section p {
-      margin-bottom: 0.5rem;
-      opacity: 0.8;
-      font-size: 0.9rem;
-    }
-
-    .footer-section ul {
-      list-style: none;
-    }
-
-    .footer-section ul li {
-      margin-bottom: 0.5rem;
-    }
-
-    .footer-section a {
-      color: var(--light-text);
-      text-decoration: none;
-      opacity: 0.8;
-      transition: opacity var(--transition-speed);
-    }
-
-    .footer-section a:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    .social-icons {
-      display: flex;
-      margin-top: 1rem;
-    }
-
-    .social-icons a {
-      display: inline-block;
-      margin-right: 1rem;
-      font-size: 1.5rem;
-    }
-
-    .copyright {
-      width: 100%;
-      text-align: center;
-      padding-top: 2rem;
-      margin-top: 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 0.9rem;
-      opacity: 0.7;
-    }
-
-    /* Additional mobile responsive improvements */
-    @media (max-width: 992px) {
-      .header-text h1 {
-        font-size: 3rem;
-      }
-
-      .header-text h2 {
-        font-size: 1.8rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: block;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        z-index: 102;
-      }
-
-      nav {
-        position: fixed;
-        top: 0;
-        right: 0;
-        height: 100vh;
-        width: 0;
-        overflow: hidden;
-        background-color: rgba(0, 0, 0, 0.95);
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        padding: 5rem 0 2rem;
-        transition: width var(--transition-speed);
-        opacity: 0;
-      }
-
-      nav.active {
-        width: 70%;
-        opacity: 1;
-      }
-
-      .menu-list {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .menu-list li {
-        margin: 0;
-        width: 100%;
-      }
-
-      .menu-list a {
-        padding: 1rem 2rem;
-        display: block;
-        width: 100%;
-      }
-
-      .dropdown-menu {
-        position: static;
-        background-color: rgba(0, 0, 0, 0.3);
-        width: 100%;
-        max-height: 0;
-        overflow: hidden;
-        visibility: visible;
-        opacity: 1;
-        transform: none;
-        transition: max-height var(--transition-speed);
-      }
-
-      .has-dropdown.active .dropdown-menu {
-        max-height: 500px;
-      }
-
-      .dropdown-indicator {
-        float: right;
-      }
-
-      .menu-overlay {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        z-index: 101;
-        visibility: hidden;
-        opacity: 0;
-        transition: opacity var(--transition-speed);
-      }
-
-      nav.active+.menu-overlay {
-        visibility: visible;
-        opacity: 1;
-      }
-
-      .header-text h1 {
-        font-size: 2.5rem;
-      }
-
-      .header-text h2 {
-        font-size: 1.5rem;
-      }
-
-      .tagline {
-        font-size: 1rem;
-      }
-
-      .about-image,
-      .about-content {
-        flex: 100%;
-      }
-
-      .gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      }
-    }
-
-    @media (max-width: 480px) {
-      .header-text h1 {
-        font-size: 2rem;
-      }
-
-      .header-text h2 {
-        font-size: 1.2rem;
-      }
-
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Photography — Your Name · Darkroom</title>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
+<style>
+:root{
+--cream:#F7F1E3; --paper:#FBF7EC;
+--navy:#1B2340; --navy-deep:#141B2E; --navy-darker:#0C1020;
+--cyan:#1E9AAF; --cyan-bright:#6FD6DF;
+--pink:#F04E7E; --blue:#2F6BFF;
+--gold:#C08B2B; --gold-bright:#F2B416;
+--red:#E03A4E;
+--ink-soft:rgba(247,241,227,.62);
+--line:rgba(247,241,227,.14);
+--mono:'Space Mono',monospace; --serif:'Cormorant Garamond',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+background-color:var(--navy-darker);
+background-image:radial-gradient(130% 90% at 50% -10%, #17203A 0%, var(--navy-deep) 46%, var(--navy-darker) 100%),radial-gradient(rgba(247,241,227,.03) 1px, transparent 1px),radial-gradient(rgba(30,154,175,.04) 1px, transparent 1px);
+background-size:auto,24px 24px,56px 56px; background-position:0 0,0 0,14px 28px; background-repeat:no-repeat,repeat,repeat;
+color:var(--cream); font-family:var(--serif); line-height:1.55; font-size:17px; min-height:100vh; overflow-x:hidden;
+-webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--pink); color:var(--navy-deep)}
+a{color:inherit; text-decoration:none}
+:focus-visible{outline:3px solid var(--cyan-bright); outline-offset:3px; border-radius:999px}
+.mono{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase}
+.wrap{width:min(1100px, calc(100% - 3rem)); margin:0 auto}
+.rule{border:0; border-top:1px solid var(--line); margin:0 0 2.4rem}
+
+/* topbar */
+.topbar{position:sticky; top:0; z-index:30; background:rgba(12,16,32,.82); backdrop-filter:blur(8px); padding:.85rem 0; border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap}
+.brand{font-size:1.1rem; font-weight:700; letter-spacing:.02em; display:flex; align-items:center; gap:.45rem; font-family:var(--serif)}
+.brand .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--navy)}
+.brand span{color:var(--pink); font-family:var(--mono); font-size:.7rem; letter-spacing:.14em}
+nav{display:flex; gap:.6rem; flex-wrap:wrap}
+nav a{font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--cream); background:var(--navy); border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; transition:background-color .2s, color .2s, border-color .2s, transform .2s}
+nav a:hover{background:var(--pink); color:var(--navy-deep); border-color:var(--pink); transform:translateY(-1px)}
+nav a.on{background:var(--gold-bright); color:var(--navy-deep); border-color:var(--gold-bright)}
+
+/* hero */
+.hero{position:relative; min-height:78vh; display:grid; place-items:center; overflow:hidden; padding:3rem 0}
+.hero .hero-bg{position:absolute; inset:0; background:linear-gradient(135deg,#14203A 0%, var(--navy-deep) 45%, #1B1226 100%)}
+.hero img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.3; filter:saturate(.8) contrast(1.1)}
+.hero .hero-scan{position:absolute; inset:0; background:repeating-linear-gradient(0deg, rgba(247,241,227,.045) 0 1px, transparent 1px 3px); pointer-events:none}
+.hero .ring{position:absolute; width:min(72vw,640px); height:min(72vw,640px); border:1px dashed rgba(111,214,223,.35); border-radius:50%; animation:spin 90s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rec{position:absolute; top:22px; left:28px; font-family:var(--mono); font-size:.74rem; letter-spacing:.16em; color:var(--gold-bright); display:flex; align-items:center; gap:.55rem}
+.rec .dot{width:9px; height:9px; border-radius:50%; background:var(--red); animation:blink 1.6s steps(2) infinite}
+@keyframes blink{0%,49%{opacity:1} 50%,100%{opacity:.18}}
+.hero .content{position:relative; text-align:center; max-width:900px; padding:2rem}
+.hero .overline{display:flex; align-items:center; gap:.55rem; color:var(--cyan-bright); margin-bottom:1.2rem; justify-content:center}
+.hero .overline .dot{width:10px; height:10px; border-radius:50%; background:var(--gold-bright); border:1.5px solid var(--navy)}
+.hero h1{font-size:clamp(3rem,9vw,6.6rem); font-weight:500; line-height:1.02; letter-spacing:-.01em; margin-bottom:.7rem; text-shadow:0 0 24px rgba(240,78,126,.22), 0 0 64px rgba(240,78,126,.1)}
+.hero h1 .pink{color:var(--pink)}
+.hero p{font-family:var(--serif); font-style:italic; color:var(--ink-soft); font-size:clamp(1rem,2.4vw,1.3rem); max-width:52ch; margin:0 auto}
+
+/* section head */
+.section-head{display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem}
+.section-head .no{color:var(--cyan-bright); font-family:var(--mono); font-size:.72rem; letter-spacing:.08em}
+.section-head .no::before{content:'●'; color:var(--pink); margin-right:.3em}
+h2{font-size:2.4rem; font-weight:500}
+
+/* folder tabs */
+.folder-tabs{display:flex; overflow-x:auto; gap:0; margin-bottom:.9rem; border-bottom:1px solid var(--line)}
+.tab{position:relative; padding:.72rem 1.15rem .82rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); background:transparent; border:none; border-right:1px solid var(--line); cursor:pointer; white-space:nowrap; transition:background-color .2s, color .2s, transform .2s}
+.tab .cnt{opacity:.5; margin-left:.45rem}
+.tab:hover{color:var(--cream); background:rgba(30,154,175,.06)}
+.tab.active{color:var(--cream); background:linear-gradient(180deg,var(--navy-deep),var(--navy)); transform:translateY(-1px); box-shadow:inset 0 2px 0 var(--cyan-bright)}
+.tab.active::after{content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--cyan-bright)}
+.folder-bar{display:flex; align-items:center; gap:.9rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-soft); border:1px solid var(--line); padding:.55rem 1rem; background:rgba(0,0,0,.28); margin-bottom:1.8rem}
+.folder-bar .fb-name{color:var(--cyan-bright)}
+.folder-bar .sep{opacity:.4}
+
+/* gallery */
+.gallery{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:1.6rem 1.4rem; padding-bottom:2.4rem}
+.gallery-item{margin:0}
+.frame{position:relative; aspect-ratio:4/5; background:hsl(var(--h), 28%, 15%); border:1px solid var(--line); overflow:hidden; transition:box-shadow .25s, transform .25s}
+.gallery-item:hover .frame{box-shadow:0 0 0 1px rgba(245,166,35,.35), 0 0 26px rgba(245,166,35,.14); transform:translateY(-2px)}
+.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; transition:filter .3s}
+.gallery-item:hover .frame img{filter:brightness(1.06) contrast(1.03)}
+.viewfinder{position:absolute; inset:0; pointer-events:none; background:linear-gradient(var(--gold-bright),var(--gold-bright)) left top / 30px 2px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) left top / 2px 30px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) right top / 30px 2px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) right top / 2px 30px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) left bottom / 30px 2px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) left bottom / 2px 30px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) right bottom / 30px 2px no-repeat, linear-gradient(var(--gold-bright),var(--gold-bright)) right bottom / 2px 30px no-repeat}
+.cat{position:absolute; top:8px; right:9px; font-family:var(--mono); font-size:.58rem; letter-spacing:.16em; color:var(--gold-bright); background:rgba(12,16,32,.66); padding:.22rem .42rem; border:1px solid rgba(245,166,35,.4)}
+.label{margin-top:.55rem; display:flex; align-items:baseline; gap:.55rem; font-family:var(--mono); font-size:.74rem; letter-spacing:.05em}
+.label .ph{color:var(--gold-bright); flex:none}
+.label .title{color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+/* about / darkroom */
+.about{padding:3.4rem 0 2.6rem; display:grid; grid-template-columns:1.1fr .9fr; gap:2.8rem; align-items:center}
+.about .copy h3{font-size:1.7rem; margin-bottom:.9rem; font-weight:500}
+.about .copy h3 .no{color:var(--cyan-bright); font-family:var(--mono); font-size:.82rem; letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:.5rem}
+.about .copy p{font-size:1.1rem; color:var(--ink-soft); max-width:60ch; line-height:1.7; margin-bottom:1.3rem}
+.safelight{position:relative; aspect-ratio:4/3; background:radial-gradient(60% 55% at 50% 45%, rgba(224,58,78,.2), transparent 70%), var(--navy); border:1px solid var(--line); border-radius:1.4rem; display:grid; place-items:center; overflow:hidden}
+.safelight::after{content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg, rgba(224,58,78,.05) 0 1px, transparent 1px 3px); pointer-events:none}
+.safelight svg{width:70%; height:auto; filter:drop-shadow(0 0 18px rgba(224,58,78,.5))}
+.safelight .saf-label{position:absolute; bottom:12px; left:16px; font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; color:rgba(247,241,227,.5)}
+
+/* footer */
+footer{padding:2.6rem 0 3rem; border-top:1px solid var(--line); margin-top:2rem}
+.foot{display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; font-family:var(--mono); font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft)}
+.foot .fb{color:var(--cream); font-size:.95rem}
+.foot nav{display:flex; gap:.9rem; flex-wrap:wrap}
+.foot a:hover{color:var(--cyan-bright)}
+.top-up{border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; color:var(--cream); transition:border-color .2s, color .2s}
+.top-up:hover{border-color:var(--gold-bright); color:var(--gold-bright)}
+
+/* lightbox */
+.lightbox{position:fixed; inset:0; z-index:9999; background:rgba(8,10,18,.97); display:none}
+.lightbox.open{display:block}
+.lb-stage{position:absolute; top:0; left:0; right:0; overflow:auto; display:flex; flex-direction:column; align-items:center; padding:2.6rem 1rem 1rem}
+.lb-img-wrap{position:relative; width:100%; max-width:min(980px,100%); text-align:center}
+.lb-img{max-width:100%; max-height:60vh; object-fit:contain; border:1px solid var(--line); display:block; margin:0 auto; box-shadow:0 0 0 1px rgba(30,154,175,.12), 0 0 40px rgba(0,0,0,.9); transition:transform .15s ease}
+.lb-rec{position:absolute; top:74px; right:20px; color:var(--red); display:flex; align-items:center; gap:.4rem; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; background:rgba(12,16,32,.72); padding:.25rem .5rem; border:1px solid var(--line)}
+.lb-rec i{width:8px; height:8px; border-radius:50%; background:var(--red); animation:blink 1.6s steps(2) infinite}
+.lb-details{position:absolute; left:0; right:0; bottom:0; width:100%; background:linear-gradient(180deg,var(--navy-deep),var(--navy-darker)); border:1px solid var(--line); border-top:2px solid var(--cyan-bright); padding:1.4rem 1.6rem 1.8rem}
+.lb-meta{display:flex; justify-content:space-between; gap:1rem; align-items:center; font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:.9rem}
+.lb-idx{color:var(--gold-bright)}
+.lb-cat{color:var(--cyan-bright); border:1px solid var(--line); padding:.2rem .55rem; border-radius:999px}
+.lb-title{font-family:var(--serif); font-weight:500; font-size:clamp(1.6rem,3vw,2.4rem); line-height:1.08; color:var(--cream); margin-bottom:.5rem}
+.lb-loc{font-family:var(--mono); font-size:.78rem; letter-spacing:.06em; color:var(--cyan-bright); margin-bottom:.5rem}
+.lb-loc .pin{margin-right:.45rem; opacity:.9}
+.lb-desc{color:var(--ink-soft); font-family:var(--serif); font-style:italic; font-size:1.08rem; line-height:1.6; max-width:62ch; margin-bottom:1.2rem; white-space:pre-line}
+.exif-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem .9rem; border-top:1px dashed var(--line); padding-top:1rem}
+.exif-cell{border-left:1px solid var(--line); padding-left:.6rem}
+.exif-cell:nth-child(4n){border-left:none}
+.exif-label{display:block; font-family:var(--mono); font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:.2rem}
+.exif-value{font-family:var(--mono); font-size:.8rem; color:var(--cream)}
+.lb-close{position:absolute; top:16px; right:20px; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:rgba(12,16,32,.7); color:var(--cream); font-size:1.1rem; cursor:pointer; transition:border-color .2s, transform .2s; z-index:5}
+.lb-close:hover{border-color:var(--pink); color:var(--pink); transform:scale(1.08)}
+.lb-nav{position:absolute; top:50%; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; border:1px solid var(--line); background:rgba(12,16,32,.7); color:var(--cream); font-size:1.1rem; cursor:pointer; transition:border-color .2s, transform .2s; z-index:5}
+.lb-nav:hover{border-color:var(--cyan-bright); color:var(--cyan-bright)}
+.lb-nav.prev{left:16px}
+.lb-nav.next{right:16px}
+.lb-zoom{position:absolute; top:16px; left:20px; display:flex; align-items:center; gap:.35rem; font-family:var(--mono); background:rgba(12,16,32,.7); border:1px solid var(--line); border-radius:999px; padding:.22rem .45rem; z-index:5}
+.zoom-btn{width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:var(--cream); font-size:1.15rem; cursor:pointer; line-height:1; transition:color .2s, transform .15s}
+.zoom-btn:hover{color:var(--cyan-bright); transform:scale(1.1)}
+.zoom-pct{font-size:.62rem; letter-spacing:.08em; color:var(--ink-soft); min-width:3.4rem; text-align:center}
+
+@media (max-width:760px){
+.about{grid-template-columns:1fr; gap:2rem}
+.safelight{aspect-ratio:1}
+.hero{min-height:64vh}
+.rec{top:16px; left:16px; font-size:.66rem}
+.lb-nav{width:40px; height:40px; font-size:.95rem}
+.lb-nav.prev{left:8px} .lb-nav.next{right:8px}
+.exif-grid{grid-template-columns:repeat(2,1fr)}
+.lb-details{padding:1.1rem 1rem 1.4rem}
+}
+</style>
 </head>
-
 <body>
-  <header>
-    <div class="header-background" id="backgroundImage1" style="opacity: 1;"></div>
-    <div class="header-background" id="backgroundImage2" style="opacity: 0;"></div>
-    <div class="header-content">
-      <div class="header-text">
-        <h1>Foo T'suen Wei</h1>
-        <h2>Photography</h2>
-        <p class="tagline">Capturing Moments | Creating Art | Sharing Perspectives</p>
-      </div>
-    </div>
-  </header>
 
-  <div class="navbar">
-    <button class="menu-toggle" aria-label="Menu">☰</button>
-    <nav>
-      <div class="menu-overlay"></div>
-      <ul class="menu-list">
-        <li><a href="index.html">Home</a></li>
-        <li class="has-dropdown">
-          <a href="about.html">About <span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="bio.html">Bio</a></li>
-            <li><a href="music.html">Music</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown">
-          <a>Portfolio<span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="jewelry.html">Jewelry</a></li>
-            <li><a href="collections.html">Collections</a></li>
-            <li><a href="photography.html">Photography</a></li>
-            <li><a href="wallpapers.html">Wallpapers</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown">
-          <a>WebTools<span class="dropdown-indicator">▾</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="tools.html">Web Editor</a></li>
-          </ul>
-        </li>
-        <li><a href="projects.html">Projects</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
+<header class='topbar'>
+<div class='wrap'>
+<a class='brand' href='#'>Foo T'suen Wei<span>PH</span></a>
+<nav aria-label='Site'>
+<a href='index.html'>Home</a>
+<a href='photography.html' class='on'>Photography</a>
+<a href='jewelry.html'>Jewelry</a>
+<a href='github.html'>Projects</a>
+<a href='liminality.html'>Liminality</a>
+</nav>
+</div>
+</header>
+
+<section class='hero' aria-label='Photography'>
+<div class='hero-bg'></div>
+<img src='img\6d1a8ec0-60ea-4943-8ef8-0493d144e824.jpg' alt='' />
+<div class='hero-scan'></div>
+<div class='ring'></div>
+<span class='rec'><i class='dot'></i>REC&nbsp;<span id='rec-time'>00:00:00</span></span>
+<div class='content'>
+<div class='overline mono'><span class='dot'></span>The Darkroom</div>
+<h1>Photograph<i style='font-style:italic; font-weight:400; color:var(--cyan-bright)'>s</i></h1>
+<p>A darkroom of still images; architecture, weather, and the small things that held up.</p>
+</div>
+</section>
+
+<div class='wrap'>
+<div class='rule'></div>
+
+<div class='section-head'><span class='no'>03 / Contact Sheet</span></div>
+<div class='folder-tabs' role='tablist' id='tabs'></div>
+<div class='folder-bar' id='folderBar'></div>
+
+<div class='gallery' id='gallery'></div>
+
+<div class='rule'></div>
+<div class='section-head'><span class='no'>04 / Process</span></div>
+<h2 style='margin-bottom:1.6rem'>The Darkroom</h2>
+<section class='about' aria-label='About the practice'>
+<div class='copy'>
+<h3><span class='no'>04 / The Darkroom</span>Where the image is made</h3>
+<p>Welcome to the archive. I'm a photographer chasing the same two subjects the old future always promised us: the ever-shifting sky, and the city — its concrete, its glass, its quiet corners.</p>
+<p>Every frame is a transmission. Photography is how I hold onto moments that slip past in the noise of daily life; once exposed, a moment is fixed forever — you can never develop the same instant twice.</p>
+<p>Mostly skies and old buildings. I'm drawn to structures built for a future we never quite got — the kind being torn down to make room for glass towers that promise the same thing.</p>
+<p>I aim for the uncanny, the almost-fantasy kind of stillness — empty streets, no people — so a place feels like it's waiting for someone who isn't there yet.</p>
+<p>It's also a correction. I was born with Antimetropia and astigmatism in both eyes, so a lens is the only way I've ever been able to see the world the way everyone else does — one frame at a time.</p>
+<p>If any of it makes you look up, look closer, notice the ordinary turning into something worth keeping — then the archive did its job. The real exhibition is happening outside, every single day.</p>
+</div>
+<div class='safelight'>
+<svg viewBox='0 0 200 200' aria-hidden='true'>
+<circle cx='100' cy='100' r='82' fill='none' stroke='#E03A4E' stroke-width='2' stroke-dasharray='4 10' opacity='.55'/>
+<circle cx='100' cy='100' r='60' fill='none' stroke='#F2B416' stroke-width='1.5' opacity='.7'/>
+<path d='M100 40 L100 96' stroke='#F2B416' stroke-width='3' stroke-linecap='round'/>
+<path d='M100 104 L132 128' stroke='#F2B416' stroke-width='3' stroke-linecap='round'/>
+<circle cx='100' cy='100' r='5' fill='#F2B416'/>
+<rect x='28' y='146' width='144' height='22' rx='4' fill='none' stroke='#E03A4E' stroke-width='1.5' opacity='.5'/>
+</svg>
+<span class='saf-label'>SAFELIGHT ON</span>
+</div>
+</section>
+</div>
+
+<footer>
+<div class='wrap foot'>
+<span class='fb'>Your·04</span>
+<nav><a href='index.html'>Index</a><a href='jewelry_old.html'>Jewelry</a><a href='music_old.html'>Music</a></nav>
+<a class='top-up' href='#top'>↑ Back to top</a>
+</div>
+</footer>
+
+<div class='lightbox' id='lightbox' role='dialog' aria-hidden='true'>
+<span class='lb-rec'><i></i>REC</span>
+<button class='lb-close' data-close aria-label='Close'>✕</button>
+<div class='lb-zoom' role='group' aria-label='Zoom'>
+<button class='zoom-btn' data-zoom='-1' aria-label='Zoom out'>−</button>
+<span class='zoom-pct' id='zoom-pct'>100%</span>
+<button class='zoom-btn' data-zoom='1' aria-label='Zoom in'>+</button>
+</div>
+<button class='lb-nav prev' data-nav='-1' aria-label='Previous'>◀</button>
+<button class='lb-nav next' data-nav='1' aria-label='Next'>▶</button>
+<div class='lb-stage'>
+<div class='lb-img-wrap'>
+<img class='lb-img' id='lb-img' alt='' />
+</div>
+</div>
+<div class='lb-details'>
+<div class='lb-meta'><span class='lb-idx' id='lb-idx'></span><span class='lb-cat' id='lb-cat'></span></div>
+<h3 class='lb-title' id='lb-title'></h3>
+<p class='lb-loc'><span class='pin'>◈</span><span id='lb-loc'></span></p>
+<p class='lb-desc' id='lb-desc'></p>
+<div class='exif-grid' id='lb-exif'></div>
+</div>
+</div>
+
+<script>
+var DATA=[
+{n:1,t:'School of the Arts',c:'arch',l:'Zubir Said Drive, Singapore',d:'Harsh sunlight & clear skies on a weekend, over SOTA.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/1636 sec',iso:'50',fl:'5mm',dim:'9248 x 6944',fs:'24.4 MB'},
+{n:2,t:'Cloudy or Clear?',c:'sky',l:'Bukit Timah, Singapore',d:'Heavy cloud formations juxtaposed with clear, deep blue skies.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/1645 sec',iso:'50',fl:'5mm',dim:'4624 x 2904',fs:'3.99 MB'},
+{n:3,t:'Station at Twilight',c:'arch',l:'Paya Lebar, Singapore',d:'Office buildings darken as people commute home.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/50 sec',iso:'849',fl:'5mm',dim:'4624 x 3472',fs:'6.54 MB'},
+{n:4,t:'Concrete Apeture',c:'arch',l:'Beauty World, Singapore',d:'In a concrete jungle, surrounded by monoliths, the sky rarely shows itself.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/1645 sec',iso:'50',fl:'5mm',dim:'3106 x 4607',fs:'1.96 MB'},
+{n:5,t:'Birthday Roast Beef',c:'det',l:'Lawry\'s The Prime Rib, Singapore',d:'A meal fit for a king, but it made me wonder when the last time I got a toy as a gift was.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/100 sec',iso:'292',fl:'5mm',dim:'4624 x 3472',fs:'6.25 MB'},
+{n:6,t:'Modern Obelisk',c:'arch',l:'Tun Razak Exchange, Malaysia',d:'It\'s a monolith of glass and steel, yet it does not feel different by today\'s standards.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/138 sec',iso:'50',fl:'5mm',dim:'9248 x 6944',fs:'19.1 MB'},
+{n:7,t:'Seaside Mosque',c:'arch',l:'Masjid Selat Melaka, Malacca, Malaysia',d:'A seaside mosque with a white dome that feels like it\'s floating in the sky.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/325 sec',iso:'50',fl:'5mm',dim:'9248 x 6944',fs:'21.6 MB'},
+{n:8,t:'Space Station',c:'arch',l:'Parkway Centre, Marine Parade, Singapore',d:'Just kidding, old architecture truly is the best.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/24 sec',iso:'249',fl:'4mm',dim:'4032 x 3024',fs:'3.1 MB'},
+{n:9,t:'Neon Trees',c:'det',l:'IOI City Mall, Selangor, Malaysia',d:'An outdoor installation for a mall.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/25 sec',iso:'46',fl:'4mm',dim:'4032 x 2461',fs:'0.864 MB'},
+{n:10,t:'Temple in the Clouds',c:'sky',l:'Chin Swee Caves Temple, Genting Highlands, Malaysia',d:'The clouds and the temple.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/3906 sec',iso:'66',fl:'4mm',dim:'3024 x 4032',fs:'1.85 MB'},
+{n:11,t:'Highlands at Night',c:'arch',l:'Genting Highlands, Malaysia',d:'Bright lights, high altitude, empty streets.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/4 sec',iso:'140',fl:'4mm',dim:'4032 x 3024',fs:'2.14 MB'},
+{n:12,t:'Room in the Clouds',c:'sky',l:'Genting Highlands, Malaysia',d:'The sky is so close you can touch it.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/939 sec',iso:'89',fl:'4mm',dim:'4032 x 3024',fs:'3.05 MB'},
+{n:13,t:'Airport Blues',c:'arch',l:'KLIA, Malaysia',d:'The airport is a place of departure and arrival.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/50 sec',iso:'477',fl:'5mm',dim:'4624 x 3472',fs:'6.68 MB'},
+{n:14,t:'Future Malls',c:'arch',l:'LaLaport, KL, Malaysia',d:'This is what people in the 90\'s thought the future would look like.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/100 sec',iso:'50',fl:'4mm',dim:'4032 x 3024',fs:'2.25 MB'},
+{n:15,t:'Space Station II',c:'arch',l:'LaLaport, KL, Malaysia',d:'For an upscale mall this does look relatively industrial.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/100 sec',iso:'776',fl:'4mm',dim:'3024 x 4032',fs:'2.93 MB'},
+{n:16,t:'Jellies',c:'det',l:'S.E.A. Aquarium, Singapore',d:'A jellyfish in a tank.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/33 sec',iso:'99',fl:'4mm',dim:'4032 x 3024',fs:'1.57 MB'},
+{n:17,t:'Triangles',c:'det',l:'Jewel Changi Airport, Singapore',d:'The triangles of the ceiling.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/2347 sec',iso:'50',fl:'4mm',dim:'3419 x 3024',fs:'1.81 MB'},
+{n:18,t:'Rainy day at the beach',c:'nat',l:'Blue Lagoon, Port Dickson, Malaysia',d:'The sea is always calm, even in the rain.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/322 sec',iso:'73',fl:'4mm',dim:'4032 x 3024',fs:'1.71 MB'},
+{n:19,t:'Construction in the Clouds',c:'arch',l:'Genting Highlands, Malaysia',d:'Building something with clouds in your face :)',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/5882 sec',iso:'100',fl:'4mm',dim:'4032 x 3024',fs:'3.17 MB'},
+{n:20,t:'Orange-tinted Hometown',c:'sky',l:'Ipoh, Perak, Malaysia',d:'The sunset in Ipoh.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/120 sec',iso:'87',fl:'4mm',dim:'4032 x 3024',fs:'1.69 MB'},
+{n:21,t:'Worn Rainbow',c:'det',l:'Market Lane, Ipoh, Malaysia',d:'A rainbow in the market.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/7812 sec',iso:'70',fl:'4mm',dim:'4032 x 3024',fs:'3.70 MB'},
+{n:22,t:'Airport Christmas Deco',c:'arch',l:'Changi Airport, Singapore',d:'Christmas decorations at the airport.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/208 sec',iso:'45',fl:'4mm',dim:'4032 x 3024',fs:'4.72 MB'},
+{n:23,t:'Jellies II',c:'det',l:'S.E.A. Aquarium, Singapore',d:'For something with no face or brain it\'s pretty cute.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/50 sec',iso:'955',fl:'4mm',dim:'4032 x 3024',fs:'1.45 MB'},
+{n:24,t:'Pillar Reef',c:'nat',l:'S.E.A. Aquarium, Singapore',d:'A reef in the aquarium.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/100 sec',iso:'611',fl:'4mm',dim:'3024 x 4032',fs:'6.83 MB'},
+{n:25,t:'Pillar Aquarium',c:'nat',l:'S.E.A. Aquarium, Singapore',d:'The aquarium\'s pillars.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/100 sec',iso:'986',fl:'4mm',dim:'4032 x 3024',fs:'4.19 MB'},
+{n:26,t:'Frutiger Aero',c:'det',l:'S.E.A. Aquarium, Singapore',d:'A fish in the aquarium.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/100 sec',iso:'2046',fl:'4mm',dim:'3933 x 3024',fs:'2.62 MB'},
+{n:27,t:'The sky from beyond the fence',c:'sky',l:'Salak Selatan Station, Malaysia',d:'This image\'s colour is a bit off.',cam:'Google Pixel 4a',len:'13mm',ap:'f/1.7',sh:'1/1174 sec',iso:'54',fl:'4mm',dim:'3974 x 2980',fs:'2.36 MB'},
+{n:28,t:'Rural Construction',c:'arch',l:'Peng Siang River, Singapore',d:'Construction in the countryside.',cam:'Xiaomi',len:'MIX 3',ap:'f/1.8',sh:'1/2478 sec',iso:'100',fl:'4mm',dim:'4032 x 3024',fs:'5.93 MB'},
+{n:29,t:'Blue Town',c:'arch',l:'Bukit Batok West, Singapore',d:'A blue town in the suburbs.',cam:'Xiaomi',len:'MIX 3',ap:'f/2.4',sh:'1/1534 sec',iso:'100',fl:'5mm',dim:'4032 x 3024',fs:'4.43 MB'},
+{n:30,t:'Heaven\'s Garden',c:'nat',l:'Singapore',d:'A park/garden or the face of a building?',cam:'Sony SLT a58',len:'Olympus OM F.Zuiko Auto-S 50mm f/1.8',ap:'f/4',sh:'1/1250 sec',iso:'800',fl:'50mm',dim:'5456 x 3632',fs:'4.59 MB'},
+{n:31,t:'Heaven\'s Garden II',c:'nat',l:'Singapore',d:'They grow bougainvillea up there :)',cam:'Sony SLT a58',len:'Olympus OM F.Zuiko Auto-S 50mm f/1.8',ap:'f/22',sh:'1/5 sec',iso:'100',fl:'50mm',dim:'5456 x 3632',fs:'1.36 MB'},
+{n:32,t:'Stray',c:'det',l:'Singapore',d:'A stray cat, now it\'s gone.',cam:'Sony SLT a58',len:'Olympus OM F.Zuiko Auto-S 50mm f/1.8',ap:'f/1.8',sh:'1/125 sec',iso:'3200',fl:'50mm',dim:'5456 x 3632',fs:'5.81 MB'},
+{n:33,t:'Towers in the Lake',c:'arch',l:'Hindhede Quarry, Singapore',d:'I slip through gates, soft as breath,\nA silent trail, no trace I\'ve left.\nThe water waits, the towers loom,\nIn secret dance beneath the moon.\nReflections stir with careful grace,\nSpires blur in twilight\'s face.\nTaking aim; my lens aligns,\n\'Neath starlight in this forest shrine.',cam:'Sony SLT a58',len:'Olympus OM F.Zuiko Auto-S 50mm f/1.8',ap:'f/4',sh:'1/80 sec',iso:'200',fl:'50mm',dim:'5456 x 3632',fs:'5.46 MB'},
+{n:34,t:'False Moon',c:'sky',l:'Singapore',d:'A false moon in the sky.',cam:'Sony SLT a58',len:'Olympus OM F.Zuiko Auto-S 50mm f/1.8',ap:'f/1.8',sh:'1/500 sec',iso:'3200',fl:'50mm',dim:'5456 x 3632',fs:'5.96 MB'},
+{n:35,t:'Abyss Lamp',c:'det',l:'Bukit Batok Nature Reserve, Singapore',d:'What is it doing? Its best.',cam:'YI Technology M1 XiaoYi',len:'12-40mm f/3.5-5.6',ap:'f/5.6',sh:'1/80 sec',iso:'800',fl:'40mm',dim:'5200 x 3902',fs:'1.42 MB'},
+{n:36,t:'Corvus Adversus Caelum',c:'det',l:'Haw Par Villa, Singapore',d:'Corvus solus, contra lucem.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/1025 sec',iso:'50',fl:'5mm',dim:'4624 x 3472',fs:'6.51 MB'},
+{n:37,t:'Rainbow\'s end',c:'det',l:'Newton, Singapore',d:'At the end was where my girl was waiting.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/1358 sec',iso:'50',fl:'5mm',dim:'4624 x 3472',fs:'5.16 MB'},
+{n:38,t:'Duck by the Sea',c:'nat',l:'The Cove, Persiaran Waterfront, Port Dickson, Malaysia',d:'Maslow\'s hierarchy of needs is not as important as a duck by the sea.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/1.9',sh:'1/25 sec',iso:'1385',fl:'5mm',dim:'6944 x 8976',fs:'14.5 MB'},
+{n:39,t:'Droplets on Leaf',c:'nat',l:'Batu Caves, Malaysia',d:'Droplets on a leaf.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'f/2.4',sh:'1/100 sec',iso:'88',fl:'4mm',dim:'2592 x 1944',fs:'2.32 MB'},
+{n:40,t:'Sky Canvas',c:'sky',l:'Rail Corridor, Singapore',d:'The sky as a canvas.',cam:'Xiaomi',len:'POCO F2 Pro',ap:'-',sh:'-',iso:'-',fl:'-',dim:'7488 x 1744',fs:'2.77 MB'}
+];
+var CATL={arch:'ARCH',nat:'NAT',sky:'SKY',det:'DET'};
+var TABS=[{c:'all',label:'INDEX'},{c:'arch',label:'ARCHITECTURE'},{c:'sky',label:'SKY & Light'},{c:'nat',label:'NATURE'},{c:'det',label:'DETAILS'}];
+var grid=document.getElementById('gallery');
+var tabsEl=document.getElementById('tabs');
+var folderBar=document.getElementById('folderBar');
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/'/g,'&#39;')}
+var counts={all:0,arch:0,nat:0,sky:0,det:0};
+DATA.forEach(function(d){counts[d.c]=(counts[d.c]||0)+1});
+counts.all=DATA.length;
+TABS.forEach(function(tb,i){
+var b=document.createElement('button');
+b.className=(i===0?'tab active':'tab');
+b.dataset.cat=tb.c;
+var l=document.createElement('span');l.textContent=tb.label;b.appendChild(l);
+var n=document.createElement('span');n.className='cnt';n.textContent=' '+counts[tb.c];b.appendChild(n);
+tabsEl.appendChild(b);
+});
+var html='';
+DATA.forEach(function(d,i){
+var pad=String(i+1).padStart(2,'0');
+html+=`<figure class='gallery-item' data-cat='${d.c}' style='--h:${((d.n*29)%360)}deg'>`
++`<div class='frame'><img src='img/photog/thumb-id${d.n}.jpg' alt='${esc(d.t)}' loading='lazy'/><span class='viewfinder'></span><span class='cat'>${CATL[d.c]}</span></div>`
++`<figcaption class='label'><span class='ph'>PH ${pad}</span><span class='title'>${d.t}</span></figcaption></figure>`;
+});
+grid.innerHTML=html;
+var items=[].slice.call(grid.querySelectorAll('.gallery-item'));
+function setFolder(c){
+document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('active',x.dataset.cat===c)});
+folderBar.textContent='';
+var name=TABS.filter(function(t){return t.c===c})[0].label;
+var n=document.createElement('span');n.className='fb-name';n.textContent=name;
+var sep=document.createElement('span');sep.className='sep';sep.textContent=' / ';
+var cnt=document.createElement('span');cnt.textContent=counts[c]+' frames';
+folderBar.appendChild(n);folderBar.appendChild(sep);folderBar.appendChild(cnt);
+items.forEach(function(it){it.style.display=(c==='all'||it.dataset.cat===c)?'':'none'});
+}
+document.querySelectorAll('.tab').forEach(function(b){
+b.addEventListener('click',function(){setFolder(b.dataset.cat)});
+});
+var lb=document.getElementById('lightbox');
+var lbImg=document.getElementById('lb-img');
+var lbTitle=document.getElementById('lb-title');
+var lbCat=document.getElementById('lb-cat');
+var lbIdx=document.getElementById('lb-idx');
+var lbLoc=document.getElementById('lb-loc');
+var lbDesc=document.getElementById('lb-desc');
+var lbExif=document.getElementById('lb-exif');
+var zoomPct=document.getElementById('zoom-pct');
+var lbStage=document.querySelector('.lb-stage');
+var lbDetails=document.querySelector('.lb-details');
+var navBtns=[].slice.call(document.querySelectorAll('.lb-nav'));
+function lbLayout(){lbStage.style.height='calc(100% - '+lbDetails.offsetHeight+'px)';var sh=lbStage.offsetHeight;navBtns.forEach(function(b){b.style.top=(sh/2)+'px'});lbImg.style.maxHeight=Math.max(120,sh-58)+'px'}
+window.addEventListener('resize',lbLayout);
+var zoomLevel=1; var maxZoom=5; var minZoom=.5;
+var panX=0, panY=0;
+var dragging=false, dragSX=0, dragSY=0;
+lbImg.draggable=false;
+function applyTransform(){lbImg.style.transform='translate('+panX+'px,'+panY+'px) scale('+zoomLevel+')'}
+function setZoom(z){z=Math.max(minZoom,Math.min(maxZoom,z));zoomLevel=z;panX=0;panY=0;applyTransform();zoomPct.textContent=Math.round(z*100)+'%';if(zoomLevel>1){lbStage.style.overflow='hidden';lbStage.style.cursor='grab';lbStage.style.touchAction='none'}else{lbStage.style.overflow='auto';lbStage.style.cursor='auto';lbStage.style.touchAction='auto'}}
+function onDown(e){if(zoomLevel<=1)return;e.preventDefault();dragging=true;dragSX=e.clientX-panX;dragSY=e.clientY-panY;lbImg.style.cursor='grabbing'}
+function onMove(e){if(!dragging)return;panX=e.clientX-dragSX;panY=e.clientY-dragSY;applyTransform()}
+function onUp(){if(!dragging)return;dragging=false;lbImg.style.cursor='grab'}
+var cur=-1;
+function open(i){cur=i;setZoom(1);lb.classList.add('open');lb.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';update()}
+function close(){lb.classList.remove('open');lb.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+function update(){
+panX=0;panY=0;applyTransform();
+var d=DATA[cur];
+var pad=String(d.n).padStart(2,'0');
+lbImg.src='img/photog/id'+d.n+'.jpg';
+lbImg.alt=d.t;
+lbTitle.textContent=d.t;
+lbCat.textContent=CATL[d.c];
+lbIdx.textContent='PH '+pad+' / 40 · '+d.c.toUpperCase();
+lbLoc.textContent=d.l;
+lbDesc.textContent=d.d;
+var exif=[['Camera',d.cam],['Lens',d.len],['Aperture',d.ap],['Shutter',d.sh],['ISO',d.iso],['Focal Length',d.fl],['Dimensions',d.dim],['File Size',d.fs]];
+lbExif.innerHTML='';
+exif.forEach(function(p){
+var cell=document.createElement('div');cell.className='exif-cell';
+var lab=document.createElement('span');lab.className='exif-label';lab.textContent=p[0];
+var val=document.createElement('span');val.className='exif-value';val.textContent=p[1];
+cell.appendChild(lab);cell.appendChild(val);
+lbExif.appendChild(cell);
+});
+lbLayout();
+}
+function step(dir){cur=(cur+dir+DATA.length)%DATA.length;update()}
+items.forEach(function(it,i){it.addEventListener('click',function(){open(i)})});
+document.querySelector('[data-close]').addEventListener('click',close);
+document.querySelectorAll('[data-nav]').forEach(function(b){b.addEventListener('click',function(){step(+b.dataset.nav)})});
+lb.addEventListener('click',function(e){if(e.target===lb)close()});
+document.addEventListener('keydown',function(e){
+if(!lb.classList.contains('open'))return;
+if(e.key==='Escape')close();
+else if(e.key==='ArrowLeft')step(-1);
+else if(e.key==='ArrowRight')step(1);
+});
+document.querySelectorAll('[data-zoom]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();setZoom(zoomLevel+parseFloat(b.dataset.zoom))})});
+lb.addEventListener('wheel',function(e){if(!lb.classList.contains('open'))return;if(e.ctrlKey){e.preventDefault();var z=zoomLevel*(e.deltaY<0?1.15:1/1.15);setZoom(z)}});
+lbImg.addEventListener('dblclick',function(e){e.stopPropagation();setZoom(zoomLevel===1?2:1)});
+lbStage.addEventListener('pointerdown',onDown);
+window.addEventListener('pointermove',onMove);
+window.addEventListener('pointerup',onUp);
+var recTime=document.getElementById('rec-time'); var recStart=Date.now();
+setInterval(function(){var ms=Date.now()-recStart; var s=Math.floor(ms/1000); var h=Math.floor(s/3600); var m=Math.floor((s%3600)/60); var sec=s%60; recTime.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec},1000);
+setFolder('all');
+</script>
 
-  <div class="gallery-container">
-    <h2 class="section-title">Photography Portfolio</h2>
-
-    <div class="categories">
-      <button class="category-btn active">All</button>
-      <button class="category-btn">Food</button>
-      <button class="category-btn">Sky</button>
-      <button class="category-btn">Landscape</button>
-      <button class="category-btn">Urban</button>
-      <button class="category-btn">Nature</button>
-      <button class="category-btn">Black</button>
-      <button class="category-btn">White</button>
-      <button class="category-btn">Blue</button>
-      <button class="category-btn">Misc</button>
-    </div>
-
-    <div class="gallery-grid">
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id1.webp" type="image/webp">
-          <img src="img/photog/thumb-id1.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">School of the Arts</h3>
-          <p class="gallery-description">Clear skies & harsh sunlight above SOTA</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id2.webp" type="image/webp">
-          <img src="img/photog/thumb-id2.jpg" alt="Blue Sky Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Cloudy or Clear?</h3>
-          <p class="gallery-description">Heavy cloud formations juxtaposed with clear, deep blue skies.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id3.webp" type="image/webp">
-          <img src="img/photog/thumb-id3.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Station at Twilight</h3>
-          <p class="gallery-description">Office buildings darken as people commute home</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id4.webp" type="image/webp">
-          <img src="img/photog/thumb-id4.jpg" alt="Blue Sky Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Concrete Apeture</h3>
-          <p class="gallery-description">In a concrete jungle, surrounded by monoliths, the sky rarely shows itself.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id5.webp" type="image/webp">
-          <img src="img/photog/thumb-id5.jpg" alt="Food Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Birthday Roast Beef</h3>
-          <p class="gallery-description">A meal fit for a king, but it made me wonder when the last time I got a toy as
-            a gift was.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id6.webp" type="image/webp">
-          <img src="img/photog/thumb-id6.jpg" alt="Blue Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Modern Obelisk</h3>
-          <p class="gallery-description">Once originally dedicated to Gods - no different by today's standards.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id7.webp" type="image/webp">
-          <img src="img/photog/thumb-id7.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Seaside Mosque</h3>
-          <p class="gallery-description">A fitting place to walk over water</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id8.webp" type="image/webp">
-          <img src="img/photog/thumb-id8.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Space Station</h3>
-          <p class="gallery-description">Just kidding, old architecture truly is the best.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id9.webp" type="image/webp">
-          <img src="img/photog/thumb-id9.jpg" alt="Black Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Neon Trees</h3>
-          <p class="gallery-description">An outdoor installation for a mall.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id10.webp" type="image/webp">
-          <img src="img/photog/thumb-id10.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Temple in the Clouds</h3>
-          <p class="gallery-description">Straight out of a fantasy.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id11.webp" type="image/webp">
-          <img src="img/photog/thumb-id11.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Highlands at Night</h3>
-          <p class="gallery-description">Bright lights, high altitude, empty streets.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id12.webp" type="image/webp">
-          <img src="img/photog/thumb-id12.jpg" alt="White Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Room in the Clouds</h3>
-          <p class="gallery-description">Again, straight out of fantasy. Opening your windows and seeing nothing but
-            clouds.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id13.webp" type="image/webp">
-          <img src="img/photog/thumb-id13.jpg" alt="Blue Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Airport Blues</h3>
-          <p class="gallery-description">Warm and cool colours create a stark contrast in an empty airport.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id14.webp" type="image/webp">
-          <img src="img/photog/thumb-id14.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Future Malls</h3>
-          <p class="gallery-description">This is what people in the 90's thought the future would look like. Still no
-            flying cars though.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id15.webp" type="image/webp">
-          <img src="img/photog/thumb-id15.jpg" alt="White Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Space Station II</h3>
-          <p class="gallery-description">For an upscale mall this does look relatively industrial.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id16.webp" type="image/webp">
-          <img src="img/photog/thumb-id16.jpg" alt="Black Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Jellies</h3>
-          <p class="gallery-description">Bright white against the abyss.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id17.webp" type="image/webp">
-          <img src="img/photog/thumb-id17.jpg" alt="White Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Triangles</h3>
-          <p class="gallery-description">Polygons!</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id18.webp" type="image/webp">
-          <img src="img/photog/thumb-id18.jpg" alt="Landscape Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Rainy day at the beach</h3>
-          <p class="gallery-description">I was angry at first since I was looking forward to a sunny day at the beach,
-            but in the end it was still time spent with friends.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id19.webp" type="image/webp">
-          <img src="img/photog/thumb-id19.jpg" alt="Landscape Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Construction in the Clouds</h3>
-          <p class="gallery-description">Building something with clouds in your face!</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id20.webp" type="image/webp">
-          <img src="img/photog/thumb-id20.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Orange-tinted Hometown</h3>
-          <p class="gallery-description">White LEDs shine bright while the sky bathes the town in orange.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id21.webp" type="image/webp">
-          <img src="img/photog/thumb-id21.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Worn Rainbow</h3>
-          <p class="gallery-description">Exposed to the elements, the colour still remains.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id22.webp" type="image/webp">
-          <img src="img/photog/thumb-id22.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Airport Christmas Deco</h3>
-          <p class="gallery-description">Multicoloured lights reflect against the metallic ceiling.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id23.webp" type="image/webp">
-          <img src="img/photog/thumb-id23.jpg" alt="Blue Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Jellies II</h3>
-          <p class="gallery-description">For something with no face or brain it's pretty cute.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id24.webp" type="image/webp">
-          <img src="img/photog/thumb-id24.jpg" alt="Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Pillar Reef</h3>
-          <p class="gallery-description">I should go diving one day.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id25.webp" type="image/webp">
-          <img src="img/photog/thumb-id25.jpg" alt="Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Pillar Aquarium</h3>
-          <p class="gallery-description">I can imagine the fishes looking out and seeing nothing but darkness</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id26.webp" type="image/webp">
-          <img src="img/photog/thumb-id26.jpg" alt="Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Frutiger Aero</h3>
-          <p class="gallery-description">I miss the early 2000s</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id27.webp" type="image/webp">
-          <img src="img/photog/thumb-id27.jpg" alt="Sky Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">The sky from beyond the fence</h3>
-          <p class="gallery-description">The sun and clouds greet commuters on their way home.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id28.webp" type="image/webp">
-          <img src="img/photog/thumb-id28.jpg" alt="Sky Landscape Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Rural Construction</h3>
-          <p class="gallery-description">Outside the city with no tall buildings in sight, construction still continues.
-          </p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id29.webp" type="image/webp">
-          <img src="img/photog/thumb-id29.jpg" alt="Blue Sky Landscape Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Blue Town</h3>
-          <p class="gallery-description">White and blue buildings against the white and blue sky.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id30.webp" type="image/webp">
-          <img src="img/photog/thumb-id30.jpg" alt="White Sky Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Heaven's Garden</h3>
-          <p class="gallery-description">A park/garden or the face of a building?</p>
-        </div>
-      </div>
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id31.webp" type="image/webp">
-          <img src="img/photog/thumb-id31.jpg" alt="White Sky Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Heaven's Garden II</h3>
-          <p class="gallery-description">They grow bougainvillea up there :)</p>
-        </div>
-      </div>
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id32.webp" type="image/webp">
-          <img src="img/photog/thumb-id32.jpg" alt="Urban Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Stray</h3>
-          <p class="gallery-description">It used to greet me everyday with its teary eyes, now it's gone.</p>
-        </div>
-      </div>
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id33.webp" type="image/webp">
-          <img src="img/photog/thumb-id33.jpg" alt="Urban Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Towers in the Lake</h3>
-          <p class="gallery-description">
-            I slip through gates, soft as breath,<br>
-            A silent trail, no trace I've left.<br>
-            The water waits, the towers loom,<br>
-            In secret dance beneath the moon.<br>
-
-            Reflections stir with careful grace,<br>
-            Spires blur in twilight’s face.<br>
-            Taking aim; my lens aligns,<br>
-            'Neath starlight in this forest shrine.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id34.webp" type="image/webp">
-          <img src="img/photog/thumb-id34.jpg" alt="Blue Urban Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">False Moon</h3>
-          <p class="gallery-description">The irreplaceable warm glow of an old street lamp.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id35.webp" type="image/webp">
-          <img src="img/photog/thumb-id35.jpg" alt="Urban Nature Black Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Abyss Lamp</h3>
-          <p class="gallery-description">What is it doing? Its best.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id36.webp" type="image/webp">
-          <img src="img/photog/thumb-id36.jpg" alt="Sky Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Corvus Adversus Caelum</h3>
-          <p class="gallery-description">Corvus solus, contra lucem.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id37.webp" type="image/webp">
-          <img src="img/photog/thumb-id37.jpg" alt="Sky Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Rainbow's end</h3>
-          <p class="gallery-description">At the end was where my girl was waiting</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id38.webp" type="image/webp">
-          <img src="img/photog/thumb-id38.jpg" alt="Food Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Duck by the Sea</h3>
-          <p class="gallery-description">A meal with friends by the sea in the evening. The secret bottom level of
-            Maslow's hierarchy of needs.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id39.webp" type="image/webp">
-          <img src="img/photog/thumb-id39.jpg" alt="Nature Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Droplets on Leaf</h3>
-          <p class="gallery-description">No idea why I attempted macro photography on a random leaf but I did.</p>
-        </div>
-      </div>
-
-      <div class="gallery-item">
-        <picture>
-          <source srcset="img/photog/web-optimized/thumb-id40.webp" type="image/webp">
-          <img src="img/photog/thumb-id40.jpg" alt="Sky Photography" />
-        </picture>
-        <div class="gallery-overlay">
-          <h3 class="gallery-title">Sky Canvas</h3>
-          <p class="gallery-description">The sky that day had colours I could never capture on my camera, much to my
-            dismay.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="about-section">
-    <div class="about-image">
-      <picture>
-        <source srcset="img/photog/web-optimized/lagoon.webp" type="image/webp">
-        <img src="img/photog/lagoon.png" alt="Photographer Profile Image" />
-      </picture>
-    </div>
-    <div class="about-content">
-      <h2>About the Artist</h2>
-      <p>Welcome to my photography portfolio. I'm passionate about capturing the beauty of our world through my lens,
-        with a special focus on sky photography and urban landscapes.</p>
-      <p>Photography allows me to express my perspective and share the fleeting moments that often go unnoticed in our
-        busy lives. Each image tells a story and freezes a moment in time that can never be precisely recreated.</p>
-      <p>My work spans various styles and subjects, but I'm particularly drawn to the ever-changing canvas of the sky,
-        and older architecture which I think are quickly being destroyed and replaced with glass towers.</p>
-      <p>I try my best to take photos that are "fantasy-like", and photos that don't include people to create a sense of
-        liminality or isolation.</p>
-      <p>The art of taking photos itself is very personal to me. I was born with Antimetropia and Astigmatism in both
-        eyes, and photography is the only way I think I can see the world as other people do.</p>
-      <p>I hope my images inspire you to look around more often and appreciate the art show happening every day.</p>
-    </div>
-  </div>
-
-  <div class="modal">
-    <div class="modal-container">
-      <span class="modal-close"><i class="fas fa-times"></i></span>
-      <div class="modal-image-container">
-        <img class="modal-image" id="expandedImg">
-        <div class="modal-navigation">
-          <div class="modal-nav-btn prev-btn"><i class="fas fa-chevron-left"></i></div>
-          <div class="modal-nav-btn next-btn"><i class="fas fa-chevron-right"></i></div>
-        </div>
-      </div>
-      <div class="modal-details">
-        <h3 class="modal-title">Image Title</h3>
-        <div class="modal-location"><i class="fas fa-map-marker-alt"></i> <span>Location</span></div>
-        <p class="modal-description">Detailed description of the photograph and the story behind it.</p>
-
-        <div class="modal-exif">
-          <h4>Technical Details</h4>
-          <div class="exif-grid">
-            <div class="exif-item">
-              <span class="exif-label">Camera</span>
-              <span class="exif-value">Sony A7 III</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">Lens</span>
-              <span class="exif-value">24-70mm f/2.8</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">Aperture</span>
-              <span class="exif-value">f/5.6</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">Shutter Speed</span>
-              <span class="exif-value">1/125 sec</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">ISO</span>
-              <span class="exif-value">100</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">Focal Length</span>
-              <span class="exif-value">35mm</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">Dimensions</span>
-              <span class="exif-value">9248 x 6944</span>
-            </div>
-            <div class="exif-item">
-              <span class="exif-label">File Size</span>
-              <span class="exif-value">24.4 MB</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>Contact</h3>
-        <p>Email: your.email@example.com</p>
-        <p>Location: Singapore</p>
-      </div>
-
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="photography.html">Photography</a></li>
-          <li><a href="jewelry.html">Jewelry</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="copyright">
-      <p>© 2025 Foo T'suen Wei. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Navigation menu toggle for mobile
-      const menuToggle = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('nav');
-      const menuOverlay = document.querySelector('.menu-overlay');
-
-      // Toggle menu when hamburger is clicked
-      menuToggle.addEventListener('click', function () {
-        nav.classList.toggle('active');
-      });
-
-      // Close menu when overlay is clicked
-      menuOverlay.addEventListener('click', function () {
-        nav.classList.remove('active');
-      });
-
-      // Mobile dropdown toggle
-      const dropdownLinks = document.querySelectorAll('.has-dropdown > a');
-      dropdownLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
-          if (window.innerWidth <= 768) {
-            e.preventDefault();
-            this.parentElement.classList.toggle('active');
-          }
-        });
-      });
-
-      // Navbar background change on scroll
-      window.addEventListener('scroll', function () {
-        const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 50) {
-          navbar.classList.add('scrolled');
-        } else {
-          navbar.classList.remove('scrolled');
-        }
-      });
-
-      // Gallery filtering
-      const categoryBtns = document.querySelectorAll('.category-btn');
-      const galleryItems = document.querySelectorAll('.gallery-item');
-
-      categoryBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-          categoryBtns.forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-
-          const category = this.textContent.toLowerCase();
-
-          if (category === 'all') {
-            galleryItems.forEach(item => {
-              item.style.display = 'block';
-            });
-          } else {
-            galleryItems.forEach(item => {
-              if (item.querySelector('img').alt.toLowerCase().includes(category)) {
-                item.style.display = 'block';
-              } else {
-                item.style.display = 'none';
-              }
-            });
-          }
-        });
-      });
-
-      // Modal for image viewing
-      const modal = document.querySelector('.modal');
-      const modalImg = document.querySelector('.modal-content');
-      const modalClose = document.querySelector('.modal-close');
-      const galleryImages = document.querySelectorAll('.gallery-item img');
-
-      galleryImages.forEach(img => {
-        img.addEventListener('click', function () {
-          modal.style.display = 'block';
-          modalImg.src = this.src;
-        });
-      });
-
-      modalClose.addEventListener('click', function () {
-        modal.style.display = 'none';
-      });
-
-      window.addEventListener('click', function (e) {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-      // Keep your existing script functionality
-
-      // Enhanced gallery and modal functionality
-      const modal = document.querySelector('.modal');
-      const modalImg = document.querySelector('.modal-image');
-      const modalClose = document.querySelector('.modal-close');
-      const modalTitle = document.querySelector('.modal-title');
-      const modalLocation = document.querySelector('.modal-location span');
-      const modalDescription = document.querySelector('.modal-description');
-      const prevBtn = document.querySelector('.prev-btn');
-      const nextBtn = document.querySelector('.next-btn');
-
-      const galleryItems = document.querySelectorAll('.gallery-item');
-      let currentIndex = 0;
-
-      const imageData = [
-        {
-          id: 1,
-          title: "School of the Arts",
-          location: "Zubir Said Drive, Singapore",
-          description: "Harsh sunlight & clear skies on a weekend, over SOTA.",
-          highResUrl: "img/photog/id1.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/1636 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "9248 x 6944",
-          fileSize: "24.4 MB"
-        },
-        {
-          id: 2,
-          title: "Cloudy or Clear?",
-          location: "Bukit Timah, Singapore",
-          description: "Heavy cloud formations juxtaposed with clear, deep blue skies.",
-          highResUrl: "img/photog/id2.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/1645 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "4624 x 2904",
-          fileSize: "3.99 MB"
-        },
-        {
-          id: 3,
-          title: "Station at Twilight",
-          location: "Paya Lebar, Singapore",
-          description: "Office buildings darken as people commute home.",
-          highResUrl: "img/photog/id3.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/50 sec",
-          iso: "849",
-          focalLength: "5mm",
-          dimensions: "4624 x 3472",
-          fileSize: "6.54 MB"
-        },
-        {
-          id: 4,
-          title: "Concrete Apeture",
-          location: "Beauty World, Singapore",
-          description: "In a concrete jungle, surrounded by monoliths, the sky rarely shows itself.",
-          highResUrl: "img/photog/id4.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/1645 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "3106 x 4607",
-          fileSize: "1.96 MB"
-        },
-        {
-          id: 5,
-          title: "Birthday Roast Beef",
-          location: "Lawry's The Prime Rib, Singapore",
-          description: "A meal fit for a king, but it made me wonder when the last time I got a toy as a gift was.",
-          highResUrl: "img/photog/id5.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/100 sec",
-          iso: "292",
-          focalLength: "5mm",
-          dimensions: "4624 x 3472",
-          fileSize: "6.25 MB"
-        },
-        {
-          id: 6,
-          title: "Modern Obelisk",
-          location: "Tun Razak Exchange, Malaysia",
-          description: "Once originally dedicated to Gods - no different by today's standards.",
-          highResUrl: "img/photog/id6.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/138 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "9248 x 6944",
-          fileSize: "19.1 MB"
-        },
-        {
-          id: 7,
-          title: "Seaside Mosque",
-          location: "Masjid Selat Melaka, Malacca",
-          description: "A fitting place to walk over water",
-          highResUrl: "img/photog/id7.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/325 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "9248 x 6944",
-          fileSize: "21.6 MB"
-        },
-        {
-          id: 8,
-          title: "Space Station",
-          location: "Parkway Centre, Marine Parade, Singapore",
-          description: "Just kidding, old architecture truly is the best.",
-          highResUrl: "img/photog/id8.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/24 sec",
-          iso: "249",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "3.1 MB"
-        },
-        {
-          id: 9,
-          title: "Neon Trees",
-          location: "IOI City Mall, Selangor, Malaysia",
-          description: "An outdoor installation for a mall.",
-          highResUrl: "img/photog/id9.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/25 sec",
-          iso: "46",
-          focalLength: "4mm",
-          dimensions: "4032 x 2461",
-          fileSize: "0.864 MB"
-        },
-        {
-          id: 10,
-          title: "Temple in the Clouds",
-          location: "Chin Swee Caves Temple, Genting Highlands, Malaysia",
-          description: "Straight out of a fantasy.",
-          highResUrl: "img/photog/id10.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/3906 sec",
-          iso: "66",
-          focalLength: "4mm",
-          dimensions: "3024 x 4032",
-          fileSize: "1.85 MB"
-        },
-        {
-          id: 11,
-          title: "Highlands at Night",
-          location: "Genting Highlands, Malaysia",
-          description: "Bright lights, high altitude, empty streets.",
-          highResUrl: "img/photog/id11.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/4 sec",
-          iso: "140",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "2.14 MB"
-        },
-        {
-          id: 12,
-          title: "Room in the Clouds",
-          location: "Genting Highlands, Malaysia",
-          description: "Again, straight out of fantasy. Opening your windows and seeing nothing but clouds.",
-          highResUrl: "img/photog/id12.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/939 sec",
-          iso: "89",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "3.05 MB"
-        },
-        {
-          id: 13,
-          title: "Airport Blues",
-          location: "KLIA, Malaysia",
-          description: "Warm and cool colours create a stark contrast in an empty airport.",
-          highResUrl: "img/photog/id13.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/50 sec",
-          iso: "477",
-          focalLength: "5mm",
-          dimensions: "4624 x 3472",
-          fileSize: "6.68 MB"
-        },
-        {
-          id: 14,
-          title: "Future Malls",
-          location: "LaLaport, KL, Malaysia",
-          description: "This is what people in the 90's thought the future would look like. Still no flying cars though.",
-          highResUrl: "img/photog/id14.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/100 sec",
-          iso: "50",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "2.25 MB"
-        },
-        {
-          id: 15,
-          title: "Space Station II",
-          location: "LaLaport, KL, Malaysia",
-          description: "For an upscale mall this does look relatively industrial.",
-          highResUrl: "img/photog/id15.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/100 sec",
-          iso: "776",
-          focalLength: "4mm",
-          dimensions: "3024 x 4032",
-          fileSize: "2.93 MB"
-        },
-        {
-          id: 16,
-          title: "Jellies",
-          location: "S.E.A. Aquarium, Singapore",
-          description: "Bright white against the abyss.",
-          highResUrl: "img/photog/id16.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/33 sec",
-          iso: "99",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "1.57 MB"
-        },
-        {
-          id: 17,
-          title: "Triangles",
-          location: "Jewel, Changi Airport, Singapore",
-          description: "Polygons!",
-          highResUrl: "img/photog/id17.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/2347 sec",
-          iso: "50",
-          focalLength: "4mm",
-          dimensions: "3419 x 3024",
-          fileSize: "1.81 MB"
-        },
-        {
-          id: 18,
-          title: "Rainy day at the beach",
-          location: "Blue Lagoon, Port Dickson, Malaysia",
-          description: "I was angry at first since I was looking forward to a sunny day at the beach, but in the end it was still time spent with friends.",
-          highResUrl: "img/photog/id18.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/322 sec",
-          iso: "73",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "1.71 MB"
-        },
-        {
-          id: 19,
-          title: "Construction in the Clouds",
-          location: "Genting Highlands, Malaysia",
-          description: "Building something with clouds in your face :)",
-          highResUrl: "img/photog/id19.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/5882 sec",
-          iso: "100",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "3.17 MB"
-        },
-        {
-          id: 20,
-          title: "Orange-tinted Hometown",
-          location: "Ipoh, Perak, Malaysia",
-          description: "White LEDs shine bright while the sky bathes the town in orange.",
-          highResUrl: "img/photog/id20.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/120 sec",
-          iso: "87",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "1.69 MB"
-        },
-        {
-          id: 21,
-          title: "Worn Rainbow",
-          location: "Market Lane, Ipoh, Malaysia",
-          description: "Exposed to the elements, the colour still remains.",
-          highResUrl: "img/photog/id21.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/7812 sec",
-          iso: "70",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "3.70 MB"
-        },
-        {
-          id: 22,
-          title: "Airport Christmas Deco",
-          location: "Changi Airport, Singapore",
-          description: "Multicoloured lights reflect against the metallic ceiling.",
-          highResUrl: "img/photog/id22.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/208 sec",
-          iso: "45",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "4.72 MB"
-        },
-        {
-          id: 23,
-          title: "Jellies II",
-          location: "S.E.A. Aquarium, Singapore",
-          description: "For something with no face or brain it's pretty cute.",
-          highResUrl: "img/photog/id23.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/50 sec",
-          iso: "955",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "1.45 MB"
-        },
-        {
-          id: 24,
-          title: "Pillar Reef",
-          location: "S.E.A. Aquarium, Singapore",
-          description: "I should go diving one day.",
-          highResUrl: "img/photog/id24.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/100 sec",
-          iso: "611",
-          focalLength: "4mm",
-          dimensions: "3024 x 4032",
-          fileSize: "6.83 MB"
-        },
-        {
-          id: 25,
-          title: "Pillar Aquarium",
-          location: "S.E.A. Aquarium, Singapore",
-          description: "I can imagine the fishes looking out and seeing nothing but darkness",
-          highResUrl: "img/photog/id25.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/100 sec",
-          iso: "986",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "4.19 MB"
-        },
-        {
-          id: 26,
-          title: "Frutiger Aero",
-          location: "S.E.A. Aquarium, Singapore",
-          description: "I miss the early 2000s",
-          highResUrl: "img/photog/id26.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/100 sec",
-          iso: "2046",
-          focalLength: "4mm",
-          dimensions: "3933 x 3024",
-          fileSize: "2.62 MB"
-        },
-        {
-          id: 27,
-          title: "The sky from beyond the fence",
-          location: "Salak Selatan Station, Malaysia",
-          description: "The sun and clouds greet commuters on their way home. This image's colour has been drastically enhanced to show off the patterns and shadows created by clouds.",
-          highResUrl: "img/photog/id27.jpg",
-          camera: "Google",
-          lens: "Pixel 4a",
-          aperture: "f/1.7",
-          shutterSpeed: "1/1174 sec",
-          iso: "54",
-          focalLength: "4mm",
-          dimensions: "3974 x 2980",
-          fileSize: "2.36 MB"
-        },
-        {
-          id: 28,
-          title: "Rural Construction",
-          location: "Peng Siang River, Singapore",
-          description: "Outside the city with no tall buildings in sight, construction still continues.",
-          highResUrl: "img/photog/id28.jpg",
-          camera: "Xiaomi",
-          lens: "MIX 3",
-          aperture: "f/1.8",
-          shutterSpeed: "1/2478 sec",
-          iso: "100",
-          focalLength: "4mm",
-          dimensions: "4032 x 3024",
-          fileSize: "5.93 MB"
-        },
-        {
-          id: 29,
-          title: "Blue Town",
-          location: "Bukit Batok West, Singapore",
-          description: "White and blue buildings against the white and blue sky.",
-          highResUrl: "img/photog/id29.jpg",
-          camera: "Xiaomi",
-          lens: "MIX 3",
-          aperture: "f/2.4",
-          shutterSpeed: "1/1534 sec",
-          iso: "100",
-          focalLength: "5mm",
-          dimensions: "4032 x 3024",
-          fileSize: "4.43 MB"
-        },
-        {
-          id: 30,
-          title: "Heaven's Garden",
-          location: "?, Singapore",
-          description: "A park/garden or the face of a building?",
-          highResUrl: "img/photog/id30.jpg",
-          camera: "Sony SLT α58",
-          lens: "Olympus OM F.Zuiko Auto-S 50mm f/1.8",
-          aperture: "f/4",
-          shutterSpeed: "1/1250 sec",
-          iso: "800",
-          focalLength: "50mm",
-          dimensions: "5456 x 3632",
-          fileSize: "4.59 MB"
-        },
-        {
-          id: 31,
-          title: "Heaven's Garden II",
-          location: "?, Singapore",
-          description: "They grow bougainvillea up there :)",
-          highResUrl: "img/photog/id31.jpg",
-          camera: "Sony SLT α58",
-          lens: "Olympus OM F.Zuiko Auto-S 50mm f/1.8",
-          aperture: "f/22",
-          shutterSpeed: "1/5 sec",
-          iso: "100",
-          focalLength: "50mm",
-          dimensions: "5456 x 3632",
-          fileSize: "1.36 MB"
-        },
-        {
-          id: 32,
-          title: "Stray",
-          location: "?, Singapore",
-          description: "It used to greet me everyday with its teary eyes, now it's gone.",
-          highResUrl: "img/photog/id32.jpg",
-          camera: "Sony SLT α58",
-          lens: "Olympus OM F.Zuiko Auto-S 50mm f/1.8",
-          aperture: "f/1.8",
-          shutterSpeed: "1/125 sec",
-          iso: "3200",
-          focalLength: "50mm",
-          dimensions: "5456 x 3632",
-          fileSize: "5.81 MB"
-        },
-        {
-          id: 33,
-          title: "Towers in the Lake",
-          location: "Hindhede Quarry, Singapore",
-          description: "I slip through gates, soft as breath, A silent trail, no trace I've left. The water waits, the towers loom, In secret dance beneath the moon. Reflections stir with careful grace, Spires blur in twilight’s face. Taking aim; my lens aligns, 'Neath starlight in this forest shrine.'.",
-          highResUrl: "img/photog/id33.jpg",
-          camera: "Sony SLT α58",
-          lens: "Olympus OM F.Zuiko Auto-S 50mm f/1.8",
-          aperture: "f/4",
-          shutterSpeed: "1/80 sec",
-          iso: "200",
-          focalLength: "50mm",
-          dimensions: "5456 x 3632",
-          fileSize: "5.46 MB"
-        },
-        {
-          id: 34,
-          title: "False Moon",
-          location: "?, Singapore",
-          description: "The irreplaceable warm glow of an old street lamp.",
-          highResUrl: "img/photog/id34.jpg",
-          camera: "Sony SLT α58",
-          lens: "Olympus OM F.Zuiko Auto-S 50mm f/1.8",
-          aperture: "f/1.8",
-          shutterSpeed: "1/500 sec",
-          iso: "3200",
-          focalLength: "50mm",
-          dimensions: "5456 x 3632",
-          fileSize: "5.96 MB"
-        },
-        {
-          id: 35,
-          title: "Abyss Lamp",
-          location: "Bukit Batok Nature Reserve, Singapore",
-          description: "What is it doing? Its best.",
-          highResUrl: "img/photog/id35.jpg",
-          camera: "YI Technology M1",
-          lens: "XiaoYi 12-40mm f/3.5-5.6",
-          aperture: "f/5.6",
-          shutterSpeed: "1/80 sec",
-          iso: "800",
-          focalLength: "40mm",
-          dimensions: "5200 x 3902",
-          fileSize: "1.42 MB"
-        },
-        {
-          id: 36,
-          title: "Corvus Adversus Caelum",
-          location: "Haw Par Villa, Singapore",
-          description: "Corvus solus, contra lucem.",
-          highResUrl: "img/photog/id36.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/1025 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "4624 x 3472",
-          fileSize: "6.51 MB"
-        },
-        {
-          id: 37,
-          title: "Rainbow's end",
-          location: "Newton, Singapore",
-          description: "At the end was where my girl was waiting",
-          highResUrl: "img/photog/id37.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/1358 sec",
-          iso: "50",
-          focalLength: "5mm",
-          dimensions: "4624 x 3472",
-          fileSize: "5.16 MB"
-        },
-        {
-          id: 38,
-          title: "Duck by the Sea",
-          location: "The Cove, Persiaran Waterfront, Port Dickson, Malaysia",
-          description: "A meal with friends by the sea in the evening. The secret bottom level of Maslow's hierarchy of needs.",
-          highResUrl: "img/photog/id38.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/1.9",
-          shutterSpeed: "1/25 sec",
-          iso: "1385",
-          focalLength: "5mm",
-          dimensions: "6944 x 8976",
-          fileSize: "14.5 MB"
-        },
-        {
-          id: 39,
-          title: "Droplets on Leaf",
-          location: "Batu Caves, Malaysia",
-          description: "No idea why I attempted macro photography on a random leaf but I did.",
-          highResUrl: "img/photog/id39.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "f/2.4",
-          shutterSpeed: "1/100 sec",
-          iso: "88",
-          focalLength: "4mm",
-          dimensions: "2592 x 1944",
-          fileSize: "2.32 MB"
-        },
-        {
-          id: 40,
-          title: "Sky Canvas",
-          location: "Rail Corridor, Singapore",
-          description: "The sky that day had colours I could never capture on my camera, much to my dismay.",
-          highResUrl: "img/photog/id40.jpg",
-          camera: "Xiaomi",
-          lens: "POCO F2 Pro",
-          aperture: "-",
-          shutterSpeed: "-",
-          iso: "-",
-          focalLength: "-",
-          dimensions: "7488 x 1744",
-          fileSize: "2.77 MB"
-        },
-      ];
-
-      // Zoom functionality variables
-      let scale = 1;
-      let isDragging = false;
-      let startX = 0, startY = 0;
-      let translateX = 0, translateY = 0;
-      let initialDistance = 0;
-      let initialScale = 1;
-
-      // Create zoom controls
-      function createZoomControls() {
-        // Check if zoom controls already exist
-        if (document.querySelector('.zoom-controls')) return;
-
-        const zoomControls = document.createElement('div');
-        zoomControls.className = 'zoom-controls';
-        zoomControls.innerHTML = `
-          <button class="zoom-btn zoom-in" title="Zoom In">
-            <i class="fas fa-plus"></i>
-          </button>
-          <button class="zoom-btn zoom-out" title="Zoom Out">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button class="zoom-btn zoom-reset" title="Reset Zoom">
-            <i class="fas fa-expand-arrows-alt"></i>
-          </button>
-        `;
-
-        // Insert zoom controls into modal
-        const modalContent = document.querySelector('.modal-content') || modal;
-        modalContent.appendChild(zoomControls);
-
-        // Add event listeners for zoom buttons
-        const zoomInBtn = zoomControls.querySelector('.zoom-in');
-        const zoomOutBtn = zoomControls.querySelector('.zoom-out');
-        const zoomResetBtn = zoomControls.querySelector('.zoom-reset');
-
-        zoomInBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          zoomIn();
-        });
-
-        zoomOutBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          zoomOut();
-        });
-
-        zoomResetBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          resetZoom();
-        });
-      }
-
-      // Zoom functions
-      function zoomIn() {
-        scale = Math.min(scale * 1.2, 5); // Max zoom 5x
-        updateImageTransform();
-      }
-
-      function zoomOut() {
-        scale = Math.max(scale / 1.2, 0.5); // Min zoom 0.5x
-        updateImageTransform();
-      }
-
-      function resetZoom() {
-        scale = 1;
-        translateX = 0;
-        translateY = 0;
-        updateImageTransform();
-      }
-
-      function updateImageTransform() {
-        modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-        modalImg.style.cursor = scale > 1 ? 'grab' : 'default';
-      }
-
-      // Mouse wheel zoom
-      // function handleWheel(e) {
-      //   if (modal.style.display === 'block') {
-      //     e.preventDefault();
-
-      //     const rect = modalImg.getBoundingClientRect();
-      //     const x = e.clientX - rect.left;
-      //     const y = e.clientY - rect.top;
-
-      //     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      //     const newScale = Math.min(Math.max(scale * delta, 0.5), 5);
-
-      //     if (newScale !== scale) {
-      //       // Zoom towards mouse position
-      //       const scaleChange = newScale / scale;
-      //       translateX = x - (x - translateX) * scaleChange;
-      //       translateY = y - (y - translateY) * scaleChange;
-      //       scale = newScale;
-      //       updateImageTransform();
-      //     }
-      //   }
-      // }
-
-      // Mouse drag functionality
-      function handleMouseDown(e) {
-        if (scale > 1) {
-          isDragging = true;
-          startX = e.clientX - translateX;
-          startY = e.clientY - translateY;
-          modalImg.style.cursor = 'grabbing';
-          e.preventDefault();
-        }
-      }
-
-      function handleMouseMove(e) {
-        if (isDragging && scale > 1) {
-          translateX = e.clientX - startX;
-          translateY = e.clientY - startY;
-          updateImageTransform();
-        }
-      }
-
-      function handleMouseUp() {
-        isDragging = false;
-        if (scale > 1) {
-          modalImg.style.cursor = 'grab';
-        }
-      }
-
-      // Touch events for mobile zoom and pan
-      function handleTouchStart(e) {
-        if (e.touches.length === 1) {
-          // Single touch - start dragging if zoomed
-          if (scale > 1) {
-            isDragging = true;
-            startX = e.touches[0].clientX - translateX;
-            startY = e.touches[0].clientY - translateY;
-          }
-        } else if (e.touches.length === 2) {
-          // Two touches - start pinch zoom
-          const touch1 = e.touches[0];
-          const touch2 = e.touches[1];
-          initialDistance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY
-          );
-          initialScale = scale;
-        }
-        e.preventDefault();
-      }
-
-      function handleTouchMove(e) {
-        if (e.touches.length === 1 && isDragging && scale > 1) {
-          // Single touch drag
-          translateX = e.touches[0].clientX - startX;
-          translateY = e.touches[0].clientY - startY;
-          updateImageTransform();
-        } else if (e.touches.length === 2) {
-          // Pinch zoom
-          const touch1 = e.touches[0];
-          const touch2 = e.touches[1];
-          const currentDistance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY
-          );
-
-          const newScale = Math.min(Math.max(initialScale * (currentDistance / initialDistance), 0.5), 5);
-          scale = newScale;
-          updateImageTransform();
-        }
-        e.preventDefault();
-      }
-
-      function handleTouchEnd() {
-        isDragging = false;
-      }
-
-      // Update EXIF data in the modal
-      function updateExifData(imageData) {
-        const exifItems = document.querySelectorAll('.exif-item');
-
-        // Update Camera
-        exifItems[0].querySelector('.exif-value').textContent = imageData.camera;
-
-        // Update Lens
-        exifItems[1].querySelector('.exif-value').textContent = imageData.lens;
-
-        // Update Aperture
-        exifItems[2].querySelector('.exif-value').textContent = imageData.aperture;
-
-        // Update Shutter Speed
-        exifItems[3].querySelector('.exif-value').textContent = imageData.shutterSpeed;
-
-        // Update ISO
-        exifItems[4].querySelector('.exif-value').textContent = imageData.iso;
-
-        // Update Focal Length
-        exifItems[5].querySelector('.exif-value').textContent = imageData.focalLength;
-
-        exifItems[6].querySelector('.exif-value').textContent = imageData.dimensions;
-
-        exifItems[7].querySelector('.exif-value').textContent = imageData.fileSize;
-      }
-
-      // Display image in modal with its data
-      function displayImage(index) {
-        currentIndex = index;
-        resetZoom();
-        const data = imageData[index];
-
-        // Show loading state
-        modalImg.src = ''; // Clear current image
-        modalImg.classList.add('loading');
-
-        // Add a loading indicator if not already present
-        let loader = document.querySelector('.modal-loader');
-        if (!loader) {
-          loader = document.createElement('div');
-          loader.className = 'modal-loader';
-          loader.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-          document.querySelector('.modal-image-container').appendChild(loader);
-        }
-        loader.style.display = 'flex';
-
-        // Update text content immediately
-        modalTitle.textContent = data.title;
-        modalLocation.textContent = data.location;
-        modalDescription.textContent = data.description;
-        updateExifData(data);
-
-        // Show modal
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-
-        // Load high-res image
-        const highResImage = new Image();
-        highResImage.onload = function () {
-          // Once loaded, update the modal image
-          modalImg.src = data.highResUrl;
-          modalImg.classList.remove('loading');
-          loader.style.display = 'none';
-        };
-
-        highResImage.onerror = function () {
-          // Fallback to thumbnail if high-res fails to load
-          modalImg.src = galleryItems[index].querySelector('img').src;
-          modalImg.classList.remove('loading');
-          loader.style.display = 'none';
-        };
-
-        // Start loading the high-res image
-        highResImage.src = data.highResUrl;
-      }
-
-      // Initialize zoom controls
-      createZoomControls();
-
-      // Add event listeners for zoom functionality
-      modalImg.addEventListener('mousedown', handleMouseDown);
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      // Touch events for mobile
-      modalImg.addEventListener('touchstart', handleTouchStart, { passive: false });
-      modalImg.addEventListener('touchmove', handleTouchMove, { passive: false });
-      modalImg.addEventListener('touchend', handleTouchEnd);
-
-      // Add click event to gallery items
-      galleryItems.forEach((item, index) => {
-        item.addEventListener('click', function () {
-          // First set the modal image to the thumbnail while high-res loads
-          // This gives immediate visual feedback to the user
-          modal.style.display = 'block';
-          modalImg.src = this.querySelector('img').src;
-
-          // Then display the high-res version with metadata
-          displayImage(index);
-        });
-      });
-
-      // Previous image button
-      prevBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        let newIndex = currentIndex - 1;
-        if (newIndex < 0) newIndex = galleryItems.length - 1;
-        displayImage(newIndex);
-      });
-
-      // Next image button
-      nextBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        let newIndex = currentIndex + 1;
-        if (newIndex >= galleryItems.length) newIndex = 0;
-        displayImage(newIndex);
-      });
-
-      // Close modal
-      modalClose.addEventListener('click', function () {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Restore scrolling
-      });
-
-      // Close modal when clicking outside of content
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-          document.body.style.overflow = 'auto';
-        }
-      });
-
-      // Keyboard navigation
-      document.addEventListener('keydown', function (e) {
-        if (modal.style.display === 'block') {
-          if (e.key === 'ArrowLeft') {
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = galleryItems.length - 1;
-            displayImage(newIndex);
-          } else if (e.key === 'ArrowRight') {
-            let newIndex = currentIndex + 1;
-            if (newIndex >= galleryItems.length) newIndex = 0;
-            displayImage(newIndex);
-          } else if (e.key === 'Escape') {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetZoom();
-          } else if (e.key === '+' || e.key === '=') {
-            e.preventDefault();
-            zoomIn();
-          } else if (e.key === '-') {
-            e.preventDefault();
-            zoomOut();
-          } else if (e.key === '0') {
-            e.preventDefault();
-            resetZoom();
-          }
-        }
-      });
-    });
-
-    // Array of background images
-    const backgroundImages = [
-      'img/photog/bedhead.jpg',
-      'img/photog/hotel.jpg',
-      'img/photog/temple.jpg',
-      'img/photog/accordion.jpg',
-      'img/photog/yingge.jpg',
-      'img/photog/conscription.png',
-    ];
-
-    let currentImageIndex = 0;
-    let nextImageIndex = 1;
-    let activeBackground = 1; // Tracks which background div is currently visible
-
-    const bg1 = document.getElementById('backgroundImage1');
-    const bg2 = document.getElementById('backgroundImage2');
-
-    // Set initial backgrounds
-    bg1.style.backgroundImage = `url('${backgroundImages[0]}')`;
-    bg2.style.backgroundImage = `url('${backgroundImages[1]}')`;
-
-    // Change background every 5 seconds
-    setInterval(crossfadeBackground, 5000);
-
-    function crossfadeBackground() {
-      // Get the currently visible and hidden background elements
-      const currentBg = activeBackground === 1 ? bg1 : bg2;
-      const nextBg = activeBackground === 1 ? bg2 : bg1;
-
-      // Set the next image before starting the transition
-      nextBg.style.backgroundImage = `url('${backgroundImages[nextImageIndex]}')`;
-
-      // Fade in the next image (which is currently hidden)
-      nextBg.style.opacity = '1';
-
-      // Fade out the current image
-      currentBg.style.opacity = '0';
-
-      // Toggle which background is active
-      activeBackground = activeBackground === 1 ? 2 : 1;
-
-      // Update the indices for the next cycle
-      currentImageIndex = nextImageIndex;
-      nextImageIndex = (nextImageIndex + 1) % backgroundImages.length;
-    }
-  </script>
 </body>
-
 </html>
