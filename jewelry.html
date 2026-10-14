@@ -188,6 +188,7 @@ display:grid; grid-template-columns:1.1fr .9fr; gap:2.4rem; align-items:center;
 .m-nav:hover{background:var(--gold-bright)}
 .m-nav.prev{left:.9rem} .m-nav.next{right:.9rem}
 .m-thumbs{display:flex; gap:.6rem; padding:.8rem 1rem; overflow-x:auto; border-top:1px solid rgba(111,214,223,.25)}
+.m-nav[hidden],.m-thumbs[hidden]{display:none !important}
 .m-thumb{position:relative; flex:0 0 auto; width:62px; height:62px; border-radius:1rem; overflow:hidden; border:1.5px solid rgba(247,241,227,.35); padding:0; background:var(--navy); opacity:.7; transition:opacity .2s, border-color .2s}
 .m-thumb:hover{opacity:1}
 .m-thumb[aria-current='true']{opacity:1; border-color:var(--gold-bright)}
@@ -339,12 +340,12 @@ const jewelryData = [
         orb: "#2F6BFF", wash: "#E3EBFB", accent: "#2457D6", chart: [40, -72],
         glow: '#8FB4FF', size: 1.35,
         title: "Lapis Lazuli Ring",
-        description: `This enchanting Lapis Lazuli Ring captures the essence of the skies above and the mysteries of the past. A polished piece of lapis lazuli - deep blue and flecked with wisps of white like clouds drifting across a twilight sky - sits proudly atop an old-world, gold-colored band. Delicate blue enamel accents echo the stone’s celestial hues, giving the ring an almost otherworldly glow.
+        description: `This enchanting Lapis Lazuli Ring captures the essence of the skies above and the mysteries of the past. A polished piece of lapis lazuli - deep blue and flecked with wisps of white like clouds drifting across a twilight sky - sits proudly atop an old-world, gold-colored band. Delicate blue enamel accents echo the stone's celestial hues, giving the ring an almost otherworldly glow.
         <br><br>
-        Lapis Lazuli, known as lapis or “sky stone” in Latin, has long been associated with royalty, wisdom, and magic. This ring channels those ancient energies, its timeless setting evoking forgotten kingdoms and starlit rituals.
+        Lapis Lazuli, known as lapis or "sky stone" in Latin, has long been associated with royalty, wisdom, and magic. This ring channels those ancient energies, its timeless setting evoking forgotten kingdoms and starlit rituals.
         <br><br>
-        The band itself has its own story. Discovered in the vibrant chaos of Bangkok’s Chatuchak Market, it was missing its centerpiece. I brought it back to Singapore, where it was lovingly restored—now crowned with a stone worthy of its history.`,
-        artistComments: `One of my favourite pieces. The moment I laid eyes on that unset band in chatuchak, I already knew what I had to do. I\'d never seen what Lapis Lazuli looks like before, but I felt it would look perfect. 
+        The band itself has its own story. Discovered in the vibrant chaos of Bangkok's Chatuchak Market, it was missing its centerpiece. I brought it back to Singapore, where it was lovingly restored—now crowned with a stone worthy of its history.`,
+        artistComments: `One of my favourite pieces. The moment I laid eyes on that unset band in chatuchak, I already knew what I had to do. I'd never seen what Lapis Lazuli looks like before, but I felt it would look perfect. 
         <br><br> 
         It turned out much better than I had hoped. The blue almost looks like it glows when light shines directly on it. The white streaks were like clouds against the sky. The only thing I was slightly disappointed by is that the pyrite flecks were not shiny, but I think it leans nicely into the rustic, antique look. 
         <br><br>
@@ -415,7 +416,7 @@ const jewelryData = [
         glow: '#FFD25A', size: 1.8,
         title: "Sunstone Ring",
         description: `
-        This rectangular sunstone ring captures the essence of sunlight. The polished stone rests beautifully within a silver band, creating a subtle contrast of color and light. Sunstone’s inner fire is revealed as the light dances across its surface and is known for its connection to joy and optimism. This ring invites a sense of grounded energy and radiant spirit. 
+        This rectangular sunstone ring captures the essence of sunlight. The polished stone rests beautifully within a silver band, creating a subtle contrast of color and light. Sunstone's inner fire is revealed as the light dances across its surface and is known for its connection to joy and optimism. This ring invites a sense of grounded energy and radiant spirit. 
         `,
         artistComments: `
         This one was a bit of a challenge. The shine only appears at certain angles, and the uncut shape of the stone did not agree with me. I needed the base to be rectangular to fit in the ring but I wanted the shine to appear from the front as much as possible. For every bit of the stone I removed, I removed some of the reflective parts, so I decided on a triangular prism for the crown combined with a rectangular base.
@@ -490,7 +491,7 @@ const jewelryData = [
         glow: '#5FCB93', size: 1.15,
         title: "Moss Agate Ring",
         description: `
-        Rooted in nature’s beauty, this captivating ring showcases the ethereal beauty of moss agate, with a mesmerizing swirl of greens and milky clear spaces that evoke the feeling of a forest floor. The stone’s rich, layered hues – from deep emerald to pale jade – are beautifully framed by a substantial silver band. Stylized antelope figures, seemingly emerging from a landscape of leaves and blossoms, stand proudly amongst the design, their horns dramatically curled backwards in a gesture of strength and grace. <br><br>
+        Rooted in nature's beauty, this captivating ring showcases the ethereal beauty of moss agate, with a mesmerizing swirl of greens and milky clear spaces that evoke the feeling of a forest floor. The stone's rich, layered hues – from deep emerald to pale jade – are beautifully framed by a substantial silver band. Stylized antelope figures, seemingly emerging from a landscape of leaves and blossoms, stand proudly amongst the design, their horns dramatically curled backwards in a gesture of strength and grace. <br><br>
         Moss Agate is considered to be a symbol of prosperity, new beginnings, healing and tranquility. 
         `,
         artistComments: `
@@ -530,7 +531,7 @@ const jewelryData = [
         glow: '#B8E04A', size: 1.2,
         title: "Demantoid Ring",
         description: `
-        This small demantoid ring evokes both nature’s grace and its enduring strength. The band, slender and organic, flows seamlessly into the fan-shaped leaves - symbols of resilience and ancient beauty. At the center rests a circular cabochon demantoid, its soft, rounded surface glowing with green fire. <br><br>Within the gem, fine thread-like inclusions mimic the delicate structure of branches - each one a tiny world, frozen in time. These natural features, known as "horsetail" inclusions, are not flaws but signatures of authenticity. The overall design hints at quiet luxury, its charm lying in subtlety rather than spectacle.<br><br>Spiritually, the demantoid is said to be associated with prosperity, protection and perhaps even adventure. Paired with the ginkgo, an ancient tree known for endurance, memory, and peace - this ring becomes more than adornment; it is a talisman of vitality and growth. A gentle reminder that strength can be soft, and that even the smallest things can carry great depth.
+        This small demantoid ring evokes both nature's grace and its enduring strength. The band, slender and organic, flows seamlessly into the fan-shaped leaves - symbols of resilience and ancient beauty. At the center rests a circular cabochon demantoid, its soft, rounded surface glowing with green fire. <br><br>Within the gem, fine thread-like inclusions mimic the delicate structure of branches - each one a tiny world, frozen in time. These natural features, known as "horsetail" inclusions, are not flaws but signatures of authenticity. The overall design hints at quiet luxury, its charm lying in subtlety rather than spectacle.<br><br>Spiritually, the demantoid is said to be associated with prosperity, protection and perhaps even adventure. Paired with the ginkgo, an ancient tree known for endurance, memory, and peace - this ring becomes more than adornment; it is a talisman of vitality and growth. A gentle reminder that strength can be soft, and that even the smallest things can carry great depth.
         `,
         artistComments: `
         I bought this one from China. I knew nothing about demantoids so when it arrived it was basically dust in a bag (most demantoids are under 1 carat). After sifting through it, I found about 3-4 pieces that were big enough to grasp between 2 fingers.
@@ -593,11 +594,11 @@ const jewelryData = [
         glow: ['#FF6F9B','#58D79B'], size: 1.2,
         title: "Watermelon Tourmaline Ring",
         description: `
-        The ring’s heart lies in the startling contrast: the vibrant pink & green of the watermelon tourmaline, a captured echo of summer’s heat, set against the cool, dark silver band. It evokes the feeling of a captured moment of impossible beauty - a silent miracle of nature, where plants survive in the freezing cold. 
+        The ring's heart lies in the startling contrast: the vibrant pink & green of the watermelon tourmaline, a captured echo of summer's heat, set against the cool, dark silver band. It evokes the feeling of a captured moment of impossible beauty - a silent miracle of nature, where plants survive in the freezing cold. 
         <br><br>
         The oval watermelon tourmaline, largely untouched in its natural state, retains a raw, vibrant energy, a testament to the enduring strength of life. Its unrefined brilliance evokes a sense of wonder, a reminder that even in the most unexpected places, beauty and resilience can be found.
         <br><br>
-        It’s associated with love and peace, a reminder that even in the darkest corners of the soul, a spark of joy and warmth can endure.
+        It's associated with love and peace, a reminder that even in the darkest corners of the soul, a spark of joy and warmth can endure.
         <br><br>
         This piece was requested by and made for my mother. She had always loved how watermelon tourmaline looked, but was always deterred one way or another. 
         `,
