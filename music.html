@@ -3,7 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-<title>My Musical Tastes — Music · Atlas No. 04</title>
+<title>Orbital Radio · Atlas No. 04</title>
 <link rel='preconnect' href='https://fonts.googleapis.com'>
 <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
 <link href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Space+Mono:wght@400;700&display=swap' rel='stylesheet'>
@@ -155,6 +155,13 @@ a.play:active{transform:translateY(1px); box-shadow:none}
 .knob::after{content:''; position:absolute; left:50%; top:2px; width:2px; height:8px; margin-left:-1px; background:var(--pink); border-radius:1px}
 .deck.nolink .lcd-st{color:#ff8a6a}
 
+/* --- stream it on... --- */
+.svc{display:flex; align-items:center; flex-wrap:wrap; gap:.3rem; margin-top:.55rem}
+.svc b{font-family:var(--mono); font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(247,241,227,.55); border:1px solid rgba(247,241,227,.3); border-radius:999px; padding:.22rem .6rem; cursor:pointer; transition:background-color .2s, color .2s, border-color .2s}
+.svc b:hover{border-color:var(--cyan-bright); color:var(--cyan-bright)}
+.svc b[aria-checked='true']{background:var(--gold-bright); color:var(--navy-deep); border-color:var(--navy-deep)}
+.svc b[aria-checked='false'][data-svc='youtube']{opacity:.5}
+
 .footer{border-top:1.5px solid var(--line); background:var(--navy-deep); color:var(--cream); padding:1.5rem 0}
 .footer-inner{display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap}
 .footer .brand{color:var(--cream); font-size:1rem}
@@ -173,9 +180,10 @@ nav{justify-content:center}
 .card h3{font-size:1.6rem}
 }
 @media (prefers-reduced-motion:reduce){
-.stars,.disc .rec,.disc .orb,.bg-punk,.bg-jazz::before,.bg-jazz::after,.bg-rock::before{animation:none}
+.svc b{transition:none}
 html{scroll-behavior:auto}
 .card{opacity:1; transform:none; animation:none}
+.stars,.disc .rec,.disc .orb,.bg-punk,.bg-jazz::before,.bg-jazz::after,.bg-rock::before{animation:none}
 }
 </style>
 </head>
@@ -356,13 +364,55 @@ const musicData = {
                 {
                     title: "The Rolling Stones",
                     type: "Rock and Roll Rebellion",
-                    description: "The bad boys of rock who brought raw energy and blues-based rock to the mainstream for decades.",
+                    description: "Another band that was pretty famous during the Vietnam War and associated with it sometimes.",
                     fav: ["<a href=https://youtu.be/SGyOaCXr8Lw>Paint It Black</a>", "<a href=https://youtu.be/RcZn2-bGXqQ>Gimme Shelter</a>"]
                 }
             ]
         };
 
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ---------- streaming services ---------- */
+const SERVICES = [
+  {key:'youtube', label:'YouTube'},
+  {key:'spotify', label:'Spotify'},
+  {key:'apple',   label:'Apple Music'},
+  {key:'deezer',  label:'Deezer'},
+  {key:'tidal',   label:'Tidal'}
+];
+let preferredSvc = null;
+
+const ytbId = href => { const m = /(?:youtu\.be\/|v[=/])([\w-]{6,})/.exec(href || ''); return m ? m[1] : null; };
+const qEnc  = q => encodeURIComponent(q.replace(/\s+/g,' ').trim());
+
+function svcHref(key, yt, dq){
+  switch(key){
+    case 'youtube': return yt || (dq ? `https://www.youtube.com/results?search_query=${qEnc(dq)}` : null);
+    case 'spotify': return `https://open.spotify.com/search/${qEnc(dq)}`;
+    case 'apple':   return `https://music.apple.com/us/search?term=${qEnc(dq)}`;
+    case 'deezer':  return dq ? `https://www.deezer.com/search/${qEnc(dq)}` : null;
+    case 'tidal':   return dq ? `https://tidal.com/search/query?query=${encodeURIComponent(dq)}` : null;
+  }
+  return null;
+}
+
+const deezerPromise = new Map();
+function deezerLookup(artist, title){
+  const key = artist + '\u0000' + title;
+  if(deezerPromise.has(key)) return deezerPromise.get(key);
+  const p = (async () => {
+    try{
+      const r = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(artist + ' ' + title)}&limit=1`);
+      if(!r.ok) return null;
+      const j = await r.json();
+      const t = j && Array.isArray(j.data) ? j.data[0] : null;
+      return t ? {deezer:t.link, tidal:`https://tidal.com/browse/search?query=${encodeURIComponent(artist+' '+title)}`, name:esc(t.artist + ' — ' + t.title)} : null;
+    }catch(e){ return null; }
+  })();
+  deezerPromise.set(key, p);
+  return p;
+}
+
 const stage = document.getElementById('stage');
 const cardsEl = document.getElementById('cards');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -391,7 +441,8 @@ ${t.href ? `<a class='play' href="${escA(t.href)}" target='_blank' rel='noopener
 <div class='deck-top'><i></i><span>Atlas Hi-Fi &middot; Fav. songs</span><i></i></div>
 <div class='lcd'><div class='reels'>${REEL}${REEL}</div><div class='lcd-text'><span class='lcd-st'></span><span class='lcd-title'></span></div><div class='eq' aria-hidden='true'><b></b><b></b><b></b><b></b><b></b></div></div>
 <ol class='tracks'>${rows}</ol>
-<div class='ctrl'><button class='tbtn' type='button' data-t='prev' aria-label='Previous track'>${ICON.prev}</button><button class='tbtn go' type='button' data-t='play' aria-label='Play cued track'>${ICON.play}</button><button class='tbtn' type='button' data-t='next' aria-label='Next track'>${ICON.next}</button><span class='sp'></span><span class='knob' aria-hidden='true'></span></div>
+<div class='ctrl'><button class='tbtn' type='button' data-t='prev' aria-label='Previous track'>${ICON.prev}</button><button class='tbtn go' type='button' data-t='play' aria-label='Play cued track on your preferred service'>${ICON.play}</button><button class='tbtn' type='button' data-t='next' aria-label='Next track'>${ICON.next}</button><span class='sp'></span><span class='knob' aria-hidden='true'></span></div>
+<div class='svc' role='radiogroup' aria-label='Preferred streaming service'><b data-svc='youtube' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on YouTube'>YouTube</b><b data-svc='spotify' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Spotify'>Spotify</b><b data-svc='apple' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Apple Music'>Apple Music</b><b data-svc='deezer' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Deezer'>Deezer</b><b data-svc='tidal' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Tidal'>Tidal</b></div>
 </div>`;
 }
 const pad2 = n => String(n).padStart(2,'0');
@@ -407,17 +458,48 @@ function setCue(deck, i, quiet){
   if(!deck.classList.contains('playing')) deck.querySelector('.lcd-st').textContent = `Cued ${pad2(i+1)}/${pad2(rows.length)}`;
   deck.querySelector('.knob').style.transform = `rotate(${-120 + i * (240 / Math.max(1, rows.length-1))}deg)`;
 }
-function playDeck(deck, i, open){
+async function resolveDeck(deck){
+  for(const r of deck.querySelectorAll('.track')){
+    const yt = ytbId(r.dataset.href);
+    if(yt) r._yt = yt; else {
+      const d = await deezerLookup(deck.dataset.artist || '', r.dataset.title);
+      if(d){ r._deezer = d.deezer; r._tidal = d.tidal; }
+    }
+  }
+}
+function svcHrefFor(deck, row, key){
+  const dq = `${deck.dataset.artist || ''} ${row.dataset.title}`.trim();
+  switch(key){
+    case 'youtube': return row.dataset.href || (row._yt ? `https://youtu.be/${row._yt}` : null);
+    case 'deezer':  return row._deezer || null;
+    case 'tidal':   return row._tidal || null;
+    default:        return svcHref(key, row._yt, dq);
+  }
+}
+
+function preferredSvcFor(deck){
+  const sel = deck.querySelector('.svc'); if(!sel) return null;
+  const chips = [...sel.querySelectorAll('b')];
+  let on = chips.find(c => c.getAttribute('aria-checked') === 'true');
+  if(!on){ on = chips[0]; chips.forEach((c,i) => c.setAttribute('aria-checked', i === 0 ? 'true' : 'false')); }
+  return on.dataset.svc;
+}
+
+async function playDeck(deck, i){
   setCue(deck, i);
-  const r = deck.querySelectorAll('.track')[+deck.dataset.cue], href = r.dataset.href;
+  const rows = deck.querySelectorAll('.track'), r = rows[+deck.dataset.cue];
+  const key = preferredSvcFor(deck) || 'youtube';
+  if(!r._yt && !r._deezer) await resolveDeck(deck);
+  const href = svcHrefFor(deck, r, key);
   document.querySelectorAll('.deck.playing').forEach(d => { if(d !== deck){ d.classList.remove('playing'); setCue(d, +d.dataset.cue, true); } });
   clearTimeout(deck._t);
   if(!href){ deck.classList.remove('playing'); deck.classList.add('nolink'); deck.querySelector('.lcd-st').textContent = 'No link yet'; return; }
   deck.classList.add('playing');
-  deck.querySelector('.lcd-st').textContent = '▶ Now playing ↗';
-  if(open) window.open(href, '_blank', 'noopener');
+  deck.querySelector('.lcd-st').textContent = `▶ ${SERVICES.find(s => s.key === key).label} ↗`;
+  window.open(href, '_blank', 'noopener');
   deck._t = setTimeout(() => { deck.classList.remove('playing'); setCue(deck, +deck.dataset.cue, true); }, 8000);
 }
+
 cardsEl.addEventListener('click', e => {
   const deck = e.target.closest('.deck'); if(!deck) return;
   const cur = +deck.dataset.cue || 0;
@@ -426,10 +508,17 @@ cardsEl.addEventListener('click', e => {
   if(t){
     if(t.dataset.t === 'prev') setCue(deck, cur - 1);
     else if(t.dataset.t === 'next') setCue(deck, cur + 1);
-    else playDeck(deck, cur, true);
+    else playDeck(deck, cur).catch(()=>{});
     return;
   }
-  if(e.target.closest('a.play')){ playDeck(deck, rows.indexOf(row), false); return; }
+  const svcGroup = e.target.closest('.svc');
+  if(svcGroup){
+    const chipB = e.target.closest('b[data-svc]'); if(!chipB) return;
+    preferredSvc = chipB.dataset.svc;
+    document.querySelectorAll('.svc').forEach(sel => sel.querySelectorAll('b').forEach(c => c.setAttribute('aria-checked', c.dataset.svc === preferredSvc ? 'true' : 'false')));
+    return;
+  }
+  if(e.target.closest('a.play')){ playDeck(deck, rows.indexOf(row)).catch(()=>{}); return; }
   if(e.target.closest('.cue')){ clearTimeout(deck._t); deck.classList.remove('playing'); setCue(deck, rows.indexOf(row)); }
 });
 
@@ -451,9 +540,11 @@ function showGenre(genre, fromHash){
     card.style.setProperty('--i', i);
     const favs = item.fav && item.fav.length ? buildDeck(item.fav) : '';
     card.innerHTML = `<p class='no'>No. ${String(i+1).padStart(2,'0')}</p><h3>${esc(item.title)}</h3><span class='type'>${esc(item.type)}</span><p class='desc'>${esc(item.description)}</p>${favs}`;
+    card.querySelectorAll('.deck').forEach(d => d.dataset.artist = item.title);
     card.querySelectorAll('.deck').forEach(d => setCue(d, 0, true));
     cardsEl.appendChild(card);
   });
+  const firstChip = cardsEl.querySelector('.svc b'); if(firstChip) firstChip.tabIndex = 0;
   sizeCanvases();
 }
 
@@ -466,6 +557,19 @@ document.querySelectorAll('.tab').forEach(t => {
     if(e.key === 'ArrowLeft') n = (i-1+tabs.length) % tabs.length;
     if(n > -1){ e.preventDefault(); tabs[n].focus(); showGenre(tabs[n].dataset.genre); }
   });
+});
+
+document.addEventListener('keydown', e => {
+  const chip = document.querySelector('.svc b[tabindex=\'0\']'); if(!chip) return;
+  if(e.key === 'Enter' || e.key === ' '){
+    e.preventDefault();
+    preferredSvc = chip.dataset.svc;
+    document.querySelectorAll('.svc').forEach(sel => sel.querySelectorAll('b').forEach(c => c.setAttribute('aria-checked', c.dataset.svc === preferredSvc ? 'true' : 'false')));
+  } else if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+    const chips = [...chip.parentElement.querySelectorAll('b')]; const i = chips.indexOf(chip);
+    const n = e.key === 'ArrowRight' ? (i+1) % chips.length : (i-1+chips.length) % chips.length;
+    e.preventDefault(); chip.tabIndex = -1; chips[n].tabIndex = 0; chips[n].focus();
+  }
 });
 
 /* ---------- psychedelic: several ring-centres drifting, overprinted so they interfere ---------- */
