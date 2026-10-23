@@ -17,6 +17,7 @@
 --gold:#C08B2B; --gold-bright:#F2B416; --gold-wash:#FBF1D3;
 --ember:#E2421F;
 --line:#212A45;
+--ease:cubic-bezier(.22,.7,.2,1);
 --mono:'Space Mono',monospace; --serif:'Cormorant Garamond',Georgia,serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -71,9 +72,10 @@ h1 em{display:block; font-style:italic; font-weight:400; text-transform:none; le
 
 /* --- the stage: one backdrop per genre --- */
 .stage{position:relative; overflow:hidden; background:var(--navy-deep); isolation:isolate; border-bottom:1.5px solid var(--line)}
-.bg{position:absolute; inset:0; z-index:-1; opacity:0; visibility:hidden; transition:opacity .9s ease, visibility .9s ease; pointer-events:none}
+.bg{position:absolute; inset:0; z-index:-1; opacity:0; visibility:hidden; transition:opacity 1s ease-in-out, visibility 1s; pointer-events:none; will-change:opacity}
 .bg.on{opacity:1; visibility:visible}
-#psyCanvas,#emberCanvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.bg:not(.on),.bg:not(.on)::before,.bg:not(.on)::after{animation-play-state:paused}
+#psyCanvas,#emberCanvas{position:absolute; left:0; top:0; width:100%; display:block}
 .bg-punk{background:
  radial-gradient(circle, rgba(20,27,46,.34) 1.5px, transparent 2px) 0 0/11px 11px,
  repeating-linear-gradient(-45deg, transparent 0 26px, rgba(20,27,46,.11) 26px 52px),
@@ -103,10 +105,11 @@ h1 em{display:block; font-style:italic; font-weight:400; text-transform:none; le
 .stage[data-genre='jazz']{--acc:var(--gold)}
 .stage[data-genre='rock']{--acc:var(--ember)}
 
-.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr)); gap:1.4rem; align-items:start}
-.card{position:relative; min-width:0; background:var(--paper); border:1.5px solid var(--line); border-radius:2rem; padding:1.6rem 1.6rem 1.5rem; box-shadow:0 18px 36px -22px rgba(0,0,0,.65); opacity:0; transform:translateY(24px); animation:rise .7s ease forwards; animation-delay:calc(var(--i,0) * 90ms); transition:transform .25s, box-shadow .25s}
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr)); gap:1.4rem; align-items:start; transition:opacity .22s ease, transform .22s ease, height .5s var(--ease)}
+.cards.swap{opacity:0; transform:translateY(10px)}
+.card{position:relative; min-width:0; background:var(--paper); border:1.5px solid var(--line); border-radius:2rem; padding:1.6rem 1.6rem 1.5rem; box-shadow:0 18px 36px -22px rgba(0,0,0,.65); animation:rise .8s var(--ease) backwards; animation-delay:calc(var(--i,0) * 80ms + 60ms); transition:transform .4s var(--ease), box-shadow .4s var(--ease)}
 .card:hover{transform:translateY(-5px); box-shadow:0 26px 40px -22px rgba(0,0,0,.7)}
-@keyframes rise{to{opacity:1; transform:none}}
+@keyframes rise{from{opacity:0; transform:translateY(22px) scale(.985)}}
 .card::before{content:''; position:absolute; left:1.6rem; top:-1.5px; width:56px; height:5px; border-radius:0 0 6px 6px; background:var(--acc)}
 .card .no{font-family:var(--mono); font-size:.62rem; letter-spacing:.2em; color:var(--ink-soft); display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem}
 .card .no::before{content:'●'; color:var(--acc); font-size:.7rem}
@@ -131,7 +134,7 @@ h1 em{display:block; font-style:italic; font-weight:400; text-transform:none; le
 .eq b:nth-child(2){animation-delay:-.25s!important} .eq b:nth-child(3){animation-delay:-.5s!important} .eq b:nth-child(4){animation-delay:-.15s!important} .eq b:nth-child(5){animation-delay:-.7s!important}
 @keyframes eqb{0%{height:4px} 50%{height:20px} 100%{height:9px}}
 .tracks{list-style:none; position:relative; margin:.6rem 0 .55rem; max-height:14rem; overflow-y:auto; display:flex; flex-direction:column; gap:.25rem; padding-right:.2rem; scrollbar-width:thin; scrollbar-color:rgba(247,241,227,.35) transparent}
-.track{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.4rem; border-radius:.8rem; background:rgba(247,241,227,.06); transition:background-color .18s}
+.track{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.4rem; border-radius:.8rem; background:rgba(247,241,227,.06); transition:background-color .25s ease, box-shadow .25s ease}
 .track:hover{background:rgba(247,241,227,.12)}
 .track.on{background:rgba(255,194,74,.16); box-shadow:inset 0 0 0 1px rgba(255,194,74,.5)}
 .cue{display:flex; align-items:center; gap:.6rem; min-width:0; text-align:left; background:none; border:0; color:inherit; cursor:pointer; padding:.45rem .3rem .45rem .65rem; font-family:var(--mono); font-size:.64rem; letter-spacing:.03em}
@@ -154,13 +157,20 @@ a.play:active{transform:translateY(1px); box-shadow:none}
 .knob{width:26px; height:26px; border-radius:50%; background:conic-gradient(from 0deg,#cfd5de,#6f7686,#e7ebf1,#5b6272,#cfd5de); border:1px solid #070a14; box-shadow:0 2px 3px rgba(0,0,0,.6); position:relative; transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
 .knob::after{content:''; position:absolute; left:50%; top:2px; width:2px; height:8px; margin-left:-1px; background:var(--pink); border-radius:1px}
 .deck.nolink .lcd-st{color:#ff8a6a}
+.embed{height:0; opacity:0; overflow:hidden; border-radius:12px; transition:height .4s var(--ease), opacity .3s ease, margin .4s var(--ease)}
+.embed.open{height:var(--eh,80px); opacity:1; margin-top:.6rem}
+.embed iframe{display:block; width:100%; height:100%; border:0; border-radius:12px; color-scheme:normal; background:#000}
 
-/* --- stream it on... --- */
-.svc{display:flex; align-items:center; flex-wrap:wrap; gap:.3rem; margin-top:.55rem}
-.svc b{font-family:var(--mono); font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(247,241,227,.55); border:1px solid rgba(247,241,227,.3); border-radius:999px; padding:.22rem .6rem; cursor:pointer; transition:background-color .2s, color .2s, border-color .2s}
-.svc b:hover{border-color:var(--cyan-bright); color:var(--cyan-bright)}
-.svc b[aria-checked='true']{background:var(--gold-bright); color:var(--navy-deep); border-color:var(--navy-deep)}
-.svc b[aria-checked='false'][data-svc='youtube']{opacity:.5}
+/* --- listen-on picker: one control for the whole page --- */
+.listen{display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:.6rem .8rem; margin-top:.1rem}
+.pick{display:flex; align-items:center; gap:.15rem; padding:.28rem; background:rgba(251,247,236,.95); border:1.5px solid var(--line); border-radius:999px; box-shadow:0 8px 22px -14px rgba(0,0,0,.6)}
+.pick-l{font-family:var(--mono); font-size:.54rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); padding:0 .45rem 0 .7rem; white-space:nowrap}
+.pick button{font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; padding:.42rem .8rem; border-radius:999px; border:1px solid transparent; background:transparent; color:var(--ink); cursor:pointer; transition:background-color .3s var(--ease), color .3s var(--ease), opacity .3s}
+.pick button:hover:not([aria-disabled='true']):not([aria-checked='true']){background:var(--cream)}
+.pick button[aria-checked='true']{background:var(--acc,var(--ink)); color:var(--cream)}
+.pick button[aria-disabled='true']{opacity:.3; cursor:not-allowed}
+.lcd-hint{display:block; margin-top:.25rem; padding:0; font:inherit; font-size:.54rem; letter-spacing:.1em; text-transform:uppercase; color:#ffd88a; background:none; border:0; border-bottom:1px dashed currentColor; cursor:pointer; text-shadow:none}
+.lcd-hint[hidden]{display:none}
 
 .footer{border-top:1.5px solid var(--line); background:var(--navy-deep); color:var(--cream); padding:1.5rem 0}
 .footer-inner{display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap}
@@ -178,9 +188,11 @@ nav{justify-content:center}
 .tabs{border-radius:1.6rem; width:100%}
 .tab{flex:1 1 calc(50% - .4rem); text-align:center; padding:.6rem .6rem}
 .card h3{font-size:1.6rem}
+.pick{border-radius:1.4rem; flex-wrap:wrap; justify-content:center; width:100%}
+.pick-l{width:100%; text-align:center; padding:.25rem 0 .1rem}
 }
 @media (prefers-reduced-motion:reduce){
-.svc b{transition:none}
+.pick button{transition:none}
 html{scroll-behavior:auto}
 .card{opacity:1; transform:none; animation:none}
 .stars,.disc .rec,.disc .orb,.bg-punk,.bg-jazz::before,.bg-jazz::after,.bg-rock::before{animation:none}
@@ -254,6 +266,10 @@ html{scroll-behavior:auto}
 <button class='tab' role='tab' data-genre='jazz' aria-selected='false'>Jazz</button>
 <button class='tab' role='tab' data-genre='rock' aria-selected='false'>Rock</button>
 </div>
+<div class='listen'>
+<div class='pick' role='radiogroup' aria-label='Streaming service'><span class='pick-l'>Listen on</span><button type='button' role='radio' data-svc='youtube'>YouTube</button><button type='button' role='radio' data-svc='spotify'>Spotify</button><button type='button' role='radio' data-svc='apple'>Apple Music</button><button type='button' role='radio' data-svc='deezer'>Deezer</button><button type='button' role='radio' data-svc='tidal'>Tidal</button></div>
+<div class='pick' role='radiogroup' aria-label='How to open it'><span class='pick-l'>Open</span><button type='button' role='radio' data-how='page'>In page</button><button type='button' role='radio' data-how='app'>Desktop app</button><button type='button' role='radio' data-how='tab'>New tab</button></div>
+</div>
 </div>
 <div class='cards' id='cards' role='tabpanel' aria-live='polite'></div>
 </div>
@@ -273,7 +289,7 @@ const musicData = {
                     title: "The Black Angels",
                     type: "Psychedelic Rock",
                     description: "One of my favourite bands, they have a very heavy rock/psych sound with some of their music alluding to war and how countries send men to their deaths. ",
-                    fav: ["<a href=https://youtu.be/cxaeFD67Rb8>Bad Vibrations</a>", "<a href=https://youtu.be/4C7tfkuGqe4>I'd Kill for Her</a>", "<a href=https://youtu.be/6G7yLulp4oI>Black Grease</a>", "<a href=https://youtu.be/ep-iQjlICNM>The First Vietnamese War</a>", "<a href=https://youtu.be/gvLJZKdrDZ4>Young Men Dead</a>"]
+                    fav: [{title:"Bad Vibrations", yt:"https://youtu.be/cxaeFD67Rb8", spotify:"https://open.spotify.com/track/2JUgnLUDU6AsbOMHIFTcqB"}, {title:"I'd Kill for Her", yt:"https://youtu.be/4C7tfkuGqe4", spotify:"https://open.spotify.com/track/4j2p5bgNxRt0uOpL5YQYPK"}, {title:"Black Grease", yt:"https://youtu.be/6G7yLulp4oI", spotify:"https://open.spotify.com/track/2JGnH3D1ubBikQqGdlMURP"}, {title:"The First Vietnamese War", yt:"https://youtu.be/ep-iQjlICNM", spotify:"https://open.spotify.com/track/7pKwlfZtq5kdLgWrLYUAXJ"}, {title:"Young Men Dead", yt:"https://youtu.be/gvLJZKdrDZ4", spotify:"https://open.spotify.com/track/2C7CRmiNGiyO8TSgAZwA2X"}, {title:"Without a Trace", yt:"https://youtu.be/1nqfhyJVNOo", spotify:"https://open.spotify.com/track/08XTPu3NR0ICMqFg0OGjrQ"}]
                 },
                 {
                     title: "Tame Impala",
@@ -380,43 +396,29 @@ const SERVICES = [
   {key:'deezer',  label:'Deezer'},
   {key:'tidal',   label:'Tidal'}
 ];
-let preferredSvc = null;
 
-const ytbId = href => { const m = /(?:youtu\.be\/|v[=/])([\w-]{6,})/.exec(href || ''); return m ? m[1] : null; };
+const spRe = /open\.spotify\.com\/(?:intl-[a-z-]+\/)?(track|album|artist|playlist|episode|show)\/([A-Za-z0-9]{22})|^spotify:(track|album|artist|playlist|episode|show):([A-Za-z0-9]{22})$/;
+const spParse = href => { const m = spRe.exec((href || '').trim()); return m ? {type: m[1] || m[3], id: m[2] || m[4]} : null; };
+const spUrl = s => `https://open.spotify.com/${s.type}/${s.id}`;
+const ytId = href => { const m = /(?:youtu\.be\/|v[=/])([\w-]{6,})/.exec(href || ''); return m ? m[1] : null; };
 const qEnc  = q => encodeURIComponent(q.replace(/\s+/g,' ').trim());
 
 function svcHref(key, yt, dq){
   switch(key){
-    case 'youtube': return yt || (dq ? `https://www.youtube.com/results?search_query=${qEnc(dq)}` : null);
+    case 'youtube': return yt || `https://www.youtube.com/results?search_query=${qEnc(dq)}`;
     case 'spotify': return `https://open.spotify.com/search/${qEnc(dq)}`;
     case 'apple':   return `https://music.apple.com/us/search?term=${qEnc(dq)}`;
-    case 'deezer':  return dq ? `https://www.deezer.com/search/${qEnc(dq)}` : null;
-    case 'tidal':   return dq ? `https://tidal.com/search/query?query=${encodeURIComponent(dq)}` : null;
+    case 'deezer':  return `https://www.deezer.com/search/${qEnc(dq)}`;
+    case 'tidal':   return `https://tidal.com/search/query?query=${encodeURIComponent(dq)}`;
   }
   return null;
-}
-
-const deezerPromise = new Map();
-function deezerLookup(artist, title){
-  const key = artist + '\u0000' + title;
-  if(deezerPromise.has(key)) return deezerPromise.get(key);
-  const p = (async () => {
-    try{
-      const r = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(artist + ' ' + title)}&limit=1`);
-      if(!r.ok) return null;
-      const j = await r.json();
-      const t = j && Array.isArray(j.data) ? j.data[0] : null;
-      return t ? {deezer:t.link, tidal:`https://tidal.com/browse/search?query=${encodeURIComponent(artist+' '+title)}`, name:esc(t.artist + ' — ' + t.title)} : null;
-    }catch(e){ return null; }
-  })();
-  deezerPromise.set(key, p);
-  return p;
 }
 
 const stage = document.getElementById('stage');
 const cardsEl = document.getElementById('cards');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let current = 'psychedelic';
+let clock = 0;
 
 
 const escA = s => esc(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -426,23 +428,24 @@ const ICON = {
   next:"<svg viewBox='0 0 12 12' aria-hidden='true'><path d='M9.4 1H11v10H9.4zM1 1l7.4 5L1 11z' fill='currentColor'/></svg>"
 };
 const REEL = "<svg class='reel' viewBox='0 0 26 26' aria-hidden='true'><circle cx='13' cy='13' r='12' fill='#1b2340' stroke='#FFC24A' stroke-opacity='.7'/><g><circle cx='13' cy='13' r='4' fill='none' stroke='#FFC24A'/><path d='M13 3v6M13 17v6M3 13h6M17 13h6' stroke='#FFC24A' stroke-width='1.6'/></g></svg>";
-function parseFav(s){
-  const d = document.createElement('div'); d.innerHTML = s;
-  const a = d.querySelector('a');
-  return { title: d.textContent.trim(), href: a ? a.getAttribute('href') : '' };
+function parseFav(f){
+  /* a favourite is either an <a href> string, or {title, yt, spotify} */
+  if(f && typeof f === 'object') return { title: String(f.title || '').trim(), yt: f.yt || '', sp: spParse(f.spotify || '') };
+  const d = document.createElement('div'); d.innerHTML = f;
+  const a = d.querySelector('a'), href = a ? (a.getAttribute('href') || '') : '', sp = spParse(href);
+  return { title: d.textContent.trim(), yt: sp ? '' : href, sp };
 }
 function buildDeck(favs){
   const tracks = favs.map(parseFav);
-  const rows = tracks.map((t,i) => `<li class='track' data-title="${escA(t.title)}" data-href="${escA(t.href)}">
+  const rows = tracks.map((t,i) => { const link = t.yt || (t.sp ? spUrl(t.sp) : ''); return `<li class='track' data-title="${escA(t.title)}" data-yt="${escA(t.yt)}" data-sp="${t.sp ? t.sp.type + ':' + t.sp.id : ''}">
 <button class='cue' type='button' aria-label="Cue ${escA(t.title)}"><span class='tn'>${String(i+1).padStart(2,'0')}</span><span class='tt'>${esc(t.title)}</span></button>
-${t.href ? `<a class='play' href="${escA(t.href)}" target='_blank' rel='noopener' aria-label="Play ${escA(t.title)} (opens in a new tab)">${ICON.play}</a>` : `<span class='play off' title='No link yet' aria-hidden='true'>${ICON.play}</span>`}
-</li>`).join('');
+${link ? `<a class='play' href="${escA(link)}" target='_blank' rel='noopener' aria-label="Play ${escA(t.title)}">${ICON.play}</a>` : `<span class='play off' title='No link yet' aria-hidden='true'>${ICON.play}</span>`}
+</li>`; }).join('');
   return `<div class='deck' data-n='${tracks.length}'>
 <div class='deck-top'><i></i><span>Atlas Hi-Fi &middot; Fav. songs</span><i></i></div>
-<div class='lcd'><div class='reels'>${REEL}${REEL}</div><div class='lcd-text'><span class='lcd-st'></span><span class='lcd-title'></span></div><div class='eq' aria-hidden='true'><b></b><b></b><b></b><b></b><b></b></div></div>
+<div class='lcd'><div class='reels'>${REEL}${REEL}</div><div class='lcd-text'><span class='lcd-st'></span><span class='lcd-title'></span><button class='lcd-hint' type='button' hidden></button></div><div class='eq' aria-hidden='true'><b></b><b></b><b></b><b></b><b></b></div></div>
 <ol class='tracks'>${rows}</ol>
 <div class='ctrl'><button class='tbtn' type='button' data-t='prev' aria-label='Previous track'>${ICON.prev}</button><button class='tbtn go' type='button' data-t='play' aria-label='Play cued track on your preferred service'>${ICON.play}</button><button class='tbtn' type='button' data-t='next' aria-label='Next track'>${ICON.next}</button><span class='sp'></span><span class='knob' aria-hidden='true'></span></div>
-<div class='svc' role='radiogroup' aria-label='Preferred streaming service'><b data-svc='youtube' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on YouTube'>YouTube</b><b data-svc='spotify' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Spotify'>Spotify</b><b data-svc='apple' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Apple Music'>Apple Music</b><b data-svc='deezer' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Deezer'>Deezer</b><b data-svc='tidal' aria-checked='false' tabindex='-1' role='radio' aria-label='Stream on Tidal'>Tidal</b></div>
 </div>`;
 }
 const pad2 = n => String(n).padStart(2,'0');
@@ -452,78 +455,138 @@ function setCue(deck, i, quiet){
   deck.dataset.cue = i;
   rows.forEach((r,k) => r.classList.toggle('on', k === i));
   const r = rows[i], ol = deck.querySelector('.tracks');
-  if(!quiet) ol.scrollTop = r.offsetTop - ol.clientHeight/2 + r.offsetHeight/2;
-  deck.querySelector('.lcd-title').textContent = r.dataset.title;
+  if(!quiet) ol.scrollTo({top: r.offsetTop - ol.clientHeight/2 + r.offsetHeight/2, behavior: reduce ? 'auto' : 'smooth'});
+  const lt = deck.querySelector('.lcd-title');
+  if(lt.textContent !== r.dataset.title){ lt.textContent = r.dataset.title; if(!quiet && !reduce && lt.animate) lt.animate([{opacity:0, transform:'translateY(3px)'},{opacity:1, transform:'none'}], {duration:260, easing:'ease-out'}); }
   deck.classList.remove('nolink');
-  if(!deck.classList.contains('playing')) deck.querySelector('.lcd-st').textContent = `Cued ${pad2(i+1)}/${pad2(rows.length)}`;
+  if(!deck.classList.contains('playing')) deck.querySelector('.lcd-st').textContent = `Cued ${pad2(i+1)}/${pad2(rows.length)} · ${svcTag()}`;
   deck.querySelector('.knob').style.transform = `rotate(${-120 + i * (240 / Math.max(1, rows.length-1))}deg)`;
-}
-async function resolveDeck(deck){
-  for(const r of deck.querySelectorAll('.track')){
-    const yt = ytbId(r.dataset.href);
-    if(yt) r._yt = yt; else {
-      const d = await deezerLookup(deck.dataset.artist || '', r.dataset.title);
-      if(d){ r._deezer = d.deezer; r._tidal = d.tidal; }
-    }
-  }
 }
 function svcHrefFor(deck, row, key){
   const dq = `${deck.dataset.artist || ''} ${row.dataset.title}`.trim();
-  switch(key){
-    case 'youtube': return row.dataset.href || (row._yt ? `https://youtu.be/${row._yt}` : null);
-    case 'deezer':  return row._deezer || null;
-    case 'tidal':   return row._tidal || null;
-    default:        return svcHref(key, row._yt, dq);
+  if(key === 'spotify' && row.dataset.sp){ const [type,id] = row.dataset.sp.split(':'); return spUrl({type,id}); }
+  return svcHref(key, key === 'youtube' ? row.dataset.yt : null, dq);
+}
+
+/* ---------- one global choice: which service, and how to open it ---------- */
+const label = k => SERVICES.find(s => s.key === k).label;
+const CAN = { youtube:{page:1,app:0,tab:1}, spotify:{page:1,app:1,tab:1}, apple:{page:0,app:1,tab:1}, deezer:{page:0,app:0,tab:1}, tidal:{page:0,app:0,tab:1} };
+let svc = 'youtube', how = 'page';
+try{ const sv = JSON.parse(localStorage.getItem('orbital.listen') || 'null'); if(sv && CAN[sv.svc]){ svc = sv.svc; if(['page','app','tab'].includes(sv.how)) how = sv.how; } }catch(e){}
+const saveListen = () => { try{ localStorage.setItem('orbital.listen', JSON.stringify({svc, how})); }catch(e){} };
+const effHow = () => CAN[svc][how] ? how : 'tab';          /* the chosen way, unless this service can't do it */
+function svcTag(){ return label(svc).toUpperCase() + (effHow() === 'app' ? ' APP' : ''); }
+function syncListen(){
+  const m = effHow();
+  document.querySelectorAll('.pick [data-svc]').forEach(b => { const on = b.dataset.svc === svc; b.setAttribute('aria-checked', on); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll('.pick [data-how]').forEach(b => { const k = b.dataset.how, on = k === m; b.setAttribute('aria-checked', on); b.setAttribute('aria-disabled', CAN[svc][k] ? 'false' : 'true'); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll('.deck:not(.playing)').forEach(d => setCue(d, +d.dataset.cue || 0, true));
+}
+function initListen(){
+  const root = document.querySelector('.listen');
+  root.addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.svc) svc = b.dataset.svc;
+    else if(b.dataset.how){ if(b.getAttribute('aria-disabled') === 'true') return; how = b.dataset.how; }
+    saveListen(); syncListen();
+  });
+  root.addEventListener('keydown', e => {
+    if(!/^Arrow/.test(e.key)) return;
+    const g = e.target.closest('[role=radiogroup]'); if(!g) return;
+    const bs = [...g.querySelectorAll('button:not([aria-disabled=true])')], i = bs.indexOf(e.target); if(i < 0) return;
+    e.preventDefault(); const n = bs[(i + (/Right|Down/.test(e.key) ? 1 : -1) + bs.length) % bs.length]; n.focus(); n.click();
+  });
+  syncListen();
+}
+
+/* what should happen for this track, given the service + how */
+function planFor(deck, row){
+  const m = effHow(), dq = `${deck.dataset.artist || ''} ${row.dataset.title}`.trim(), q = encodeURIComponent(dq.replace(/\s+/g,' '));
+  const sp = row.dataset.sp ? row.dataset.sp.split(':') : null, yid = ytId(row.dataset.yt);
+  if(m === 'page'){
+    if(svc === 'youtube' && yid) return {kind:'embed', title:'YouTube player', h:'170px', allow:'autoplay; encrypted-media; picture-in-picture; fullscreen', src:`https://www.youtube-nocookie.com/embed/${yid}?autoplay=1&rel=0&playsinline=1`};
+    if(svc === 'spotify' && sp) return {kind:'embed', title:'Spotify player', h:(sp[0] === 'track' || sp[0] === 'episode') ? '80px' : '152px', allow:'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture', src:`https://open.spotify.com/embed/${sp[0]}/${sp[1]}?utm_source=generator&theme=0`};
   }
+  if(m === 'app'){
+    if(svc === 'spotify') return {kind:'app', web: svcHrefFor(deck,row,svc), uri: sp ? `spotify:${sp[0]}:${sp[1]}` : `spotify:search:${q}`};
+    if(svc === 'apple')   return {kind:'app', web: svcHrefFor(deck,row,svc), uri: `music://music.apple.com/us/search?term=${q}`};
+  }
+  return {kind:'tab', href: svcHrefFor(deck,row,svc)};
 }
 
-function preferredSvcFor(deck){
-  const sel = deck.querySelector('.svc'); if(!sel) return null;
-  const chips = [...sel.querySelectorAll('b')];
-  let on = chips.find(c => c.getAttribute('aria-checked') === 'true');
-  if(!on){ on = chips[0]; chips.forEach((c,i) => c.setAttribute('aria-checked', i === 0 ? 'true' : 'false')); }
-  return on.dataset.svc;
+function openEmbed(deck, p){
+  let box = deck.querySelector('.embed');
+  if(!box){ box = document.createElement('div'); box.className = 'embed'; deck.append(box); }
+  box.style.setProperty('--eh', p.h);
+  box.innerHTML = `<iframe title='${p.title}' src='${p.src}' allow='${p.allow}' allowfullscreen loading='lazy'></iframe>`;
+  requestAnimationFrame(() => box.classList.add('open'));
 }
-
-async function playDeck(deck, i){
+function closeEmbed(deck){
+  const b = deck.querySelector('.embed'); if(!b) return;
+  b.classList.remove('open');
+  setTimeout(() => { if(!b.classList.contains('open')) b.remove(); }, 450);
+}
+function stopDeck(deck){
+  clearTimeout(deck._t); clearTimeout(deck._h); deck.classList.remove('playing'); closeEmbed(deck);
+  const h = deck.querySelector('.lcd-hint'); if(h) h.hidden = true;
+}
+/* a custom-scheme link (spotify:…) hands off to the installed app. Browsers can't tell us whether one exists,
+   so if the page never loses focus we offer a "web instead" link on the LCD. */
+function launchApp(deck, p){
+  let left = false; const mark = () => { left = true; };
+  window.addEventListener('blur', mark, {once:true}); document.addEventListener('visibilitychange', mark, {once:true});
+  const f = document.createElement('iframe'); f.style.display = 'none'; f.src = p.uri; document.body.append(f); setTimeout(() => f.remove(), 1500);
+  clearTimeout(deck._h);
+  deck._h = setTimeout(() => {
+    window.removeEventListener('blur', mark); document.removeEventListener('visibilitychange', mark);
+    if(left) return; const h = deck.querySelector('.lcd-hint'); h._web = p.web; h.textContent = 'No app? Open on the web ↗'; h.hidden = false;
+  }, 2200);
+}
+function playDeck(deck, i){
   setCue(deck, i);
-  const rows = deck.querySelectorAll('.track'), r = rows[+deck.dataset.cue];
-  const key = preferredSvcFor(deck) || 'youtube';
-  if(!r._yt && !r._deezer) await resolveDeck(deck);
-  const href = svcHrefFor(deck, r, key);
-  document.querySelectorAll('.deck.playing').forEach(d => { if(d !== deck){ d.classList.remove('playing'); setCue(d, +d.dataset.cue, true); } });
-  clearTimeout(deck._t);
-  if(!href){ deck.classList.remove('playing'); deck.classList.add('nolink'); deck.querySelector('.lcd-st').textContent = 'No link yet'; return; }
-  deck.classList.add('playing');
-  deck.querySelector('.lcd-st').textContent = `▶ ${SERVICES.find(s => s.key === key).label} ↗`;
-  window.open(href, '_blank', 'noopener');
+  const r = deck.querySelectorAll('.track')[+deck.dataset.cue], p = planFor(deck, r), st = deck.querySelector('.lcd-st');
+  document.querySelectorAll('.deck.playing').forEach(d => { if(d !== deck){ stopDeck(d); setCue(d, +d.dataset.cue, true); } });
+  clearTimeout(deck._t); clearTimeout(deck._h); deck.querySelector('.lcd-hint').hidden = true;
+  if(p.kind === 'embed'){ openEmbed(deck, p); deck.classList.add('playing'); st.textContent = `▶ ${label(svc)} · in page`; return; }
+  closeEmbed(deck); deck.classList.add('playing');
+  if(p.kind === 'app'){ st.textContent = `▶ ${label(svc)} · app`; launchApp(deck, p); }
+  else { st.textContent = `▶ ${label(svc)} ↗`; window.open(p.href, '_blank', 'noopener'); }
   deck._t = setTimeout(() => { deck.classList.remove('playing'); setCue(deck, +deck.dataset.cue, true); }, 8000);
 }
 
 cardsEl.addEventListener('click', e => {
   const deck = e.target.closest('.deck'); if(!deck) return;
+  const hint = e.target.closest('.lcd-hint');
+  if(hint){ window.open(hint._web, '_blank', 'noopener'); hint.hidden = true; return; }
   const cur = +deck.dataset.cue || 0;
   const row = e.target.closest('.track'), rows = [...deck.querySelectorAll('.track')];
   const t = e.target.closest('[data-t]');
   if(t){
-    if(t.dataset.t === 'prev') setCue(deck, cur - 1);
-    else if(t.dataset.t === 'next') setCue(deck, cur + 1);
-    else playDeck(deck, cur).catch(()=>{});
+    if(t.dataset.t === 'play') playDeck(deck, cur);
+    else { stopDeck(deck); setCue(deck, cur + (t.dataset.t === 'prev' ? -1 : 1)); }
     return;
   }
-  const svcGroup = e.target.closest('.svc');
-  if(svcGroup){
-    const chipB = e.target.closest('b[data-svc]'); if(!chipB) return;
-    preferredSvc = chipB.dataset.svc;
-    document.querySelectorAll('.svc').forEach(sel => sel.querySelectorAll('b').forEach(c => c.setAttribute('aria-checked', c.dataset.svc === preferredSvc ? 'true' : 'false')));
-    return;
-  }
-  if(e.target.closest('a.play')){ playDeck(deck, rows.indexOf(row)).catch(()=>{}); return; }
-  if(e.target.closest('.cue')){ clearTimeout(deck._t); deck.classList.remove('playing'); setCue(deck, rows.indexOf(row)); }
+  if(e.target.closest('a.play')){ if(e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); playDeck(deck, rows.indexOf(row)); return; }
+  if(e.target.closest('.cue')){ stopDeck(deck); setCue(deck, rows.indexOf(row)); }
 });
 
+function renderCards(genre){
+  cardsEl.innerHTML = '';
+  musicData[genre].forEach((item, i) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.style.setProperty('--i', i);
+    const favs = item.fav && item.fav.length ? buildDeck(item.fav) : '';
+    card.innerHTML = `<p class='no'>No. ${String(i+1).padStart(2,'0')}</p><h3>${esc(item.title)}</h3><span class='type'>${esc(item.type)}</span><p class='desc'>${esc(item.description)}</p>${favs}`;
+    card.querySelectorAll('.deck').forEach(d => { d.dataset.artist = item.title; setCue(d, 0, true); });
+    cardsEl.appendChild(card);
+  });
+}
+
+let swapT = 0, swapTok = 0;
 function showGenre(genre, fromHash){
   if(!musicData[genre]) genre = 'psychedelic';
+  const same = genre === current && cardsEl.children.length > 0;
   current = genre;
   stage.dataset.genre = genre;
   document.querySelectorAll('.bg').forEach(b => b.classList.toggle('on', b.dataset.bg === genre));
@@ -533,19 +596,21 @@ function showGenre(genre, fromHash){
     t.tabIndex = on ? 0 : -1;
   });
   if(!fromHash){ try{ history.replaceState(null,'','#'+genre); }catch(e){} }
-  cardsEl.innerHTML = '';
-  musicData[genre].forEach((item, i) => {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.style.setProperty('--i', i);
-    const favs = item.fav && item.fav.length ? buildDeck(item.fav) : '';
-    card.innerHTML = `<p class='no'>No. ${String(i+1).padStart(2,'0')}</p><h3>${esc(item.title)}</h3><span class='type'>${esc(item.type)}</span><p class='desc'>${esc(item.description)}</p>${favs}`;
-    card.querySelectorAll('.deck').forEach(d => d.dataset.artist = item.title);
-    card.querySelectorAll('.deck').forEach(d => setCue(d, 0, true));
-    cardsEl.appendChild(card);
-  });
-  const firstChip = cardsEl.querySelector('.svc b'); if(firstChip) firstChip.tabIndex = 0;
-  sizeCanvases();
+  if(same) return;
+  if(!cardsEl.children.length || reduce){ renderCards(genre); sizeCanvases(); return; }
+  /* fade the old cards out, swap, then ease the container to its new height */
+  const tok = ++swapTok, from = cardsEl.offsetHeight;
+  cardsEl.style.height = from + 'px'; cardsEl.classList.add('swap');
+  clearTimeout(swapT);
+  swapT = setTimeout(() => {
+    if(tok !== swapTok) return;
+    renderCards(genre);
+    cardsEl.style.transition = 'none'; cardsEl.classList.remove('swap'); cardsEl.style.height = 'auto';
+    const to = cardsEl.offsetHeight;
+    cardsEl.style.height = from + 'px'; void cardsEl.offsetHeight; cardsEl.style.transition = '';
+    cardsEl.style.height = to + 'px';
+    clearTimeout(cardsEl._h); cardsEl._h = setTimeout(() => { if(tok === swapTok) cardsEl.style.height = ''; }, 650);
+  }, 220);
 }
 
 document.querySelectorAll('.tab').forEach(t => {
@@ -559,30 +624,19 @@ document.querySelectorAll('.tab').forEach(t => {
   });
 });
 
-document.addEventListener('keydown', e => {
-  const chip = document.querySelector('.svc b[tabindex=\'0\']'); if(!chip) return;
-  if(e.key === 'Enter' || e.key === ' '){
-    e.preventDefault();
-    preferredSvc = chip.dataset.svc;
-    document.querySelectorAll('.svc').forEach(sel => sel.querySelectorAll('b').forEach(c => c.setAttribute('aria-checked', c.dataset.svc === preferredSvc ? 'true' : 'false')));
-  } else if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
-    const chips = [...chip.parentElement.querySelectorAll('b')]; const i = chips.indexOf(chip);
-    const n = e.key === 'ArrowRight' ? (i+1) % chips.length : (i-1+chips.length) % chips.length;
-    e.preventDefault(); chip.tabIndex = -1; chips[n].tabIndex = 0; chips[n].focus();
-  }
-});
-
 /* ---------- psychedelic: several ring-centres drifting, overprinted so they interfere ---------- */
 const psy = document.getElementById('psyCanvas'), pc = psy.getContext('2d');
 const ember = document.getElementById('emberCanvas'), ec = ember.getContext('2d');
 let W = 0, H = 0, dpr = 1;
+/* the canvas is sized in 240px steps, so it isn't wiped and reallocated every frame while the cards change height */
 function sizeCanvases(){
   const r = stage.getBoundingClientRect();
-  W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-  [psy, ember].forEach(c => { c.width = W*dpr; c.height = H*dpr; });
+  const w = Math.max(1, Math.round(r.width)), h = Math.max(240, Math.ceil(r.height / 240) * 240), d = Math.min(window.devicePixelRatio || 1, 1.5);
+  if(w === W && h === H && d === dpr) return;
+  W = w; H = h; dpr = d;
+  [psy, ember].forEach(c => { c.width = Math.round(W*dpr); c.height = Math.round(H*dpr); c.style.height = H + 'px'; });
   pc.setTransform(dpr,0,0,dpr,0,0); ec.setTransform(dpr,0,0,dpr,0,0);
-  if(reduce){ drawPsy(0); }
+  drawPsy(clock);          /* repaint straight away so a resize never shows a blank frame */
 }
 new ResizeObserver(sizeCanvases).observe(stage);
 
@@ -622,7 +676,7 @@ class Ember{
 }
 const embers = Array.from({length:150}, () => new Ember());
 
-let last = performance.now(), clock = 0;
+let last = performance.now();
 function frame(now){
   const dt = Math.max(0, Math.min(.05, (now-last)/1000)); last = now;
   if(!document.hidden){
@@ -632,6 +686,7 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 if(!reduce) requestAnimationFrame(frame);
+initListen();
 
 document.addEventListener('DOMContentLoaded', () => {
   const h = location.hash.replace('#','');
